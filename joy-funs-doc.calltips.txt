@@ -1,0 +1,2410 @@
+*comment*
+Atoms and Definitions of Joy
+.
+This document is up to date with Joy from March 1, 2003.
+Generated at Tuesday 30-DEC-03 21:39:41 by Rabbit.
+Rabbit is written in Joy and generates 
+xml, html4, html3, text, latex and calltips output from one source file.
+
+set_type
+-> Set
+The type of sets of small non-negative integers. The maximum is platform 
+dependent, typically the range is 0..31. Literals are written inside 
+curly braces.
+{} => {}
+{ 0} => { 0}
+{ 1 3 5} => { 1 3 5}
+{ 17 18 19} => { 17 18 19}
+
+string_type
+->  Str 
+The type of strings of characters. Literals are written inside double quotes.
+Unix style escapes are accepted: n - newline, t - tabulator and so on.
+ "" =>  ""
+ "A" =>  "A"
+ "hello world" =>  "hello world"
+ "123" =>  "123"
+
+list_type
+-> L
+The type of lists of values of any type (including lists)  or the type of 
+quoted programs which may contain operators or combinators. Literals of 
+this type are written inside square brackets. 
+[] => []
+[ 3 512 -7] => [ 3 512 -7]
+[ john mary] => [ john mary]
+[ 'A 'C[ 'B]] => [ 'A 'C[ 'B]]
+[ dup *] => [ dup *]
+
+integer_type
+->  I
+The type of negative, zero or positive integers. Literals are written in 
+decimal notation.
+ -123 =>  -123
+ 0 =>  0
+ 42 =>  42
+
+float_type
+->  F
+The type of floating-point numbers.  Literals of this type are written 
+with embedded decimal points (like 1.2) and optional exponent specifiers 
+(like 1.5E2).
+    1.20 =>     1.20
+
+truth_value_type
+->  B
+The logical type  or the type of truth values. It has just two literals: 
+true and false.
+ true =>  true
+ false =>  false
+
+character_type
+->  C
+The type of characters. Literals are written with a single quote. 
+Examples: 'A  '7  '; and so on. Unix style escapes are allowed.
+
+file_type
+-> STREAM
+The type of references to open I/O streams, typically but not necessarily 
+files.  The only literals of this type are stdin  stdout  and stderr.
+ stdin =>   file type
+ stdout =>   file type
+ stderr =>   file type
+
+stack
+.. Y Z -> .. Y Z [Z Y ..]
+Pushes the stack as a list.
+ 1 2 3 stack =>  1 2 3[ 3 2 1]
+
+id
+->
+Identity function, does nothing. Any program of the form  P id Q  is 
+equivalent to just  P Q.
+
+dup
+ X  ->   X X
+Pushes an extra copy of X onto stack.
+ 42 dup =>  42 42
+
+swap
+ X Y  ->   Y X
+Interchanges X and Y.
+ 1 2 swap =>  2 1
+
+rollup
+X Y Z  ->  Z X Y
+Moves X and Y up and moves Z down.
+ 1 2 3 rollup =>  3 1 2
+
+rolldown
+X Y Z  ->  Y Z X
+Moves Y and Z down and moves X up.
+ 1 2 3 rolldown =>  2 3 1
+
+rotate
+X Y Z  ->  Z Y X
+Interchanges X and Z.
+ 1 2 3 rotate =>  3 2 1
+
+popd
+Y Z  ->  Z
+As if defined by:   popd  ==  [pop] dip;
+ 1 2 popd =>  2
+
+dupd
+Y Z  ->  Y Y Z
+As if defined by:   dupd  ==  [dup] dip;
+
+swapd
+X Y Z  ->  Y X Z
+As if defined by:   swapd  ==  [swap] dip;
+
+rollupd
+X Y Z W  ->  Z X Y W
+As if defined by:   rollupd  ==  [rollup] dip;
+
+rolldownd
+X Y Z W  ->  Y Z X W
+As if defined by:   rolldownd  ==  [rolldown] dip;
+
+rotated
+X Y Z W  ->  Z Y X W
+As if defined by:   rotated  ==  [rotate] dip;
+
+pop
+X  ->
+Removes X from top of the stack.
+ 1 2 pop =>  1
+
+unstack
+[X Y ..]  ->  ..Y X
+The list [X Y ..] becomes the new stack.
+ 1 2 3[ 'a 'b] unstack =>  'b 'a
+
+dup2
+X Y -> X Y X Y
+== dupd dup swapd;
+
+
+
+pop2
+Y Z ->    
+
+newstack
+... ->
+== [] unstack;
+ Remove the stack and continue with the empty stack.
+
+setsize
+->  setsize
+Pushes the maximum number of elements in a set (platform dependent). 
+Typically it is 32  and set members are in the range 0..31.
+ setsize =>  32
+
+rest
+A -> A
+Result is the non-empty aggregate A with its first member removed.
+[ 1 2 3] 2 drop => [ 3]
+{ 1 2 3} 2 drop => { 3}
+ "abc" 2 drop =>  "c"
+[ 1 2 3] rest => [ 2 3]
+[ 1 2 3] 2 take => [ 1 2]
+
+at
+A I  ->  X
+X is the member of A at position I. The first item is at position 0.
+[ 1 2 3] 0 at =>  1
+ 0[ 1 2 3] of =>  1
+
+of
+I A  ->  X
+X is the member of A at position I. The first item is at position 0.
+[ 1 2 3] 0 at =>  1
+ 0[ 1 2 3] of =>  1
+
+size
+A  ->  I
+Integer I is the size of aggregate A.
+
+drop
+A N -> A
+Result is A with its first N elements deleted.
+[ 1 2 3] 2 drop => [ 3]
+{ 1 2 3} 2 drop => { 3}
+ "abc" 2 drop =>  "c"
+[ 1 2 3] rest => [ 2 3]
+[ 1 2 3] 2 take => [ 1 2]
+
+take
+A I -> A
+Retain just the first I elements of A.
+[ 1 2 3] 2 drop => [ 3]
+{ 1 2 3} 2 drop => { 3}
+ "abc" 2 drop =>  "c"
+[ 1 2 3] rest => [ 2 3]
+[ 1 2 3] 2 take => [ 1 2]
+
+unitset
+I -> Set
+== {} cons;
+
+
+
+unitstring
+C -> Str
+== '' cons;
+
+
+
+unitlist
+X -> L
+== [] cons;
+ 1 unitlist => [ 1]
+
+string2set
+    
+elements
+L -> Set
+Returns all members of L, doubles removed. The elements of L must fit the 
+sets range, that is integers from 0 to  31. 
+[ 1 2 3 1 2 3] elements => { 1 2 3}
+
+set2string
+    
+restd
+== [rest] dip;
+
+
+
+cons
+X A  ->  A
+Result is A with a new member X (first member for sequences).
+ 9[ 1 2 3] cons => [ 9 1 2 3]
+ 'z "abc" cons =>  "zabc"
+ 9{ 1 2 3} cons => { 1 2 3 9}
+
+swons
+A X  ->  A
+Result is A with a new member X (first member for sequences).
+[ 1 2 3] 9 swons => [ 9 1 2 3]
+ "abc" 'z swons =>  "zabc"
+{ 1 2 3} 9 swons => { 1 2 3 9}
+
+uncons
+A  ->  X A
+Returns the first and the rest of non-empty aggregate A.
+[ 1 2 3] uncons =>  1[ 2 3]
+
+unswons
+A  ->  A X
+Returns the rest and the first of non-empty aggregate A.
+[ 1 2 3] unswons => [ 2 3] 1
+
+concat
+A A -> A
+Evaluates to the concatenation of two aggregates.
+[ 1 2 3 4][ 3 4 5 6] concat => [ 1 2 3 4 3 4 5 6]
+ "abcd" "efgh" concat =>  "abcdefgh"
+{ 1 2 3 4}{ 3 4 5 6} concat => { 1 2 3 4 5 6}
+
+enconcat
+X A A -> A
+The concatenation of two aggregates with X inserted between them.
+As if defined by  enconcat == swapd cons concat;
+ 0[ 1 2 3 4][ 3 4 5 6] enconcat => [ 1 2 3 4 0 3 4 5 6]
+ '0 "abcd" "efgh" enconcat =>  "abcd0efgh"
+ 0{ 1 2 3 4}{ 3 4 5 6} enconcat => { 0 1 2 3 4 5 6}
+
+swoncat
+A A -> A
+== swap concat;
+[ 1 2 3 4][ 3 4 5 6] swoncat => [ 3 4 5 6 1 2 3 4]
+ "abcd" "efgh" swoncat =>  "efghabcd"
+{ 1 2 3 4}{ 3 4 5 6} swoncat => { 1 2 3 4 5 6}
+
+consd
+X A Y -> A Y
+ 1[] 2 consd => [ 1] 2
+
+swonsd
+A X Y -> A Y
+[] 1 2 swonsd => [ 1] 2
+
+unconsd
+A X -> Y A X
+[ 1 2 3] 99 unconsd =>  1[ 2 3] 99
+
+unswonsd
+A X -> A Y X
+[ 1 2 3] 99 unswonsd => [ 2 3] 1 99
+
+cons2
+X Y A A -> A A
+== swapd cons consd;
+Cons 2 values to 2 aggregates.
+ 1 2[][] cons2 => [ 1][ 2]
+
+uncons2
+A A -> X Y A A
+Uncons 2 values from 2 aggregates.
+[ 999 1 2 3] "text" uncons2 =>  999 't[ 1 2 3] "ext"
+
+swons2
+A A X Y -> A A
+== swapd swons swonsd;
+Swons 2 items to 2 aggregates.
+ "ext"[ 1 2 3] 't 999 swons2 =>  "text"[ 999 1 2 3]
+
+unswons2
+A A -> A A X Y
+Unswons 2 items from 2 aggregates.
+[ 1 2 3] "text" unswons2 => [ 2 3] "ext" 1 't
+
+first
+A -> X
+X is the first member of the non-empty aggregate A.
+
+second
+A -> X
+
+third
+A -> X
+
+fourth
+A -> X
+
+fifth
+A -> X
+
+firstd
+A X -> Y X
+
+secondd
+    Please use carefully!
+
+thirdd
+A X -> Y X
+
+pairset
+I I -> Set
+== {} cons cons;
+
+
+
+pairstring
+C C -> Str
+
+pairlist
+X X -> L
+== [] cons cons;
+
+
+
+unpair
+A -> X Y
+== uncons uncons pop;
+[ 1 2 3 4] unpair =>  1 2
+
+compare
+A A  ->  I
+I (=-1 0 +1) is the comparison of aggregates A1 and A2.  The values 
+correspond to the predicates >=  =  <=.
+{ 1 2 3}{ 1 2 3} compare =>  0
+{ 1 2 3}{ 1 2 4} compare =>  4
+{ 1 2 3}{ 1 31} compare =>  -3
+ "1 2 3" " 1 2 3" compare =>  17
+ 1 1 compare =>  0
+ 1 10 compare =>  -9
+ true false compare =>  1
+ false true compare =>  -1
+
+null
+X  ->  B
+Tests for empty aggregate X or zero numeric.
+ 0 null =>  true
+[] null =>  true
+{} null =>  true
+ "" null =>  true
+
+small
+X -> B
+X has to be an aggregate or an integer. 
+Tests whether aggregate X has 0 or 1 members  or integer X is 0 or 1.
+ -1 small =>  true
+ 0 small =>  true
+ 1 small =>  true
+ 2 small =>  false
+[] small =>  true
+[ 1] small =>  true
+[ 1 2] small =>  false
+
+equal
+T T  ->  B
+(Recursively) tests whether two trees are identical.
+[ 1[ 'a[ 5] 2]][ 1[ 'a[ 5] 2]] equal =>  true
+[ 1[ 'a[ 5] 2]][ 1[ 'a[ 6] 2]] equal =>  false
+
+has
+A X  ->  B
+Tests whether aggregate A has X as a member.
+[ 1 2 3] 3 has =>  true
+ 3[ 1 2 3] in =>  true
+
+in
+X A  ->  B
+Tests whether X is a member of aggregate A.
+[ 1 2 3] 3 has =>  true
+ 3[ 1 2 3] in =>  true
+
+set
+X  ->  B
+Tests whether X is a set.
+
+string
+X  ->  B
+Tests whether X is a string.
+
+list
+X  ->  B
+Tests whether X is a list.
+
+leaf
+X  ->  B
+Tests whether X is not a list.
+ 1 leaf =>  true
+[] leaf =>  false
+
+some
+A [P:test] -> B
+Applies test to members of aggregate A and returns true if some 
+( that is one or more ) pass, false if not.
+[ 1 2 3][ odd] some =>  true
+[ 2 4 6][ odd] some =>  false
+
+all
+A [P:test]  ->  X
+Applies test P to members of aggregate A, returns true if all pass.
+[ 1 2 3 4][ 5 >] all =>  false
+[ 1 2 3 4][ 5 <] all =>  true
+
+nulld
+X Y -> B Y
+
+null2
+X Y -> B
+== nulld null or;
+Tests whether X or Y is null.
+
+sum
+L|Set -> N
+== 0[+]fold;
+Calculate the sum of all list or set items.
+[ 1 2 3 4 5] sum =>  15
+
+average
+L|Set -> N
+== [sum] [size] cleave /;
+
+
+
+variance
+L -> N
+Calculate variance of lists items.
+
+product
+L|Set -> N
+Calculate the product of all list or set items.
+[ 1 2 3 4 5] product =>  120
+
+scalarproduct
+L L -> N
+Scalarproduct.
+[ 2 3 1][ 6 4 12] scalarproduct =>  36
+
+cartproduct
+L L -> L
+[ 1 2][ 'a 'b] cartproduct => [[ 2 'b][ 2 'a][ 1 'b][ 1 'a]]
+
+reverse
+S -> S
+== [[]] [''] iflist swap shunt;
+Reverse a list or string.
+[ 1 2 3] reverse => [ 3 2 1]
+
+reverselist
+L -> L
+== [] swap shunt ;
+Reverse a list.
+
+reversestring
+Str -> Str
+== '' swap shunt ;
+Reverse a string.
+
+flatten
+L -> L
+[[ 1 2 3][ 4 5 6][ 7[ 'a 'b] 9]] flatten => [ 1 2 3 4 5 6 7[ 'a 'b] 9]
+
+qsort
+A -> A
+[small] [] [uncons [>] split] [swapd cons concat] binrecSort a sequence.
+ "string." qsort =>  ".ginrst"
+[ 1 3 2] qsort => [ 1 2 3]
+
+qsort1-1
+L -> L
+
+qsort1
+L -> L
+
+mk_qsort
+L [P] -> L
+Sort a sequence. The new order is obtained after applying P on every list item.
+[[ 1 2 3][ 700 -699][ 5]][ sum] mk_qsort => [[ 700 -699][ 5][ 1 2 3]]
+
+transpose
+L -> L
+Transpose a list of lists.
+[[ 1 2 3 4][ 'a 'b 'c]] transpose => [[ 1 'a][ 2 'b][ 3 'c]]
+
+from-to
+I1|C1 I2|C2 A -> A
+Create an aggregate containing values from I1 to I2 for sets and lists, 
+from C1 to C2 for strings.
+ 3 7[] from-to => [ 3 4 5 6 7]
+ 3 7{} from-to => { 3 4 5 6 7}
+ 'c 'g "" from-to =>  "cdefg"
+
+from-to-list
+I I -> L
+== [] from-to;
+ 5 10 from-to-list => [ 5 6 7 8 9 10]
+
+from-to-set
+I I -> Set    
+== {} from-to;
+ 5 10 from-to-set => { 5 6 7 8 9 10}
+
+from-to-string
+C C -> Str
+== '' from-to;
+'a 'f from-to-string =>  "abcdef"
+
+restlist
+L -> L
+[ 1 2 3 4] restlist => [[ 1 2 3 4][ 2 3 4][ 3 4][ 4][]]
+
+frontlist1
+A -> A
+Thompson p 247
+[ 1 2 3] frontlist1 => [[][ 1][ 1 2][ 1 2 3]]
+
+frontlist
+A -> A
+[ 1 2 3] frontlist => [[][ 1][ 1 2][ 1 2 3]]
+
+subseqlist
+L -> L
+[ 1 2 3] subseqlist => [[ 1][ 1 2][ 1 2 3][ 2][ 2 3][ 3][]]
+
+powerlist1
+L ->L
+[ 1 2 3] powerlist1 => [[][ 3][ 2][ 2 3][ 1][ 1 3][ 1 2][ 1 2 3]]
+
+powerlist2
+    [ 1 2 3] powerlist2 => [[ 1 2 3][ 1 2][ 1 3][ 1][ 2 3][ 2][ 3][]]
+
+permlist
+L -> L
+Create a list of all permutations of L.
+[ 1 2 3] permlist => [[ 1 2 3][ 2 1 3][ 2 3 1][ 1 3 2][ 3 1 2][ 3 2 1]]
+
+orlist
+[P] -> [P]
+== [list] swap disjoin;
+Creates a quoted program that evaluates to true, if [P] returns true or X is a list.
+[ set] orlist => [[ list][ true][ set] ifte]
+{ 1 2 3}[ set] orlist[ sum][] ifte =>  6
+
+orlistfilter
+[P] -> [P]
+== orlist[filter]cons;
+.
+[ set] orlistfilter => [[[ list][ true][ set] ifte] filter]
+[ 1{ 1 2}[ 99 88] "string"][ set] orlistfilter i => [{ 1 2}[ 99 88]]
+
+zip
+A A -> A
+== [null2] [pop2 []] [uncons2] [[pairlist] dip cons] linrec;
+.
+Zip 2 aggregates into a list of pairs.
+[ 1 2 3][ 10 20 30] zip => [[ 1 10][ 2 20][ 3 30]]
+
+insertlist
+L X -> L
+[ 1 2 3] "X" insertlist => [[ "X" 1 2 3][ 1 "X" 2 3][ 1 2 "X" 3][ 1 2 3 "X"]]
+
+merge
+Seq Seq -> Seq
+Concat 2 sorted sequences with sorted result.
+[ 1 2 3 4][ 2 3 4 5] merge => [ 1 2 2 3 3 4 4 5]
+ "aabc" "abde" merge =>  "aaabbcde"
+
+merge1
+Seq Seq -> Seq
+Concat 2 sorted sequences of sequences with sorted result.
+
+insert
+A X -> A
+Insert X in A at sorted position.
+[ 1 2 3 4 1]    3.50 insert => [ 1 2 3    3.50 4 1]
+
+insert-old
+    Alternative implementation of insert.
+
+delete
+A X -> A
+Delete first occurrence of X out of A.
+ "delete" 'e delete =>  "dlete"
+
+treeshunt
+    
+treeflatten
+    
+treereverse
+    
+treestrip
+    
+treesample
+    
+sign
+I -> I
+Result is the sign (-1 or 0 or +1) of a number. Also supports float.
+ -7 sign =>  -1
+ 0 sign =>  0
+    7.20 sign =>     1.00
+
+neg
+N -> N
+Result is the negative of a number.  Also supports float.
+
+abs
+N -> N
+Result is the absolute value (0 1 2..) of number N. Also supports float.
+
+pred
+I -> I
+Result is the predecessor of an integer.
+ 1 pred =>  0
+
+succ
+I -> I
+Returns the successor of an integer. 
+ 1 succ =>  2
+
+null
+X  ->  B
+Tests for empty aggregate X or zero numeric.
+
+small
+X -> B
+X has to be an aggregate or an integer. 
+Tests whether aggregate X has 0 or 1 members  or numeric 0 or 1.
+ -1 small =>  true
+ 0 small =>  true
+ 1 small =>  true
+ 2 small =>  false
+[] small =>  true
+[ 1] small =>  true
+[ 1 2] small =>  false
+
+integer
+X  ->  B
+Tests whether X is an integer.
+
+numerical
+X -> B
+True if X is an integer or a float.
+
+nulld
+X Y -> B Y
+
+positive
+N -> B
+Returns true if N is greater that 0. 
+ 0 positive =>  false
+ 1 positive =>  true
+
+negative
+N -> B
+Returns true if N is negative. 
+
+even
+N -> B
+== 2 rem null;
+.
+Tests whether number N is even.
+ 2 even =>  true
+ 3 even =>  false
+
+odd
+N -> B
+== even not;
+.
+Tests whether a number is not even.
+ 2 odd =>  false
+ 3 odd =>  true
+
++
+N N -> N
+Result is the adding of two numbers. Also supports float.
+
+-
+N N -> N
+Numeric N is the result of subtracting two numbers. Also supports float.
+
+*
+N N -> N
+Result is the product of two numbers.  Also supports float.
+
+/
+N N -> N
+Result is the (rounded) ratio of two integers or the quotient of two numbers.  
+Also supports float.
+ 10 3 / =>  3
+   10.00 3 / =>     3.33
+ 10    3.00 / =>     3.33
+ 10 3 div =>  3 1
+ 10 3 rem =>  1
+
+rem
+I I -> I
+Result is the remainder of dividing two integers.  Also supports float.
+ 7 3 div =>  2 1
+ 7 3 rem =>  1
+
+div
+I I -> I I
+Result are the quotient and remainder of dividing two integers.
+ 7 3 rem =>  1
+ 7 3 div =>  2 1
+
+max
+N N -> N
+Result is the maximum of two numbers. Also supports float.
+
+min
+N N -> N
+Result is the minimum of two numbers. Also supports float.
+
+null2
+X Y -> B
+== nulld null or;
+Tests whether X or Y is null.
+
+ceil
+F -> F
+Result is the float ceiling of F.
+    1.25 ceil =>     2.00
+    1.52 ceil =>     2.00
+    1.25 floor =>     1.00
+    1.52 floor =>     1.00
+    1.25 trunc =>  1
+    1.52 trunc =>  1
+
+floor
+F -> F
+Result is the floor of F.
+    1.25 ceil =>     2.00
+    1.52 ceil =>     2.00
+    1.25 floor =>     1.00
+    1.52 floor =>     1.00
+    1.25 trunc =>  1
+    1.52 trunc =>  1
+
+frexp
+F -> F I
+Result is the mantissa and the exponent of F.  
+Unless F = 0  0.5 <= abs(F2) < 1.0.
+
+ldexp
+F I -> F
+Result is F times 2 to the Ith power.
+
+modf
+F -> F F
+Results are the fractional part and the integer part 
+(but expressed as a float) of F.
+   12.25 modf =>     0.25   12.00
+
+pow
+F1 F2 -> F
+Result is F1 raised to the F2th power.
+
+sqrt
+F -> F
+Result is the square root of F.
+
+trunc
+F -> I
+Result is an integer equal to the float F truncated toward zero.
+    1.25 ceil =>     2.00
+    1.52 ceil =>     2.00
+    1.25 floor =>     1.00
+    1.52 floor =>     1.00
+    1.25 trunc =>  1
+    1.52 trunc =>  1
+
+float
+X -> B
+Tests whether X is a float.
+
+fahrenheit
+F -> F
+Convert Celsius to Fahrenheit.
+
+celsius
+F -> F
+Convert Fahrenheit to Celsius.
+
+pi
+-> F
+== 3.14159265;
+
+
+
+radians
+N -> F
+== pi * 180 /;
+Convert degree to radians.
+
+acos
+F -> F
+Result is the arc cosine of F.
+
+asin
+F -> F
+Result is the arc sine of F.
+
+atan
+F -> F
+Result is the arc tangent of F.
+
+atan2
+F F -> F
+Result is the arc tangent of the quotient of two floats.
+
+cos
+F -> F
+Result is the cosine of F.
+
+cosh
+F -> F
+Result is the hyperbolic cosine of F.
+
+sin
+F -> F
+Result is the sine of F.
+
+sinh
+F -> F
+Result is the hyperbolic sine of F.
+
+tan
+F -> F
+Result is the tangent of F.
+
+tanh
+F -> F
+Result is the hyperbolic tangent of F.
+
+sindeg
+F -> F
+== radians sin;
+Sine calculated from degree-value.
+
+cosdeg
+F -> F
+== radians cos;
+Cosine calculated from degree-value.
+
+tandeg
+F -> F
+== radians tan;
+Tangent calculated from degree-value.
+
+exp
+F -> F
+Result is e (2.718281828...) raised to the Fth power.
+
+log
+F -> F
+Result is the natural logarithm of F.
+
+log10
+F -> F
+F is the common logarithm of F.
+
+e
+-> F
+== 1.0 exp;
+
+
+
+maxint
+->  maxint
+Pushes largest integer (platform dependent). Typically it is 32 bits.
+ 2147483647 =>  2147483647
+
+rand
+  -> I
+I is a random integer.
+
+srand
+I  ->  
+Sets the random integer seed to integer I.
+
+prime
+     12 prime =>  false
+ 17 prime =>  true
+
+fact
+     5 fact =>  120
+
+fib
+    
+gcd
+     8 12 gcd =>  4
+
+qroots
+F:a F:b F:c -> 
+Find roots of the quadratic equation with coefficients a b c :
+
+a * x*x  +  b * x   +  c  =  0
+ 1 2 -3 qroots => [    1.00   -3.00]
+ 1 0 0 qroots => [    0.00]
+ 1 2 3 qroots => [ _COMPLEX]
+
+deriv
+     
+newton
+     
+use-newton
+     
+cube-root
+F -> F
+Calculate cube root using newton
+ 64 cube-root =>     4.00
+
+false
+-> B
+Pushes the value false.
+ false =>  false
+
+true
+-> B
+Pushes the value true.
+ true =>  true
+
+choice
+B X Y -> Z
+Result is X if B is true and Y if B is false.
+ true 1 2 choice =>  1
+ false 1 2 choice =>  2
+
+or
+X Y  ->  Z
+Z is the union of two sets, the logical disjunction of two truth values.
+{ 1 2 3}{ 2 3 4} or => { 1 2 3 4}
+ true false or =>  true
+
+xor
+X Y  ->  Z
+Z is the symmetric difference of two sets, the logical exclusive disjunction 
+of two truth values.
+{ 1 2 3}{ 2 3 4} xor => { 1 4}
+ true false xor =>  true
+
+and
+X Y  ->  Z
+Result is the intersection of two sets or the logical conjunction of two 
+truth values.
+{ 1 2 3}{ 2 3 4} and => { 2 3}
+ true false and =>  false
+
+not
+X  ->  Y
+Y is the complement of a set, the logical negation of a truth value.
+{ 1 2 3} not => 
+{ 0 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31}
+ true not =>  false
+
+>=
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. 
+Tests whether 
+X greater than or equal to Y.  Also supports float.
+
+>
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. 
+Tests whether X greater than Y.  Also supports float.
+Qsort is using > in order to obtain the arrangement.
+[ "dup" dup2 "dup2" "dup3" dup "1" "Xx"] qsort 
+=> [ "1" "Xx" "dup" dup dup2 "dup2" "dup3"]
+
+<=
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. Tests whether 
+X less than or equal to Y.  Also supports float.
+
+<
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. Tests whether 
+X less than Y.  Also supports float.
+
+!=
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. Tests whether 
+X not equal to Y.  Also supports float.
+
+=
+X Y  ->  B
+Either both X and Y are numeric or both are strings or symbols. Tests whether 
+X equal to Y.  Also supports float.
+
+logical
+X  ->  B
+Tests whether X is a logical.
+
+truth
+-> B
+== true;
+
+
+
+falsity
+-> B
+== false;
+
+
+
+boolean
+X -> B
+True if X is a logical or a set.
+
+conjoin
+[P][P] -> [P]
+== [[false] ifte] cons cons;
+.
+[ P1][ P2] conjoin => [[ P1][ P2][ false] ifte]
+ 17[ 10 >][ 20 <] conjoin i =>  true
+
+disjoin
+[P][P] -> [P]
+== [ifte] cons [true] swons cons;
+[ P1][ P2] disjoin => [[ P1][ true][ P2] ifte]
+ 17[ 10 <][ 20 >] disjoin i =>  false
+
+negate
+X -> X [P]
+== [[false] [true] ifte] cons;
+
+
+[ small] negate => [[ small][ false][ true] ifte]
+[][ small] negate i => [] false
+
+sequor
+X [P:cond][P:false] -> ...
+== [pop true] swap ifte;
+
+
+
+sequand
+X [P:cond][P:true] -> ...
+== [pop false] ifte;
+
+
+
+ord
+C -> I
+Integer I is the ASCII value of character C (or logical or integer).
+ 'a ord =>  97
+
+chr
+I -> C
+C is the character whose ASCII value is integer I (or logical or character).
+ 97 chr =>  'a
+
+char
+X  ->  B
+Tests whether X is a character.
+
+to-upper
+C -> C
+  'c to-upper =>  'C
+ 'X to-upper =>  'X
+
+to-lower
+C -> C
+ 'c to-lower =>  'c
+ 'X to-lower =>  'x
+ '0 to-lower =>  'P
+
+dip
+X [P] -> ... X
+Saves X, executes P and pushes X back.
+ 1 2 3[ "diver"] dip =>  1 2 "diver" 3
+
+dipd
+X Y [P] -> ... X Y
+== [dip] cons dip;
+Saves X and Y, executes P and restores X and Y. 
+Equivalent to dip2.
+ 1 2 3[ "diver"] dipd =>  1 "diver" 2 3
+
+dip2
+X Y [P] -> ... X Y
+== [dip] cons dip;
+Saves X and Y, executes P and restores X and Y. 
+Equivalent to dipd.
+ 1 2 3[ "diver"] dip2 =>  1 "diver" 2 3
+
+dip3
+X Y Z [P] -> ... X Y Z
+== [dip2]cons dip;
+Saves X Y Z, executes P and restores X Y Z.
+ 1 2 3[ "diver"] dip3 =>  "diver" 1 2 3
+
+conts
+->  [[P] [Q] ..]
+Pushes current continuations. Buggy, do not use. 
+
+opcase
+X [..[X Xs]..] -> [Xs]
+Indexing on type of X  returns the list [Xs].
+ 1[[ 1 "integer"][ 'c "char"][[] "list"][ "default"]] opcase =>  1[ "integer"]
+ 2[[ 1 "integer"][ 'c "char"][[] "list"][ "default"]] opcase =>  2[ "integer"]
+ 'a[[ 1 "integer"][ 'c "char"][[] "list"][ "default"]] opcase =>  'a[ "char"]
+[ 1][[ 1 "integer"][ 'c "char"][[] "list"][ "default"]] opcase => [ 1][ "list"]
+{}[[ 1 "integer"][ 'c "char"][[] "list"][ "default"]] opcase => {}[ "default"]
+
+case
+X [[Xi Pi].. [P:default]] -> ...
+Indexing on the value of X, execute the matching Pi or P:default.
+ 1[[ 1 "one"][ 2 "two"][ "default"]] case =>  "one"
+ 2[[ 1 "one"][ 2 "two"][ "default"]] case =>  "two"
+ 'D[[ 1 "one"][ 2 "two"][ "default"]] case =>  'D "default"
+ 9[[ 1[ "one"]][ 2 "two"][ 9 "default"]] case =>  9 9 "default"
+ 1[[ 1 4 5 *][ 2 "two"][ "default"]] case =>  20
+ 1[[ 1[ "one"]][ 2 "two"][ "default"]] case => [ "one"]
+
+branch
+B [P1] [P2]  ->  ...
+If B is true then executes P1 else executes P2.
+ true[ "true"][ "false"] branch =>  "true"
+ true[][ "true"][ "false"] ifte =>  true "true"
+
+ifte
+[P:if] [P:true] [P:false] -> ...
+Executes P:condition. If that yields true  then executes P:if-true else 
+executes P:if-false.
+ 1234[ 1234 =][ "true"][ "false"] ifte =>  1234 "true"
+ 1234[ 1234 =][ pop "true"][ pop "false"] ifte =>  "true"
+ 1234[ odd][][ 1 +] ifte =>  1235
+
+cond
+[[[cond] true].. [Default]] -> ...
+Tries each condition. If a condition yields true executes the corresponding 
+if-true and exits. 
+If no condition yields true executes default. 
+ 1[[[ 1 =] pop "One"][[ 2 =] pop "Two"][ pop "Default"]] cond =>  "One"
+ 2[[[ 1 =] pop "One"][[ 2 =] pop "Two"][ pop "Default"]] cond =>  "Two"
+ 'D[[[ 1 =] pop "One"][[ 2 =] pop "Two"][ pop "Default"]] cond =>  "Default"
+ 1[[[ 1 =] pop 4 5 *][[ 2 =] pop "Two"][ pop "Default"]] cond =>  20
+ 1[[[ 1 =] pop[ "One"]][[ 2 =] pop "Two"][ pop "Default"]] cond => [ "One"]
+
+ifinteger
+X [P1] [P2]  ->  ...
+If X is an integer  executes P1 else executes P2.
+
+ifchar
+X [P1] [P2]  ->  ...
+If X is a character  executes P1 else executes P2.
+ 'c[ true][ false] ifchar =>  'c true
+ 3[ true][ false] ifchar =>  3 false
+
+iflogical
+X [P1] [P2]  ->  ...
+If X is a logical or truth value  executes P1 else executes P2.
+
+ifset
+X [P1] [P2]  ->  ...
+If X is a set  executes P1 else executes P2.
+
+ifstring
+X [P:if-true] [P:if-false]  ->  ...
+If X is a string executes P:if-true else executes P:if-false.
+ "text"[ "true"][ "false"] ifstring =>  "text" "true"
+
+iflist
+X [P1] [P2]  ->  ...
+If X is a list  executes P1 else executes P2.
+
+iffloat
+X [P1] [P2]  ->  ...
+If X is a float  executes P1 else executes P2.
+
+iffile
+X [P1] [P2]  ->  ...
+If X is a file  executes P1 else executes P2.
+
+while
+[P:condition] [P:body]  ->  ...
+While executing P:condition yields true executes P:body.
+ 1[ 10 <][ succ] while =>  10
+ 1[ 10 =][ succ] while =>  1
+
+times
+N [P]  ->  ...
+Executes N times P.
+ 4[ 'a] times =>  'a 'a 'a 'a
+
+repeat
+[P:body][P:condition] -> ...
+Execute P:body. Then: While executing P:condition yields true executes P:body.
+ 1[ succ][ 10 <] repeat =>  10
+ 1[ succ][ 10 =] repeat =>  2
+
+forever
+[P] -> ...
+
+step
+A [P] -> ...
+Sequentially putting members of aggregate A onto stack, executes P for each 
+member of A.
+[ 1 2 3 4][ odd] step =>  true false true false
+ 0[ 1 2 3 4][ +] step =>  10
+[ 1 2 3 4] 0[ +] fold =>  10
+
+fold
+A X [P] -> X
+Starting with X sequentially pushes members of aggregate A and combines with 
+binary operator P to produce new X.
+[ 1 2 3 4] 0[ +] fold =>  10
+[ 1 2 3 4] 0[] fold =>  0 1 2 3 4
+ 0[ 1 2 3 4][ +] step =>  10
+
+map
+A [P] -> A
+Executes P on each member of aggregate A and collects results in a same-type 
+aggregate.
+[ 1 2 3 4][ odd] map => [ true false true false]
+
+filter
+A [P] -> A
+Uses test P to filter an aggregate and produces a same-type aggregate.
+[ 1 2 3 4][ odd] filter => [ 1 3]
+
+split
+A [P] -> A A
+Uses test P to split aggregate A into two aggregates of the same type.
+[ 1 2 3 4][ odd] split => [ 1 3][ 2 4]
+
+treestep
+T [P]  ->  ...
+Recursively traverses leaves of tree T  executes P for each leaf.
+
+shunt
+A A -> A
+== [swons] step;
+[][ 1 2 3] shunt => [ 3 2 1]
+
+pairstep
+    
+mapr
+A [P] -> A
+[ 1 2 3 4][ odd] mapr => [ true false true false]
+
+foldr
+A X [P] -> X
+[ 100 3 10] 0[ -] foldr =>  107
+[ 100 3 10] 0[ -] fold =>  -113
+
+stepr2
+A A [P] -> ...
+[ 1 2 3][ 4 5 6 0][ pair] stepr2 => [ 1 4][ 2 5][ 3 6]
+
+fold2
+A A X [P] -> A
+Starting with X sequentially pushes members of both aggregates and combines 
+with ternary operator P to produce new X.
+[ 1 2 3][ 6 7 8][][ pair swons] fold2 => [[ 3 8][ 2 7][ 1 6]]
+
+mapr2
+    
+foldr2
+    
+interleave2
+== [cons cons] foldr2;
+
+
+
+interleave2list
+== [] interleave2;
+
+
+
+treemap
+    
+treefilter
+    
+linrec
+[P:condition] [P:if-true] [P:R1] [P:R2] -> ...
+Executes P:condition. If that yields true executes P:if-true. Else executes 
+P:R1, recurses and executes P:R2.
+ 1[ 1 2 3 4 5][ null][ pop][ uncons][ *] linrec =>  120
+
+tailrec
+[P:condition] [P:if-true] [P:R1] -> ...
+Executes P:condition. If that yields true executes P:if-true. 
+Else executes P:R1 and recurses.
+ 1[ 1 2 3 4 5][ null][ pop][ uncons[ *] dip] tailrec =>  120
+
+binrec
+[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...
+Executes P:condition. If that yields true  executes P:if-true. 
+Else uses P:R1 to produce two intermediates, recurses on both and then 
+executes P:R2 to combines their results.
+[ 1 3 5 2 4][ small][][ uncons[ >] split][ enconcat] binrec => [ 1 2 3 4 5]
+
+genrec
+[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...
+Executes P:condition. If that yields true executes P:if-true. 
+Else executes P:R1 and then 
+[[P:condition] [P:if-true] [P:R1] [P:R2] genrec] P:R2.
+
+condlinrec
+[ [C1] [C2] .. [P:default] ]  ->  ...
+Each [Ci] is of the forms [[P:condition] [P:if-true]] or 
+[[P:condition] [P:R1] [P:R2]]. 
+Tries each P:condition. If that yields true and there is just a P:if-true 
+executes that and exits. 
+If there are P:R1 and P:R2  executes P:R1, recurses and executes P:R2. 
+Subsequent case are ignored. 
+If no P:condition yields true then [P:default] is used. It is of the forms 
+[[T]] or [[R1] [R2]]. 
+For the former executes T.
+For the latter executes R1, recurses and executes R2.
+
+primrec
+X [P:initial] [P:combine] -> X
+Executes P:initial to obtain an initial value. 
+If X is an integer uses increasing positive integers from 1 up to X and 
+combines by P:combine for new X. 
+For aggregate X uses successive members and combines by P:combine for new X.
+ 5[ 1][ *] primrec =>  120
+[ 1 2 3 4 5][ 1][ *] primrec =>  120
+
+treerec
+T [P:O] [P:C]  ->  ...
+T is a tree. If T is a leaf  executes P:O. 
+Else executes [[O] [C] treerec] C.
+
+treegenrec
+T [P:O1] [P:O2] [P:C]  ->  ...
+T is a tree. If T is a leaf  executes P:O1. 
+Else executes P:O2 and then 
+[[P:O1] [P:O2] [P:C] treegenrec] P:C.
+
+i
+[P]  ->  ...
+Executes P. So  [P] i  =>  P.
+[ 1 2 3 *] i =>  1 6
+ 8 9[ pop 10 11] i =>  8 10 11
+
+x
+[P] -> ...
+Executes P without popping [P]. So  [P] x  ==  [P] P.
+ 1 2[ cons] x =>  1[ 2 cons]
+ 1 2 3[ dup] x =>  1 2 3[ dup][ dup]
+
+construct
+[P:init] [[P1] [P2] ..]  ->  X1 X2  ..
+Saves state of stack and then executes [P:init]. Then executes each [Pi] to 
+give Xi pushed onto saved stack.
+ 4 5[ pop][[ 10 +][ 20 +][ 30]] construct =>  4 5 14 24 30
+
+cleave
+X [P] [P]  ->  Y Z
+Executes both quotations, each with X on top of the stack and each producing 
+one result.
+ 3[ 2 *][ 3 *] cleave =>  6 9
+
+infra
+L [P]  ->  L
+Using list L as stack, executes P and returns a new list. The first element 
+of L is used as the top of stack, and after execution of P the top of 
+stack becomes the first element of new L.
+[ 2 3 4 5][ *] infra => [ 6 4 5]
+
+some
+A [P:test] -> B
+Applies test to members of aggregate A and returns true if some 
+( that is one or more ) pass, false if not.
+[ 1 2 3][ odd] some =>  true
+[ 2 4 6][ odd] some =>  false
+
+all
+A [P:test]  ->  B
+Applies test P to members of aggregate A, returns true if all pass.
+[ 1 2 3 4][ 5 >] all =>  false
+[ 1 2 3 4][ 5 <] all =>  true
+
+call
+Symbol -> ...
+Execute the symbol.
+ 1 2 "+" intern call =>  3
+ 1 2[ +] first call =>  3
+
+i2
+... X [P1][P2] -> ...
+== [dip]dip i;
+ 4 5 6[ 10 *][ 10 +] i2 =>  4 50 16
+ 4 5 6[ *][ +] i2 =>  26
+
+app1
+X [P] -> X
+Executes P, pushes result new X on stack without old X.
+Identical to i, except app1 expects 2 parameters while i expects only 1 
+on stack.
+ 100 5 1[ * +] app1 =>  105
+ 100 5 1[ * +] i =>  105
+ 100 5 1[ * +] unary =>  100 5 105
+
+app11
+X X [P] -> X
+Executes P, pushes result on stack.
+ 100 5 1[] app11 =>  100 1
+ 100 5 1[ 9] app11 =>  100 5 9
+ 100 5 1[ 9 99] app11 =>  100 5 1 99
+ 100 5 1[ 1 +] app11 =>  100 2
+ 9 100 5 1[ * +] app11 =>  105
+ 100 5 1[ * +] i =>  105
+ 100 5 1[ * +] unary =>  100 5 105
+
+app12
+X Y Z [P]  -> X X
+Executes P twice  with Y and Z  returns 2 values.
+ 1 2 3[] app12 =>  2 3
+ 1 2 3[ 999] app12 =>  999 999
+ 1 2 3[ 99 999] app12 =>  999 999
+ 10 2 3[ 10 +] app12 =>  12 13
+ 10 2 3[ +] app12 =>  12 13
+ 9 100 5 2[ * +] app12 =>  9 509 209
+ 1 =>  1
+ 9 100 5 2[ *][ +] cleave =>  9 100 5 10 7
+ 9 100 5 2[ * +] i =>  9 110
+ 9 100 5 1[ * +] unary =>  9 100 5 105
+ 1 2 3[ 9] binary =>  1 9
+ 1 2 3[ + +] binary =>  1 6
+ 1 2 3[] binary =>  1 3
+ 1 2 3[ 99 999] binary =>  1 999
+
+nullary
+[P] -> X
+Executes P  which leaves X on top of the stack. No matter how many 
+parameters this consumes  none are removed from the stack.
+ 1 2 3[ +] nullary =>  1 2 3 5
+ 1 2 3[] nullary =>  1 2 3 3
+ 1 2 3[ 7 8 9] nullary =>  1 2 3 9
+
+unary
+X [P]  ->  Y
+Executes P  which leaves Y on top of the stack. No matter how many 
+parameters this consumes  exactly one is removed from the stack.
+ 100 5 1[ * +] unary =>  100 5 105
+ 1 2 3[] unary =>  1 2 3
+ 1 2 3[ 7 8 9] unary =>  1 2 9
+
+unary2
+X Y [P] -> X Y
+Executes P twice, with X and Y on top of the stack returning new X and new Y. 
+No matter how many parameters both executions consume, exactly two are 
+removed from the stack.
+ 100 5 1 2[ * +] unary2 =>  100 5 105 110
+
+unary3
+X Y Z [P] -> X Y Z
+Executes P three times, with X Y and Z on top of the stack returning 
+new X, new Y and new Z. 
+No matter how many parameters the executions consume, exactly tree are 
+removed from the stack.
+ 100 5 1 2 3[ * +] unary3 =>  100 5 105 110 115
+
+unary4
+X X X X [P] -> X X X X
+Executes P four times, with X:1-4 on top of the stack returning four new X. 
+No matter how many parameters the executions consume, exactly four are 
+removed from the stack.
+ 100 5 1 2 3 4[ * +] unary4 =>  100 5 105 110 115 120
+
+app2
+X X [P] -> X X
+== unary2;
+Obsolescent.
+
+app3
+X X X [P] -> X X X
+== unary3;
+Obsolescent.
+
+app4
+X X X X [P] -> X X X X
+== unary4;
+Obsolescent.
+
+binary
+X Y [P]  ->  Z
+Executes P  which leaves Z on top of the stack. No matter how many 
+parameters this consumes, exactly two are removed from the stack.
+ 1 2 3[ 9] binary =>  1 9
+ 1 2 3[ + +] binary =>  1 6
+ 1 2 3[] binary =>  1 3
+ 1 2 3[ 99 999] binary =>  1 999
+
+ternary
+X Y Z [P] -> X
+Executes P  which leaves new X on top of the stack. No matter how many 
+parameters this consumes, exactly three are removed from the stack.
+ 1 2 3[ 9] ternary =>  9
+ 1 2 3[ + +] ternary =>  6
+ 1 2 3[] ternary =>  3
+ 1 2 3[ 99 999] ternary =>  999
+
+nullary2
+X Y [P] -> X Y V W
+ 2 3[ 10 +] nullary2 =>  2 3 12 13
+
+clock
+->  I
+Pushes the integer value of current CPU usage in hundreds of a second.
+ clock =>  50000
+
+time
+->  I
+Pushes the current time (in seconds since the Epoch).
+ time =>  1072816781
+
+localtime
+I -> L
+Converts a time I into a list L representing local time: 
+[year month day hour minute second isdst yearday weekday].
+Month is 1 = January ... 12 = December.
+isdst is true for daylight savings/summer time, otherwise false. 
+weekday is 0 = Monday ... 6 = Sunday.
+ time localtime => [ 2003 12 30 21 39 41 false 363 2]
+
+gmtime
+I -> L
+Converts a time I into a list L representing universal time: 
+[year month day hour minute second isdst yearday weekday].
+Month is 1 = January ... 12 = December.
+isdst is true for daylight savings/summer time, otherwise false. 
+weekday is 0 = Monday ... 6 = Sunday.
+ time gmtime => [ 2003 12 30 20 39 41 false 363 2]
+ 0 gmtime => [ 1970 1 1 0 0 0 false 0 4]
+
+mktime
+L -> I
+Converts a list L representing local time into a time I. L has to be in 
+the format generated by localtime.
+[ 2003 3 20 8 20 0] mktime =>  1048144800
+[ 2003 1 20 8 20 0] mktime 31 24 60 60 * * * + localtime => 
+[ 2003 2 20 8 20 0 false 50 4]
+
+strftime
+L Str -> Str
+Formats a list L in the format of localtime or gmtime using a string and 
+pushes the result as string.
+
+weekdays
+-> L
+
+months
+-> L
+x
+
+localtime-strings
+-> L
+Push a list with current time as follows: 
+[year month day hour minute second isdst year-day weekday].
+ localtime-strings => 
+ [ "2003" "DEC" "30" "21" "39" "41" "false" "00363" "Tuesday"]
+
+today
+-> Str
+Push a string containing todays date.
+ today =>  "Tuesday 30-DEC-03"
+
+now
+-> S    
+Push a string containing current time.
+ now =>  "21:39:41"
+
+show-todaynow
+->
+Print current time and date to std-output.
+
+strtol
+Str I -> I
+String Str is converted to an integer using base I.  If I = 0  assumes 
+base 10  but leading "0" means base 8 and leading "0x" means base 16.
+ "12" 3 strtol =>  5
+
+strtod
+Str -> F
+String Str is converted to float F.
+
+format
+I C I1 I2 -> Str
+Result is the formatted version of integer I in mode C with maximum width 
+I1 and minimum width I2.
+Possible modes of C:
+'d or 'i: decimal
+'o: octal
+'x or X: hex 
+ 12 'd 1 1 format =>  "12"
+ 12 'd 8 2 format =>  "      12"
+ 12 'd 8 4 format =>  "    0012"
+
+formatf
+F C I1 I2 -> Str
+Result is the formatted version of Float F in mode C with maximum width 
+I1 and precision I2.
+Possible modes of C:
+'e or E: exponential
+'f: fractional
+'g or G: general
+   12.89 'e 10 4 formatf =>  "1.2890e+01"
+   12.89 'f 10 4 formatf =>  "   12.8900"
+   12.89 'g 10 4 formatf =>  "     12.89"
+
+stdin
+-> STREAM
+Pushes the standard input stream.
+
+stdout
+-> STREAM
+Pushes the standard output stream.
+
+stderr
+-> STREAM
+Pushes the standard error stream.
+
+get
+-> X
+Reads a factor from input and pushes it onto stack. 
+Note: While including files ('filename.joy' include) the 
+input into the Joy system is turned to the specified file. In that case 
+get takes its input from the same file. 
+
+put
+X  ->
+Writes X to output, pops X off stack.
+
+putch
+C|I ->
+Writes character C or whose ASCII is I to stdout.
+
+putchars
+Str ->
+Write Str without quotes to stdout.
+
+newline
+->
+== XXXXXX putch;
+
+
+
+putln
+X ->
+== put newline;
+
+
+
+space
+->
+== XXXXX032 putch;
+
+
+
+bell
+->
+== XXXX007 putch;
+
+
+
+putstrings
+L ->
+Print a list of strings.
+
+ask
+Str -> X
+== 'Please ' putchars putchars newline get;
+
+
+
+putlist
+L ->
+Print a list user-readable to stdout.
+[ [1 2 3] [4 5 6] [7 8 [1 2 3] 9] ] putlist  is printed as 
+[ [1 2 3]
+  [4 5 6]
+  [7 8 [1 2 3] 9] ]
+
+
+
+fclose
+STREAM ->
+The stream is closed and removed from the stack.
+
+feof
+STREAM -> STREAM B
+Boolean B is the end-of-file status of stream.
+
+ferror
+STREAM -> STREAM B
+B is the error status of stream.
+
+fflush
+STREAM -> STREAM
+Flush stream forcing all buffered output to be written.
+
+fgetch
+STREAM -> STREAM C
+C is the next available character from stream.
+
+fgets
+STREAM  ->  STREAM Str
+Str is the next available line from stream.
+
+fopen
+Str C -> STREAM
+The file system object with pathname Str is opened with mode C (r  w  a  etc.) 
+and stream object STREAM is pushed. 
+If the open fails  file:NULL is pushed.
+
+fread
+STREAM I  ->  STREAM L
+I bytes are read from the current position of stream  and returned as a list 
+of integers.
+
+fwrite
+STREAM L  ->  STREAM
+A list of integers is written as bytes to the current position of stream.
+
+fremove
+Str  ->  B
+The file system object with pathname Str is removed from the file system.  
+B is a boolean indicating success or failure.
+
+frename
+Str1 Str2  ->  B
+The file system object with pathname Str1 is renamed to Str2. 
+B is a boolean indicating success or failure.
+
+fput
+STREAM X  ->  STREAM
+Writes X to stream.
+
+fputch
+STREAM C  ->  STREAM
+The character C is written to the current position of stream.
+
+fputchars
+STREAM Str  ->  STREAM
+The string Str is written without quotes to the current position of stream.
+
+fputstring
+STREAM Str  ->  STREAM
+== fputchars;
+Temporary alternative to fputchars.
+
+fseek
+STREAM I1 I2 -> STREAM
+Stream is repositioned to position I1 relative to whence-point I2  
+where I2 = 0  1  2 for beginning  current position  end respectively?
+
+ftell
+STREAM  ->  STREAM I
+I is the current position of stream.
+
+file
+Str -> B
+Tests whether string Str is a file.
+
+autoput
+->  I
+Pushes current value of flag for automatic output.
+
+undeferror
+->  I
+Pushes current value of undefined-is-error flag.
+
+echo
+->  I
+Pushes value of echo flag.
+
+help
+->
+Lists all defined symbols  including those from library files. 
+Then lists all primitives of raw Joy.
+
+_help
+->
+Lists all hidden symbols in library and then all hidden inbuilt symbols.
+
+helpdetail
+L ->
+Gives brief help on each item of L. 
+
+manual
+->
+Writes manual of all Joy primitives to output file.
+
+__html_manual
+->
+Writes manual of all Joy primitives to output file in HTML style.
+
+__latex_manual
+->
+Writes manual of all Joy primitives in Latex to output file but without 
+the head and tail.
+
+__manual_list
+-> L
+Pushes a list L of lists (one per operator) of three documentation strings 
+for all atoms:
+[   ["name" "type" "description"]...   ]
+
+setautoput
+I  ->
+Sets value of flag for automatic put to I. The automatic output is executed 
+as soon as Joy is returning to its main execution loop.
+0:  none
+1: execute one put
+2: print the stack
+
+setundeferror
+I  ->
+Sets flag that controls behavior of undefined functions. 
+0: no error
+1: error
+
+setecho
+I ->
+Sets the value of echo flag for listing of source code lines at stdout 
+while including new files. This results in a mix of code lines with the 
+results these lines produce. 
+0: no echo
+1: echo
+2: echo with tab
+3: echo with tab and linenumber.
+
+name
+Sym -> Str
+Result is the type of Sym for literals, the name of Sym for atoms and 
+definitions.
+[ qsort] first name =>  "qsort"
+[ +] first name =>  "+"
+ 17 name =>  " integer type"
+
+intern
+Str -> Sym
+Pushes the item whose name is string Str.
+ "qsort" intern =>  qsort
+ "+" intern =>  +
+ 1 2 "+" intern call =>  3
+
+body
+Sym  ->  [P]
+Quotation [P] is the body of user-defined symbol Sym.
+[ qsort] first body 
+=> [[ small][][ uncons[ >] split][ swapd cons concat] binrec]
+
+user
+X -> B
+Tests whether X is a user-defined symbol.
+
+gc
+->
+Initiates garbage collection.
+
+abort
+->
+Aborts the execution of current Joy program and returns to Joy main cycle.
+
+quit
+->
+Exit from Joy.
+
+__symtabmax
+->
+Pushes value of maximum size of the symbol table.
+
+__symtabindex
+->
+Pushes current size of the symbol table.
+ __symtabindex =>  1685
+
+__dump
+->
+debugging only: pushes the dump as a list.
+
+__memorymax
+->
+Pushes value of total size of memory.
+
+__settracegc
+I  ->
+Sets value of flag for tracing garbage collection to I (= 0..5).
+0: no gc trace
+1: a little gc trace
+2: a lot gc trace
+3-5: ...
+
+
+
+__memoryindex
+->
+Pushes current value of memory.
+ __memoryindex =>  283448
+
+include
+Str  ->
+Transfers input to file whose name is specified by Str. On end-of-file 
+returns to previous input file.The specified filename has to provide a 
+filename extension.
+
+_inilib
+-> B
+
+verbose
+-> B
+== false;
+If verbose is defined as false, there comes no notice if a library has 
+already been loaded.
+
+libload
+Str ->
+Str specifies a filename without filename extension. If there is no symbol 
+'XXXXXXfilename' defined, the specified file is included.
+
+basic-libload
+->
+
+special-libload
+->
+
+all-libload
+->
+
+INILIB
+-> Str
+
+_agglib
+-> B
+
+AGGLIB
+-> Str
+
+_seqlib
+-> B
+
+SEQLIB
+-> Str
+
+_numlib
+-> B
+
+NUMLIB
+-> Str
+
+system
+Str:command -> Str
+Escapes to shell and executes Str. The string may cause execution of another 
+program (command). When that has finished  the process returns to Joy.
+
+getenv
+Str -> Str
+Retrieves the value of the environment variable specified by Str.
+
+argv
+-> L
+Creates a list L containing the interpreter's command line arguments.
+ argv => [ "joy"]
+
+argc
+-> I
+Pushes the number of command line arguments. This is equivalent to 
+'argv size'.
+ argc =>  1
+
+st_new
+-> []
+Push a new and empty Stack.
+ st_new => []
+
+st_push
+L X -> L
+Push a new stack item. 
+ st_new 1 st_push => [ 1]
+
+st_null
+L:stack -> L:stack B
+ Tests, if L:stack is empty. 
+ st_new st_null => [] true
+
+st_top
+L:stack -> L:stack X
+Copies the top of L:stack to Joy stack. 
+[ 1 2] st_top => [ 1 2] 1
+
+st_pop
+L:stack -> L:stack
+Removes the top element of L:stack. 
+[ 1 2] st_pop => [ 2]
+
+st_pull
+L:stack -> L:stack X
+Removes the top element from L:stack and returns it at Joy stack. 
+[ 1 2] st_pull => [ 2] 1
+
+d_new
+-> []
+Push a new and empty Dictionary.
+ d_new => []
+
+d_null
+L -> B
+Test, if dictionary is empty. 
+ d_new d_null =>  true
+
+d_add
+L L -> L
+Add a new entry to dictionary. 
+ d_new[ 1 "one"] d_add[ 2 "two"] d_add => [[ 1 "one"][ 2 "two"]]
+
+d_union
+L L -> L
+Unify two dictionaries. 
+[[ 1 "one"][ 2 "two"]][[ 'a "A"][ 2 "zwei"]] d_union 
+=> [[ 1 "one"][ 2 "two"][ 'a "A"][ 2 "zwei"]]
+
+d_differ
+L L -> L
+?
+[[ 1 "one"][ 2 "two"]][[ 'a "A"][ 2 "two"]] d_differ => [[ 1 "one"][ 2 "two"]]
+[[ 1 "one"][ 2 "two"]][[ 'a "A"][ 2 "two"]] d_differ => [[ 1 "one"][ 2 "two"]]
+
+d_look
+L X -> L X
+Look up a value. 
+[[ 1 "one"][ 2 "two"]] 2 d_look => [[ 1 "one"][ 2 "two"]][ 2 "two"]
+[[ 1 "one"][ 2 "two"]] 3 d_look => [[ 1 "one"][ 2 "two"]] "not found"
+
+d_rem
+L X -> L
+Remove a value from dictionary. 
+[[ 1 "one"][ 2 "two"]] 2 d_rem => [[ 1 "one"]]
+[[ 1 "one"][ 2 "two"]] 3 d_rem => [[ 1 "one"][ 2 "two"]]
+
+_d_sample
+    
+q_new
+-> [] []
+Push a new and empty Queue.
+ q_new => [][]
+
+q_null
+L L -> L L B
+Test, if queue is empty. 
+[][] q_null => [][] true
+
+q_add
+L L X -> L L
+Add X to queue. 
+[][] 1 q_add 2 q_add => [ 2 1][]
+
+q_addl
+L L L -> L L
+Add list to queue. 
+[ 1 2][][ 33 44] q_addl => [ 44 33 1 2][]
+
+q_front
+L L -> L L X
+Copy the first element of queue onto Joy stack. 
+[ 1 2][] q_front => [][ 2 1] 2
+
+q_rem
+L L -> 
+Remove the first element from queue and push it onto Joy stack. 
+[ 1 2][] q_rem => [][ 1] 2
+
+bs_new
+-> []    
+Push a new and empty Big Set.
+ bs_new => []
+
+bs_union
+L L -> L
+Unification of two big sets. 
+[ 1 2][ 8 9] bs_union => [ 1 2 8 9]
+
+bs_differ
+L1 L2 -> L
+Result is big set L1 without members of big set L2. 
+[ 1 2 3][ 3] bs_differ => [ 1 2]
+[ 1 2 3][ 4] bs_differ => [ 1 2 3]
+
+bs_member
+L X -> B
+Test, if X is member of big set L. 
+[ 1 2 3 4] 4 bs_member =>  true
+[ 1 2 3 4] 5 bs_member =>  false
+
+bs_insert
+L X -> L
+Insert X in big set L. 
+[ 1 2 9] "New" bs_insert => [ 1 2 9 "New"]
+[ 1 2 9] 5 bs_insert => [ 1 2 5 9]
+
+bs_delete
+    
+t_new
+-> []
+Push a new and empty Tree.
+ t_new => []
+
+t_reset
+    
+t_add
+    
+t_null
+    
+t_front
+    
+t_rem
+    
+_t_sample
+-> L
+
+fatal2
+Str Str ->     
+Print two error messages and abort. 
+
+pop3
+X X X -> 
+ 1 2 3 4 pop3 =>  1
+
+swap2
+X Y V W -> V W X Y
+ 1 2 'a 'b swap2 =>  'a 'b 1 2
+
+over
+X Y -> X Y X
+ 1 2 over =>  1 2 1
+
+over2
+X Y V W-> X Y V W X Y
+ 1 2 'a 'b over2 =>  1 2 'a 'b 1 2
+
+overd
+X Y Z -> X Y X Z
+ 1 2 99 overd =>  1 2 1 99
+
+nop
+ -> 
+Does nothing.
+ "X" nop =>  "X"
+
+wrapconcat
+A A A -> A
+ "center" "[" "]" wrapconcat =>  "[center]"
+
+concat3
+A A A -> A
+
+concatall
+A -> Str
+Concatall concats all strings of a list into one string.
+Flatten concats all lists of a list into one list.
+[ " Max" " Mueller" " Muenchen"] concatall =>  " Max Mueller Muenchen"
+[[ 1 2][ 3 4]] flatten => [ 1 2 3 4]
+
+dequote
+[P] -> [P]
+Evaluates to the evaluation of P, returned as a new quotation. 
+[ 16 2 + 20 4 +] dequote => [ 18 24]
+[ 16 2 + 20 4 +] i =>  18 24
+[][ 16 2 + 20 4 +] infra => [ 24 18]
+
+docca
+[P] -> Str
+Evaluates to the string concatenation of the evaluation of P. 
+[ "Max " "Mueller " 5 resize] docca =>  "Max Muell"
+
+doccaif
+X -> Str
+If X is a list docca it. 
+[ "Max " "Mueller " 5 resize] doccaif =>  "Max Muell"
+ "Max Mueller" doccaif =>  "Max Mueller"
+
+resize
+Str I -> Str
+Resize Str to length of I. That is cut down if Str is longer and append 
+spaces if Str is shorter than I characters. 
+ "Mueller" 4 resize =>  "Muel"
+
+last
+A -> X
+Returns the last element of A. 
+[ 1 2 3] last =>  3
+
+unzip
+A -> A A
+Unzip a list into two. 
+[[ 1 2][ 11 22][ 111 222]] unzip => [ 1 11 111][ 2 22 222]
+
+isin
+X A -> B
+Test if X is in A. Works if X is an aggregate, too.
+ "word"[ "This" "is" "a" "word"] isin =>  true
+ "word"[ "This" "is" "a" "sentence"] isin =>  false
+ "word"[ "This" "is" "a" "word"] in =>  false
+
+pair
+X Y -> L
+ "Frank" 17 pair => [ "Frank" 17]
+
+zipwith
+A A [P] -> A
+Zip 2 aggregates, combining by P.
+[ 1 2 3][ 10 20 30][ +] zipwith => [ 11 22 33]
+
+ipow
+N I -> N
+I times N * N, that is N raised to I-th power.
+ 2 3 ipow =>  8
+
+foldapps
+[ [P:app-1]..[P:app-n] ]   I:n-ary   X:init [P:fold] -> X
+
+fold-andconds
+[ [P:app-1]..[P:app-n] ]   I:n-ary   -> X
+First parameter is a list of quoted programs. Each quoted program is applied 
+to the same stack and expected to return a truth value. If all values are 
+true, true is returned. 
+No matter how many parameters these operations consume, exactly I:-ary are 
+removed from incoming stack. 
+[ "Max" "Mueller" 37 6500 3][[ third 40 <][ fourth 5000 >][ fifth 3 =]] 1 fold-andconds 
+=>  true
+
+fold-orconds
+[ [P:app-1]..[P:app-n] ]   I:n-ary   -> X
+
+fold-strconcat
+[ [P:app-1]..[P:app-n] ]   I:-ary   -> X
+First parameter is a list of quoted programs. Each quoted program is applied 
+to the same stack and expected to return a string. The result strings are 
+concatenated to one string and returned.
+No matter how many parameters these operations consume, exactly 
+I:-ary are removed from incoming stack. 
+ "Muenchen"[ " Max" "Mueller"][[ first][ " "][ second][ ", "][ pop]] 
+ 2 fold-strconcat 
+ =>  " Max Mueller, Muenchen"
+
+fold-listconcat
+[ [P:app-1]..[P:app-n] ]   I:n-ary   -> X
+
+apps
+[ [P:app-1]...[P:app-n] ] I:-ary -> X1 ... Xn
+First Parameter is a list of quoted programs. Each quoted program is 
+applied to the same stack and the results of these applications are returned. 
+No matter how many parameters these operations consume, exactly 
+I:-ary are removed from incoming stack. 
+ "XY" 7 9[[ *][ +][ -]] 2 apps =>  "XY" -2 16 63
+ "XY" 7 9[[ pop2][ "Lost" "Result"]] 0 apps =>  "XY" 7 9 "Result" "XY"
+ "XY" 7 9[ 1 +][[ *][ +][ -]] construct =>  "XY" 7 9 70 17 -3
+
+intersect
+A I:Index -> A A
+Intersect aggregate A at position I into two aggs.
+[ 1 2 3 4] 2 intersect => [ 1 2][ 3 4]
+[ 1 2 3 4] 0 intersect => [][ 1 2 3 4]
+[ 1 2 3 4] 30 intersect => [ 1 2 3 4][]
+
+onitem
+A [P] I:Index -> A
+Apply [P] to item I of agg A.
+[ 1 2 3 4][ 200 +] 0 onitem => [ 201 2 3 4]
+[ 1 2 3 4][ 200 +] 3 onitem => [ 1 2 3 204]
+[ 1 2 3 4][ pop 999] 2 onitem => [ 1 2 999 4]
+
+twice
+X [P] -> P(P(X))
+ 3[ 2 *] twice =>  12
+
+dipdd
+X Y Y Y [P] -> P(X) Y Y Y
+ 17 1 2 3[ 100 *] dipdd =>  1700 1 2 3
+
+dudip
+X [P] -> P(X) X
+ 17[ 10 *] dudip =>  170 17
+
+sdip
+X Y [P] -> P(Y) X
+ 1 2 3[ 10 * +] sdip =>  31 2
+
+b
+[P] [P] -> ...
+Executes both quoted programs.
+ 16 2 4[ *][ /] b =>  2
+
+step2
+A A [P] -> ...
+[][ 1 2 3][ 4 5 6 0][ pair swap[ swons] dip] step2 
+=> [[ 3 0][ 3 6][ 3 5][ 3 4][ 2 0][ 2 6][ 2 5][ 2 4][ 1 0][ 1 6][ 1 5][ 1 4]]
+
+putline
+Str -> 
+Print Str at stdout followed by newline.
+
+newputline
+Str -> 
+Print newline at stdout followed by Str and newline.
+
+get-file-contents
+Str:Filename -> Str:File-contents
+Open Filename and read it.
+
+write-file-contents
+Str:Contents Str:Filename -> 
+Open Filename and write Contents to it.
+
+calld
+Symbol -> ...
+
+needed-time
+[P] -> [...] F
+Evaluates to i(P), returned in a list and the time needed for the 
+operation in msec. 
+[ 1 1 +] needed-time => [ 2]    0.00
+
+error
+X Str -> 
+Print X and Str at stdout and abort.
+
+cp
+->
+Control Point: Print stack at stdout and wait for user command. 
+Available commands are:
+v: Print stack vertical.
+h: Print stack in a line.
+j: Read Joy command from stdin and evaluate it.
+c: Continue with program execution.
+q: Quit program execution.
+
+ncp
+Str -> 
+Named Control Point: same as cp, additionally print Str. 
+
+tp
+->
+Trace Point: Print stack at stdout and continue. 
+
+ntp
+Str -> 
+Named Trace Point: same as tp, additionally print Str.  
+
+cpifte
+[P:condition] [P:if-true] [P:if-false] -> ...
+Inserts a control point at beginning and end of all three quoted 
+programs and after that executes ifte. 
+
+cpbinrec
+[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...
+Inserts Control Point at beginning and end of each quoted program 
+and after that executes binrec. 
+
+tpifte
+[P:if] [P:then] [P:else] -> ...
+cpifte inserts a trace point at beginning and end of all three 
+quoted programs and executes ifte. 
+
+tpbinrec
+[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...
+Inserts Trace Point at beginning and end of each quoted program 
+and after that executes binrec. 

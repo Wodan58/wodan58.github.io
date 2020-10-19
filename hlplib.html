@@ -1,0 +1,1090 @@
+<html><head><title>A Joy Library for Online Help Generation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body vlink="#000080" text="#000000" link="#000085" bgcolor="#FFFFFF" alink="#000080">
+<font face="ARIEL">
+<hr width="100%" size="4" noshade="noshade">
+<center>
+<table cols="3" nosave="" width="100%" border="0">
+<tbody><tr>
+  <td colspan="1" width="100%" valign="CENTER" align="LEFT"><h2>A Joy Library for Online Help Generation</h2>
+	<font color="#000000">
+		<b>Nick Forde</b> [<a href="mailto:nickf@system-7.freeserve.co.uk">nickf@system-7.freeserve.co.uk</a>]<br>
+		<b>Creation Date:</b> Thu Feb 27 2003 <br>
+		<b>Last Updated:</b> Thu Feb 27 2003
+	</font></td>
+  <td colspan="1" width="10%" valign="CENTER" align="RIGHT">
+  </td>
+ </tr>
+</tbody></table>
+</center>
+<hr width="100%" size="4" noshade="noshade">
+<font color="#000000">
+<h2>Contents</h2><p></p><ul><li><a href="#1. Introduction"><b>1 Introduction</b></a>
+   </li><li><a href="#2. Library Implementation"><b>2 Library Implementation</b></a>
+   </li><li><a href="#3. Help Text"><b>3 Help Text</b></a>
+   </li><li><a href="#4. Hidden Primitives"><b>4 Hidden Primitives</b></a>
+   </li><li><a href="#5. The helpdetail Function"><b>5 The helpdetail Function</b></a>
+   </li><li><a href="#6. HTML Manual"><b>6 HTML Manual</b></a>
+   </li><li><a href="#7. References"><b>7 References</b></a>
+   </li></ul><p>
+<!--------------------------------------------------------------------------->
+</p><hr width="100%" size="4" noshade="noshade"><a name="1. Introduction"><h2>1 Introduction</h2></a><p>
+
+A recent update to the Joy interpreter was inclusion of the
+<i>__manual_list</i> primitive which gives direct access to the online
+help table. One advantage of this is that it makes possible the
+definition of help functions written in Joy. It also means that help
+generation support, which is not performance critical, could 
+effectively be removed from the interpreter and supplied as a standard
+library.
+
+</p><p>To experiment with <i>__manual_list</i> I created the
+<a href="hlplib.txt">hlplib.joy</a> library below. This largely, although
+not exactly, replicates the primitive functions <i>help</i>, <i>_help</i>,
+<i>manual</i>, <i>__html_manual</i>, <i>__latex_manual</i> and
+<i>helpdetail</i>. I've improved the help format somewhat by sorting and
+splitting into multiple columns. As an example the HTML primitive list
+also now includes a little colour!
+
+</p><p>The Latex output hasn't been tested and it would be nice to have
+some functions for rabbit, texi, or even postscript. Please send me
+any updates or suggestions you may have to the above address.
+
+</p>
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade"><a name="2. Library Implementation"><h2>2 Library Implementation</h2></a><p>
+
+
+</p><table width="100%">
+<tbody><tr>
+  <td colspan="1" width="100%" bgcolor="#CCCCCC">
+    <pre>     1	<font color="DARKRED">(* FILE: hlplib.joy *)</font>
+     2	
+     3	"seqlib" libload.
+     4	
+     5	LIBRA
+     6	
+     7	<font color="DARKRED">##### Public Definitions #############################################</font>
+     8	
+     9	  help == <font color="DARKRED">(* Print a textual sorted, 4 column, list of definitions *)</font>
+    10	    help-names [help-print-line] help-print-entries pop;
+    11	
+    12	  _help == <font color="DARKRED">(* Print a textual sorted, 4 column, list of hidden defs. *)</font>
+    13	    help-hidden-names [help-print-line] help-print-entries pop;
+    14	
+    15	  manual == <font color="DARKRED">(* Print a list of primitive, hidden &amp; type definitions *)</font>
+    16	    help-list help-hidden-list concat help-type-list concat
+    17	    [help-print-tentry] help-print-entries pop;
+    18	
+    19	  _manual == <font color="DARKRED">(* Print a list of hidden definitions *)</font>
+    20	    help-hidden-list [help-print-tentry] help-print-entries pop;
+    21	
+    22	  __html_manual == <font color="DARKRED">(* Print the manual in HTML format *)</font>
+    23	    help-print-hhead
+    24	    help-list [help-print-hentry] help-print-entries pop
+    25	    "&lt;/TABLE&gt;&lt;H2&gt;Hidden Primitives&lt;/H2&gt;&lt;TABLE&gt;\n" putchars
+    26	    help-hidden-list [help-print-hentry] help-print-entries pop
+    27	    "&lt;/TABLE&gt;&lt;H2&gt;Types&lt;/H2&gt;&lt;TABLE&gt;\n" putchars
+    28	    help-type-list [help-print-hentry] help-print-entries pop
+    29	    help-print-hfoot;
+    30	
+    31	  __latex_manual == <font color="DARKRED">(* Print the manual in Latex format *)</font>
+    32	    help-list [help-print-lentry] help-print-entries pop;
+    33	
+    34	  helpdetail == <font color="DARKRED">(* A -&gt; Print help for  *)</font>
+    35	    [help-list [first =] filter [help-print-tentry] map] map pop;
+    36	
+    37	<font color="DARKRED">##### Private Definitions ############################################</font>
+    38	
+    39	  _hlplib == true;
+    40	
+    41	  help-sort == <font color="DARKRED">(* A:unsorted -&gt; A:sorted *)</font>
+    42	    [small] [] [uncons [first [first] dip &gt;] split] 
+    43	    [swapd cons concat] binrec;
+    44	
+    45	  help-list == <font color="DARKRED">(* -&gt; A *)</font>
+    46	    __manual_list help-sort [first first '  !=] filter
+    47	    [first first '_ !=] filter;
+    48	
+    49	  help-hidden-list == <font color="DARKRED">(* -&gt; A *)</font>
+    50	    __manual_list help-sort [first first ' !=] filter
+    51	    [first first '_ =] filter;
+    52	
+    53	  help-type-list == <font color="DARKRED">(* -&gt; A *)</font>
+    54	    __manual_list help-sort [ first first ' =] filter;
+    55	
+    56	  help-names == <font color="DARKRED">(* -&gt; A *)</font>
+    57	    help-list [first] map 4 help-slice;
+    58	
+    59	  help-hidden-names == <font color="DARKRED">(* -&gt; A *)</font>
+    60	    help-hidden-list [first] map 4 help-slice;
+    61	
+    62	  help-slice == <font color="DARKRED">(* A -&gt; A:A *)</font>
+    63	    [] rolldown [null] [pop popd reverse]
+    64	    [[dupd swap] dip swap dup2 take rollup drop swonsd] tailrec;
+    65	
+    66	  help-print-entries == <font color="DARKRED">(* A P -&gt; *)</font>
+    67	    swap [null] [pop] [unswons rolldown dup [i] dip swap] tailrec;
+    68	
+    69	  help-print-line == <font color="DARKRED">(* A -&gt; *)</font>
+    70	    [null] [] [unswons 16 help-pad] tailrec "\n" putchars pop;
+    71	
+    72	  help-print-tentry == <font color="DARKRED">(* A -&gt; *)</font>
+    73	    dup first 20 help-pad " : " putchars 
+    74	    dup second 30 help-pad "\n" putchars
+    75	    third putchars "\n\n" putchars;
+    76	
+    77	  help-print-hhead == <font color="DARKRED">(* -&gt; *)</font>
+    78	    "&lt;HTML&gt;&lt;BODY&gt;\n" putchars
+    79	    "&lt;H2&gt;Atoms of Joy&lt;/H2\n" putchars
+    80	    "&lt;TABLE&gt;&lt;TR&gt;&lt;TD&gt;&lt;B&gt;Last Updated:&lt;/B&gt; " putchars show-todaynow
+    81	    "&lt;/TD&gt;&lt;/TR&gt;&lt;/TABLE&gt;&lt;/P&gt;&lt;H2&gt;Basic Primitives&lt;/H2&gt;&lt;P&gt;\n&lt;TABLE&gt;" putchars;
+    82	
+    83	  help-print-hfoot == <font color="DARKRED">(* -&gt; *)</font>
+    84	    "&lt;/TABLE&gt;\n&lt;/BODY&gt;\n&lt;/HTML&gt;\n" putchars;
+    85	
+    86	  help-print-hentry == <font color="DARKRED">(* A -&gt; *)</font>
+    87	    "&lt;TR&gt;&lt;TD&gt;&lt;B&gt;" putchars dup first 20 help-pad "&lt;/B&gt;&lt;/TD&gt;" putchars 
+    88	    "&lt;TD&gt;&lt;FONT COLOR=darkblue&gt;" putchars dup second 30 help-pad 
+    89	    "&lt;/FONT&gt;&lt;/TD&gt;&lt;/TR&gt;\n" putchars
+    90	    "&lt;TR&gt;&lt;TD&gt;&lt;/TD&gt;&lt;TD&gt;&lt;FONT COLOR=darkred&gt;" putchars third putchars 
+    91	    "&lt;BR&gt;&lt;BR&gt;&lt;/FONT&gt;&lt;/TD&gt;&lt;/TR&gt;\n\n" putchars;
+    92	
+    93	  help-print-lentry == <font color="DARKRED">(* A -&gt; *)</font>
+    94	    "\\item[\\JX{" putchars dup first putchars
+    95	    "}]  \\verb<font color="DARKRED">#      : " putchars dup second putchars</font>
+    96	    "<font color="DARKRED"># \\\\\n{\\small\\verb#" putchars third putchars</font>
+    97	    "<font color="DARKRED">#}\n\n" putchars;</font>
+    98	
+    99	  help-pad == <font color="DARKRED">(* S I -&gt; S *)</font>
+   100	    [dup putchars size] dip swap - [" " putchars] times;
+   101	
+   102	<font color="DARKRED">######################################################################</font>
+   103	  
+   104	HLPLIB == "hlplib.joy - help generation library".
+   105	
+   106	<font color="DARKRED">(* end LIBRA *)</font>
+   107	
+   108	"hlplib  is loaded\n" putchars.
+   109	
+   110	<font color="DARKRED">(* END hlplib.joy *)</font></pre>
+  </td>
+</tr>
+</tbody></table><p>
+
+<!--------------------------------------------------------------------------->
+</p><hr width="100%" size="4" noshade="noshade"><a name="3. Help Text"><h2>3 Help Text</h2></a><p>
+
+</p><pre>
+<p></p><table width="100%">
+<tbody><tr>
+  <td colspan="1" width="100%" bgcolor="#CCCCCC">
+    <pre>help.
+
+!=              *               +               -               
+/               &lt;               &lt;=              =               
+&gt;               &gt;=              abort           abs             
+acos            all             and             app1            
+app11           app12           app2            app3            
+app4            argc            argv            asin            
+at              atan            atan2           autoput         
+binary          binrec          body            branch          
+case            ceil            char            choice          
+chr             cleave          clock           compare         
+concat          cond            condlinrec      cons            
+construct       conts           cos             cosh            
+dip             div             drop            dup             
+dupd            echo            enconcat        equal           
+exp             false           fclose          feof            
+ferror          fflush          fgetch          fgets           
+file            filter          first           float           
+floor           fold            fopen           format          
+formatf         fput            fputch          fputchars       
+fputstring      fread           fremove         frename         
+frexp           fseek           ftell           fwrite          
+gc              genrec          get             getenv          
+gmtime          has             help            helpdetail      
+i               id              ifchar          iffile          
+iffloat         ifinteger       iflist          iflogical       
+ifset           ifstring        ifte            in              
+include         infra           integer         intern          
+ldexp           leaf            linrec          list            
+localtime       log             log10           logical         
+manual          map             max             maxint          
+min             mktime          modf            name            
+neg             not             null            nullary         
+of              opcase          or              ord             
+pop             popd            pow             pred            
+primrec         put             putch           putchars        
+quit            rand            rem             rest            
+rolldown        rolldownd       rollup          rollupd         
+rotate          rotated         set             setautoput      
+setecho         setsize         setundeferror   sign            
+sin             sinh            size            small           
+some            split           sqrt            srand           
+stack           stderr          stdin           stdout          
+step            strftime        string          strtod          
+strtol          succ            swap            swapd           
+swons           system          tailrec         take            
+tan             tanh            ternary         time            
+times           treegenrec      treerec         treestep        
+true            trunc           unary           unary2          
+unary3          unary4          uncons          undeferror      
+undefs          unstack         unswons         user            
+while           x               xor             
+</pre>
+  </td>
+</tr>
+</tbody></table><p>
+</p></pre>
+
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade"><a name="4. Hidden Primitives"><h2>4 Hidden Primitives</h2></a><p>
+
+</p><pre>
+<p></p><table width="100%">
+<tbody><tr>
+  <td colspan="1" width="100%" bgcolor="#CCCCCC">
+    <pre>_help.
+
+__ANON_FUNCT    __COPIED        __USR           __dump          
+__html_manual   __latex_manual  __manual_list   __memoryindex   
+__memorymax     __settracegc    __symtabindex   __symtabmax     
+_help           
+</pre>
+  </td>
+</tr>
+</tbody></table><p>
+</p></pre>
+
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade"><a name="5. The helpdetail Function"><h2>5 The helpdetail Function</h2></a><p>
+
+</p><pre>
+<p></p><table width="100%">
+<tbody><tr>
+  <td colspan="1" width="100%" bgcolor="#CCCCCC">
+    <pre>[dip dup pop] helpdetail.
+
+dip                  : X [P]  -&gt;  ... X              
+Saves X, executes P, pushes X back.
+
+dup                  :  X  -&gt;   X X                  
+Pushes an extra copy of X onto stack.
+
+pop                  :  X  -&gt;                        
+Removes X from top of the stack.
+
+</pre>
+  </td>
+</tr>
+</tbody></table><p>
+</p></pre>
+
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade"><a name="6. HTML Manual"><h2>6 HTML Manual</h2></a><p>
+
+</p><h2>Atoms of Joy</h2><b>Last Updated:</b> Thursday 27-FEB-03 18:51:48
+<p></p><h2>Basic Primitives</h2><p>
+<table><tbody><tr><td><b>!=                  </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X not equal to Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>*                   </b></td><td><font color="darkred">I J  -&gt;  K                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer K is the product of integers I and J.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>+                   </b></td><td><font color="darkred">M I  -&gt;  N                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Numeric N is the result of adding integer I to numeric M.
+Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>-                   </b></td><td><font color="darkred">M I  -&gt;  N                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Numeric N is the result of subtracting integer I from numeric M.
+Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>/                   </b></td><td><font color="darkred">I J  -&gt;  K                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer K is the (rounded) ratio of integers I and J.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>&lt;                   </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X less than Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>&lt;=                  </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X less than or equal to Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>=                   </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X equal to Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>&gt;                   </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X greater than Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>&gt;=                  </b></td><td><font color="darkred">X Y  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Either both X and Y are numeric or both are strings or symbols.
+Tests whether X greater than or equal to Y.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>abort               </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Aborts execution of current Joy program, returns to Joy main cycle.<br><br></font></td></tr>
+
+<tr><td><b>abs                 </b></td><td><font color="darkred">N1  -&gt;  N2                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer N2 is the absolute value (0,1,2..) of integer N1,
+or float N2 is the absolute value (0.0 ..) of float N1<br><br></font></td></tr>
+
+<tr><td><b>acos                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the arc cosine of F.<br><br></font></td></tr>
+
+<tr><td><b>all                 </b></td><td><font color="darkred">A [B]  -&gt;  X                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Applies test B to members of aggregate A, X = true if all pass.<br><br></font></td></tr>
+
+<tr><td><b>and                 </b></td><td><font color="darkred">X Y  -&gt;  Z                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Z is the intersection of sets X and Y, logical conjunction for truth values.<br><br></font></td></tr>
+
+<tr><td><b>app1                </b></td><td><font color="darkred">X [P]  -&gt;  R                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, pushes result R on stack without X.<br><br></font></td></tr>
+
+<tr><td><b>app11               </b></td><td><font color="darkred">X Y [P]  -&gt;  R                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, pushes result R on stack.<br><br></font></td></tr>
+
+<tr><td><b>app12               </b></td><td><font color="darkred">X Y1 Y2 [P]  -&gt;  R1 R2        </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P twice, with Y1 and Y2, returns R1 and R2.<br><br></font></td></tr>
+
+<tr><td><b>app2                </b></td><td><font color="darkred">X1 X2 [P]  -&gt;  R1 R2          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Obsolescent.  == unary2<br><br></font></td></tr>
+
+<tr><td><b>app3                </b></td><td><font color="darkred">X1 X2 X3 [P]  -&gt;  R1 R2 R3    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Obsolescent.  == unary3<br><br></font></td></tr>
+
+<tr><td><b>app4                </b></td><td><font color="darkred">X1 X2 X3 X4 [P]  -&gt;  R1 R2 R3 R4</font></td></tr>
+<tr><td></td><td><font color="darkblue">Obsolescent.  == unary4<br><br></font></td></tr>
+
+<tr><td><b>argc                </b></td><td><font color="darkred">-&gt; I                          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the number of command line arguments. This is quivalent to 'argv size'.<br><br></font></td></tr>
+
+<tr><td><b>argv                </b></td><td><font color="darkred">-&gt; A                          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Creates an aggregate A containing the interpreter's command line arguments.<br><br></font></td></tr>
+
+<tr><td><b>asin                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the arc sine of F.<br><br></font></td></tr>
+
+<tr><td><b>at                  </b></td><td><font color="darkred">A I  -&gt;  X                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">X (= A[I]) is the member of A at position I.<br><br></font></td></tr>
+
+<tr><td><b>atan                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the arc tangent of F.<br><br></font></td></tr>
+
+<tr><td><b>atan2               </b></td><td><font color="darkred">F G  -&gt;  H                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">H is the arc tangent of F / G.<br><br></font></td></tr>
+
+<tr><td><b>autoput             </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes current value of flag  for automatic output, I = 0..2.<br><br></font></td></tr>
+
+<tr><td><b>binary              </b></td><td><font color="darkred">X Y [P]  -&gt;  R                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, which leaves R on top of the stack.
+No matter how many parameters this consumes,
+exactly two are removed from the stack.<br><br></font></td></tr>
+
+<tr><td><b>binrec              </b></td><td><font color="darkred">[B] [T] [R1] [R2]  -&gt;  ...    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P. If that yields true, executes T.
+Else uses R1 to produce two intermediates, recurses on both,
+then executes R2 to combines their results.<br><br></font></td></tr>
+
+<tr><td><b>body                </b></td><td><font color="darkred">U  -&gt;  [P]                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Quotation [P] is the body of user-defined symbol U.<br><br></font></td></tr>
+
+<tr><td><b>branch              </b></td><td><font color="darkred">B [T] [F]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If B is true, then executes T else executes F.<br><br></font></td></tr>
+
+<tr><td><b>case                </b></td><td><font color="darkred">X [..[X Y]..]  -&gt;  Y i        </font></td></tr>
+<tr><td></td><td><font color="darkblue">Indexing on the value of X, execute the matching Y.<br><br></font></td></tr>
+
+<tr><td><b>ceil                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the float ceiling of F.<br><br></font></td></tr>
+
+<tr><td><b>char                </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a character.<br><br></font></td></tr>
+
+<tr><td><b>choice              </b></td><td><font color="darkred">B T F  -&gt;  X                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">If B is true, then X = T else X = F.<br><br></font></td></tr>
+
+<tr><td><b>chr                 </b></td><td><font color="darkred">I  -&gt;  C                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">C is the character whose Ascii value is integer I (or logical or character).<br><br></font></td></tr>
+
+<tr><td><b>cleave              </b></td><td><font color="darkred">X [P1] [P2]  -&gt;  R1 R2        </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P1 and P2, each with X on top, producing two results.<br><br></font></td></tr>
+
+<tr><td><b>clock               </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the integer value of current CPU usage in hundreds of a second.<br><br></font></td></tr>
+
+<tr><td><b>compare             </b></td><td><font color="darkred">A B  -&gt;  I                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">I (=-1,0,+1) is the comparison of aggregates A and B.
+The values correspond to the predicates &lt;=, =, &gt;=.<br><br></font></td></tr>
+
+<tr><td><b>concat              </b></td><td><font color="darkred">S T  -&gt;  U                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sequence U is the concatenation of sequences S and T.<br><br></font></td></tr>
+
+<tr><td><b>cond                </b></td><td><font color="darkred">[..[[Bi] Ti]..[D]]  -&gt;  ...   </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tries each Bi. If that yields true, then executes Ti and exits.
+If no Bi yields true, executes default D.<br><br></font></td></tr>
+
+<tr><td><b>condlinrec          </b></td><td><font color="darkred">[ [C1] [C2] .. [D] ]  -&gt;  ... </font></td></tr>
+<tr><td></td><td><font color="darkblue">Each [Ci] is of the forms [[B] [T]] or [[B] [R1] [R2]].
+Tries each B. If that yields true and there is just a [T], executes T and exit.
+If there are [R1] and [R2], executes R1, recurses, executes R2.
+Subsequent case are ignored. If no B yields true, then [D] is used.
+It is then of the forms [[T]] or [[R1] [R2]]. For the former, executes T.
+For the latter executes R1, recurses, executes R2.<br><br></font></td></tr>
+
+<tr><td><b>cons                </b></td><td><font color="darkred">X A  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Aggregate B is A with a new member X (first member for sequences).<br><br></font></td></tr>
+
+<tr><td><b>construct           </b></td><td><font color="darkred">[P] [[P1] [P2] ..]  -&gt;  R1 R2 ..</font></td></tr>
+<tr><td></td><td><font color="darkblue">Saves state of stack and then executes [P].
+Then executes each [Pi] to give Ri pushed onto saved stack.<br><br></font></td></tr>
+
+<tr><td><b>conts               </b></td><td><font color="darkred">-&gt;  [[P] [Q] ..]              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes current continuations. Buggy, do not use.<br><br></font></td></tr>
+
+<tr><td><b>cos                 </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the cosine of F.<br><br></font></td></tr>
+
+<tr><td><b>cosh                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the hyperbolic cosine of F.<br><br></font></td></tr>
+
+<tr><td><b>dip                 </b></td><td><font color="darkred">X [P]  -&gt;  ... X              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Saves X, executes P, pushes X back.<br><br></font></td></tr>
+
+<tr><td><b>div                 </b></td><td><font color="darkred">I J  -&gt;  K L                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integers K and L are the quotient and remainder of dividing I by J.<br><br></font></td></tr>
+
+<tr><td><b>drop                </b></td><td><font color="darkred">A N  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Aggregate B is the result of deleting the first N elements of A.<br><br></font></td></tr>
+
+<tr><td><b>dup                 </b></td><td><font color="darkred"> X  -&gt;   X X                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes an extra copy of X onto stack.<br><br></font></td></tr>
+
+<tr><td><b>dupd                </b></td><td><font color="darkred">Y Z  -&gt;  Y Y Z                </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   dupd  ==  [dup] dip<br><br></font></td></tr>
+
+<tr><td><b>echo                </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes value of echo flag, I = 0..3.<br><br></font></td></tr>
+
+<tr><td><b>enconcat            </b></td><td><font color="darkred">X S T  -&gt;  U                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sequence U is the concatenation of sequences S and T
+with X inserted between S and T (== swapd cons concat)<br><br></font></td></tr>
+
+<tr><td><b>equal               </b></td><td><font color="darkred">T U  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">(Recursively) tests whether trees T and U are identical.<br><br></font></td></tr>
+
+<tr><td><b>exp                 </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is e (2.718281828...) raised to the Fth power.<br><br></font></td></tr>
+
+<tr><td><b>false               </b></td><td><font color="darkred">-&gt;  false                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the value false.<br><br></font></td></tr>
+
+<tr><td><b>fclose              </b></td><td><font color="darkred">S  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Stream S is closed and removed from the stack.<br><br></font></td></tr>
+
+<tr><td><b>feof                </b></td><td><font color="darkred">S  -&gt;  S B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">B is the end-of-file status of stream S.<br><br></font></td></tr>
+
+<tr><td><b>ferror              </b></td><td><font color="darkred">S  -&gt;  S B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">B is the error status of stream S.<br><br></font></td></tr>
+
+<tr><td><b>fflush              </b></td><td><font color="darkred">S  -&gt;  S                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Flush stream S, forcing all buffered output to be written.<br><br></font></td></tr>
+
+<tr><td><b>fgetch              </b></td><td><font color="darkred">S  -&gt;  S C                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">C is the next available character from stream S.<br><br></font></td></tr>
+
+<tr><td><b>fgets               </b></td><td><font color="darkred">S  -&gt;  S L                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">L is the next available line (as a string) from stream S.<br><br></font></td></tr>
+
+<tr><td><b>file                </b></td><td><font color="darkred">F  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether F is a file.<br><br></font></td></tr>
+
+<tr><td><b>filter              </b></td><td><font color="darkred">A [B]  -&gt;  A1                 </font></td></tr>
+<tr><td></td><td><font color="darkblue">Uses test B to filter aggregate A producing sametype aggregate A1.<br><br></font></td></tr>
+
+<tr><td><b>first               </b></td><td><font color="darkred">A  -&gt;  F                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">F is the first member of the non-empty aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>float               </b></td><td><font color="darkred">R  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether R is a float.<br><br></font></td></tr>
+
+<tr><td><b>floor               </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the floor of F.<br><br></font></td></tr>
+
+<tr><td><b>fold                </b></td><td><font color="darkred">A V0 [P]  -&gt;  V               </font></td></tr>
+<tr><td></td><td><font color="darkblue">Starting with value V0, sequentially pushes members of aggregate A
+and combines with binary operator P to produce value V.<br><br></font></td></tr>
+
+<tr><td><b>fopen               </b></td><td><font color="darkred">P M  -&gt;  S                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">The file system object with pathname P is opened with mode M (r, w, a, etc.)
+and stream object S is pushed; if the open fails, file:NULL is pushed.<br><br></font></td></tr>
+
+<tr><td><b>format              </b></td><td><font color="darkred">N C I J  -&gt;  S                </font></td></tr>
+<tr><td></td><td><font color="darkblue">S is the formatted version of N in mode C
+('d or 'i = decimal, 'o = octal, 'x or
+'X = hex with lower or upper case letters)
+with maximum width I and minimum width J.<br><br></font></td></tr>
+
+<tr><td><b>formatf             </b></td><td><font color="darkred">F C I J  -&gt;  S                </font></td></tr>
+<tr><td></td><td><font color="darkblue">S is the formatted version of F in mode C
+('e or 'E = exponential, 'f = fractional,
+'g or G = general with lower or upper case letters)
+with maximum width I and precision J.<br><br></font></td></tr>
+
+<tr><td><b>fput                </b></td><td><font color="darkred">S X  -&gt;  S                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes X to stream S, pops X off stack.<br><br></font></td></tr>
+
+<tr><td><b>fputch              </b></td><td><font color="darkred">S C  -&gt;  S                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">The character C is written to the current position of stream S.<br><br></font></td></tr>
+
+<tr><td><b>fputchars           </b></td><td><font color="darkred">S "abc.."  -&gt;  S              </font></td></tr>
+<tr><td></td><td><font color="darkblue">The string abc.. (no quotes) is written to the current position of stream S.<br><br></font></td></tr>
+
+<tr><td><b>fputstring          </b></td><td><font color="darkred">S "abc.."  -&gt;  S              </font></td></tr>
+<tr><td></td><td><font color="darkblue">== fputchars, as a temporary alternative.<br><br></font></td></tr>
+
+<tr><td><b>fread               </b></td><td><font color="darkred">S I  -&gt;  S L                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">I bytes are read from the current position of stream S
+and returned as a list of I integers.<br><br></font></td></tr>
+
+<tr><td><b>fremove             </b></td><td><font color="darkred">P  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">The file system object with pathname P is removed from the file system.
+ is a boolean indicating success or failure.<br><br></font></td></tr>
+
+<tr><td><b>frename             </b></td><td><font color="darkred">P1 P2  -&gt;  B                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">The file system object with pathname P1 is renamed to P2.
+B is a boolean indicating success or failure.<br><br></font></td></tr>
+
+<tr><td><b>frexp               </b></td><td><font color="darkred">F  -&gt;  G I                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the mantissa and I is the exponent of F.
+Unless F = 0, 0.5 &lt;= abs(G) &lt; 1.0.<br><br></font></td></tr>
+
+<tr><td><b>fseek               </b></td><td><font color="darkred">S P W  -&gt;  S                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Stream S is repositioned to position P relative to whence-point W,
+where W = 0, 1, 2 for beginning, current position, end respectively.<br><br></font></td></tr>
+
+<tr><td><b>ftell               </b></td><td><font color="darkred">S  -&gt;  S I                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">I is the current position of stream S.<br><br></font></td></tr>
+
+<tr><td><b>fwrite              </b></td><td><font color="darkred">S L  -&gt;  S                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">A list of integers are written as bytes to the current position of stream S.<br><br></font></td></tr>
+
+<tr><td><b>gc                  </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Initiates garbage collection.<br><br></font></td></tr>
+
+<tr><td><b>genrec              </b></td><td><font color="darkred">[B] [T] [R1] [R2]  -&gt;  ...    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes B, if that yields true executes T.
+Else executes R1 and then [[B] [T] [R1] [R2] genrec] R2.<br><br></font></td></tr>
+
+<tr><td><b>get                 </b></td><td><font color="darkred">-&gt;  F                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Reads a factor from input and pushes it onto stack.<br><br></font></td></tr>
+
+<tr><td><b>getenv              </b></td><td><font color="darkred">"variable"  -&gt;  "value"       </font></td></tr>
+<tr><td></td><td><font color="darkblue">Retrieves the value of the environment variable "variable".<br><br></font></td></tr>
+
+<tr><td><b>gmtime              </b></td><td><font color="darkred">I  -&gt;  T                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Converts a time I into a list T representing universal time:
+[year month day hour minute second isdst yearday weekday].
+Month is 1 = January ... 12 = December;
+isdst is false; weekday is 0 = Monday ... 7 = Sunday.<br><br></font></td></tr>
+
+<tr><td><b>has                 </b></td><td><font color="darkred">A X  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether aggregate A has X as a member.<br><br></font></td></tr>
+
+<tr><td><b>help                </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Lists all defined symbols, including those from library files.
+Then lists all primitives of raw Joy
+(There is a variant: "_help" which lists hidden symbols).<br><br></font></td></tr>
+
+<tr><td><b>helpdetail          </b></td><td><font color="darkred">[ S1  S2  .. ]                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Gives brief help on each symbol S in the list.<br><br></font></td></tr>
+
+<tr><td><b>i                   </b></td><td><font color="darkred">[P]  -&gt;  ...                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P. So, [P] i  ==  P.<br><br></font></td></tr>
+
+<tr><td><b>id                  </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Identity function, does nothing.
+Any program of the form  P id Q  is equivalent to just  P Q.<br><br></font></td></tr>
+
+<tr><td><b>ifchar              </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a character, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>iffile              </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a file, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>iffloat             </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a float, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>ifinteger           </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is an integer, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>iflist              </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a list, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>iflogical           </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a logical or truth value, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>ifset               </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a set, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>ifstring            </b></td><td><font color="darkred">X [T] [E]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">If X is a string, executes T else executes E.<br><br></font></td></tr>
+
+<tr><td><b>ifte                </b></td><td><font color="darkred">[B] [T] [F]  -&gt;  ...          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes B. If that yields true, then executes T else executes F.<br><br></font></td></tr>
+
+<tr><td><b>in                  </b></td><td><font color="darkred">X A  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a member of aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>include             </b></td><td><font color="darkred">"filnam.ext"  -&gt;              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Transfers input to file whose name is "filnam.ext".
+On end-of-file returns to previous input file.<br><br></font></td></tr>
+
+<tr><td><b>infra               </b></td><td><font color="darkred">L1 [P]  -&gt;  L2                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Using list L1 as stack, executes P and returns a new list L2.
+The first element of L1 is used as the top of stack,
+and after execution of P the top of stack becomes the first element of L2.<br><br></font></td></tr>
+
+<tr><td><b>integer             </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is an integer.<br><br></font></td></tr>
+
+<tr><td><b>intern              </b></td><td><font color="darkred">"sym"  -&gt; sym                 </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the item whose name is "sym".<br><br></font></td></tr>
+
+<tr><td><b>ldexp               </b></td><td><font color="darkred">F I  -&gt; G                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is F times 2 to the Ith power.<br><br></font></td></tr>
+
+<tr><td><b>leaf                </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is not a list.<br><br></font></td></tr>
+
+<tr><td><b>linrec              </b></td><td><font color="darkred">[P] [T] [R1] [R2]  -&gt;  ...    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P. If that yields true, executes T.
+Else executes R1, recurses, executes R2.<br><br></font></td></tr>
+
+<tr><td><b>list                </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a list.<br><br></font></td></tr>
+
+<tr><td><b>localtime           </b></td><td><font color="darkred">I  -&gt;  T                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Converts a time I into a list T representing local time:
+[year month day hour minute second isdst yearday weekday].
+Month is 1 = January ... 12 = December;
+isdst is a Boolean flagging daylight savings/summer time;
+weekday is 0 = Monday ... 7 = Sunday.<br><br></font></td></tr>
+
+<tr><td><b>log                 </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the natural logarithm of F.<br><br></font></td></tr>
+
+<tr><td><b>log10               </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the common logarithm of F.<br><br></font></td></tr>
+
+<tr><td><b>logical             </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a logical.<br><br></font></td></tr>
+
+<tr><td><b>manual              </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes this manual of all Joy primitives to output file.<br><br></font></td></tr>
+
+<tr><td><b>map                 </b></td><td><font color="darkred">A [P]  -&gt;  B                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P on each member of aggregate A,
+collects results in sametype aggregate B.<br><br></font></td></tr>
+
+<tr><td><b>max                 </b></td><td><font color="darkred">N1 N2  -&gt;  N                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">N is the maximum of numeric values N1 and N2.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>maxint              </b></td><td><font color="darkred">-&gt;  maxint                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes largest integer (platform dependent). Typically it is 32 bits.<br><br></font></td></tr>
+
+<tr><td><b>min                 </b></td><td><font color="darkred">N1 N2  -&gt;  N                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">N is the minimum of numeric values N1 and N2.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>mktime              </b></td><td><font color="darkred">T  -&gt;  I                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Converts a list T representing local time into a time I.
+T is in the format generated by localtime.<br><br></font></td></tr>
+
+<tr><td><b>modf                </b></td><td><font color="darkred">F  -&gt;  G H                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the fractional part and H is the integer part
+(but expressed as a float) of F.<br><br></font></td></tr>
+
+<tr><td><b>name                </b></td><td><font color="darkred">sym  -&gt;  "sym"                </font></td></tr>
+<tr><td></td><td><font color="darkblue">For operators and combinators, the string "sym" is the name of item sym,
+for literals sym the result string is its type.<br><br></font></td></tr>
+
+<tr><td><b>neg                 </b></td><td><font color="darkred">I  -&gt;  J                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer J is the negative of integer I.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>not                 </b></td><td><font color="darkred">X  -&gt;  Y                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Y is the complement of set X, logical negation for truth values.<br><br></font></td></tr>
+
+<tr><td><b>null                </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests for empty aggregate X or zero numeric.<br><br></font></td></tr>
+
+<tr><td><b>nullary             </b></td><td><font color="darkred">[P]  -&gt;  R                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, which leaves R on top of the stack.
+No matter how many parameters this consumes, none are removed from the stack.<br><br></font></td></tr>
+
+<tr><td><b>of                  </b></td><td><font color="darkred">I A  -&gt;  X                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">X (= A[I]) is the I-th member of aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>opcase              </b></td><td><font color="darkred">X [..[X Xs]..]  -&gt;  [Xs]      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Indexing on type of X, returns the list [Xs].<br><br></font></td></tr>
+
+<tr><td><b>or                  </b></td><td><font color="darkred">X Y  -&gt;  Z                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Z is the union of sets X and Y, logical disjunction for truth values.<br><br></font></td></tr>
+
+<tr><td><b>ord                 </b></td><td><font color="darkred">C  -&gt;  I                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer I is the Ascii value of character C (or logical or integer).<br><br></font></td></tr>
+
+<tr><td><b>pop                 </b></td><td><font color="darkred"> X  -&gt;                        </font></td></tr>
+<tr><td></td><td><font color="darkblue">Removes X from top of the stack.<br><br></font></td></tr>
+
+<tr><td><b>popd                </b></td><td><font color="darkred">Y Z  -&gt;  Z                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   popd  ==  [pop] dip <br><br></font></td></tr>
+
+<tr><td><b>pow                 </b></td><td><font color="darkred">F G  -&gt;  H                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">H is F raised to the Gth power.<br><br></font></td></tr>
+
+<tr><td><b>pred                </b></td><td><font color="darkred">M  -&gt;  N                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Numeric N is the predecessor of numeric M.<br><br></font></td></tr>
+
+<tr><td><b>primrec             </b></td><td><font color="darkred">X [I] [C]  -&gt;  R              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes I to obtain an initial value R0.
+For integer X uses increasing positive integers to X, combines by C for new R.
+For aggregate X uses successive members and combines by C for new R.<br><br></font></td></tr>
+
+<tr><td><b>put                 </b></td><td><font color="darkred">X  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes X to output, pops X off stack.<br><br></font></td></tr>
+
+<tr><td><b>putch               </b></td><td><font color="darkred">N  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">N : numeric, writes character whose ASCII is N.<br><br></font></td></tr>
+
+<tr><td><b>putchars            </b></td><td><font color="darkred">"abc.."  -&gt;                   </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes  abc.. (without quotes)<br><br></font></td></tr>
+
+<tr><td><b>quit                </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Exit from Joy.<br><br></font></td></tr>
+
+<tr><td><b>rand                </b></td><td><font color="darkred">  -&gt; I                        </font></td></tr>
+<tr><td></td><td><font color="darkblue">I is a random integer.<br><br></font></td></tr>
+
+<tr><td><b>rem                 </b></td><td><font color="darkred">I J  -&gt;  K                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer K is the remainder of dividing I by J.  Also supports float.<br><br></font></td></tr>
+
+<tr><td><b>rest                </b></td><td><font color="darkred">A  -&gt;  R                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">R is the non-empty aggregate A with its first member removed.<br><br></font></td></tr>
+
+<tr><td><b>rolldown            </b></td><td><font color="darkred">X Y Z  -&gt;  Y Z X              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Moves Y and Z down, moves X up<br><br></font></td></tr>
+
+<tr><td><b>rolldownd           </b></td><td><font color="darkred">X Y Z W  -&gt;  Y Z X W          </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   rolldownd  ==  [rolldown] dip <br><br></font></td></tr>
+
+<tr><td><b>rollup              </b></td><td><font color="darkred">X Y Z  -&gt;  Z X Y              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Moves X and Y up, moves Z down<br><br></font></td></tr>
+
+<tr><td><b>rollupd             </b></td><td><font color="darkred">X Y Z W  -&gt;  Z X Y W          </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   rollupd  ==  [rollup] dip<br><br></font></td></tr>
+
+<tr><td><b>rotate              </b></td><td><font color="darkred">X Y Z  -&gt;  Z Y X              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Interchanges X and Z<br><br></font></td></tr>
+
+<tr><td><b>rotated             </b></td><td><font color="darkred">X Y Z W  -&gt;  Z Y X W          </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   rotated  ==  [rotate] dip<br><br></font></td></tr>
+
+<tr><td><b>set                 </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a set.<br><br></font></td></tr>
+
+<tr><td><b>setautoput          </b></td><td><font color="darkred">I  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sets value of flag for automatic put to I (if I = 0, none;
+if I = 1, put; if I = 2, stack.<br><br></font></td></tr>
+
+<tr><td><b>setecho             </b></td><td><font color="darkred">I -&gt;                          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sets value of echo flag for listing.
+I = 0: no echo, 1: echo, 2: with tab, 3: and linenumber.<br><br></font></td></tr>
+
+<tr><td><b>setsize             </b></td><td><font color="darkred">-&gt;  setsize                   </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the maximum number of elements in a set (platform dependent).
+Typically it is 32, and set members are in the range 0..31.<br><br></font></td></tr>
+
+<tr><td><b>setundeferror       </b></td><td><font color="darkred">I  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sets flag that controls behavior of undefined functions
+(0 = no error, 1 = error).<br><br></font></td></tr>
+
+<tr><td><b>sign                </b></td><td><font color="darkred">N1  -&gt;  N2                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer N2 is the sign (-1 or 0 or +1) of integer N1,
+or float N2 is the sign (-1.0 or 0.0 or 1.0) of float N1.<br><br></font></td></tr>
+
+<tr><td><b>sin                 </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the sine of F.<br><br></font></td></tr>
+
+<tr><td><b>sinh                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the hyperbolic sine of F.<br><br></font></td></tr>
+
+<tr><td><b>size                </b></td><td><font color="darkred">A  -&gt;  I                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Integer I is the number of elements of aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>small               </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether aggregate X has 0 or 1 members, or numeric 0 or 1.<br><br></font></td></tr>
+
+<tr><td><b>some                </b></td><td><font color="darkred">A  [B]  -&gt;  X                 </font></td></tr>
+<tr><td></td><td><font color="darkblue">Applies test B to members of aggregate A, X = true if some pass.<br><br></font></td></tr>
+
+<tr><td><b>split               </b></td><td><font color="darkred">A [B]  -&gt;  A1 A2              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Uses test B to split aggregate A into sametype aggregates A1 and A2 .<br><br></font></td></tr>
+
+<tr><td><b>sqrt                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the square root of F.<br><br></font></td></tr>
+
+<tr><td><b>srand               </b></td><td><font color="darkred">I  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sets the random integer seed to integer I.<br><br></font></td></tr>
+
+<tr><td><b>stack               </b></td><td><font color="darkred">.. X Y Z  -&gt;  .. X Y Z [Z Y X ..]</font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the stack as a list.<br><br></font></td></tr>
+
+<tr><td><b>stderr              </b></td><td><font color="darkred">-&gt;  S                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the standard error stream.<br><br></font></td></tr>
+
+<tr><td><b>stdin               </b></td><td><font color="darkred">-&gt;  S                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the standard input stream.<br><br></font></td></tr>
+
+<tr><td><b>stdout              </b></td><td><font color="darkred">-&gt;  S                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the standard output stream.<br><br></font></td></tr>
+
+<tr><td><b>step                </b></td><td><font color="darkred">A  [P]  -&gt;  ...               </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sequentially putting members of aggregate A onto stack,
+executes P for each member of A.<br><br></font></td></tr>
+
+<tr><td><b>strftime            </b></td><td><font color="darkred">T S1  -&gt;  S2                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Formats a list T in the format of localtime or gmtime
+using string S1 and pushes the result S2.<br><br></font></td></tr>
+
+<tr><td><b>string              </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a string.<br><br></font></td></tr>
+
+<tr><td><b>strtod              </b></td><td><font color="darkred">S  -&gt;  R                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">String S is converted to the float R.<br><br></font></td></tr>
+
+<tr><td><b>strtol              </b></td><td><font color="darkred">S I  -&gt;  J                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">String S is converted to the integer J using base I.
+If I = 0, assumes base 10,
+but leading "0" means base 8 and leading "0x" means base 16.<br><br></font></td></tr>
+
+<tr><td><b>succ                </b></td><td><font color="darkred">M  -&gt;  N                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Numeric N is the successor of numeric M.<br><br></font></td></tr>
+
+<tr><td><b>swap                </b></td><td><font color="darkred"> X Y  -&gt;   Y X                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Interchanges X and Y on top of the stack.<br><br></font></td></tr>
+
+<tr><td><b>swapd               </b></td><td><font color="darkred">X Y Z  -&gt;  Y X Z              </font></td></tr>
+<tr><td></td><td><font color="darkblue">As if defined by:   swapd  ==  [swap] dip<br><br></font></td></tr>
+
+<tr><td><b>swons               </b></td><td><font color="darkred">A X  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Aggregate B is A with a new member X (first member for sequences).<br><br></font></td></tr>
+
+<tr><td><b>system              </b></td><td><font color="darkred">"command"  -&gt;                 </font></td></tr>
+<tr><td></td><td><font color="darkblue">Escapes to shell, executes string "command".
+The string may cause execution of another program.
+When that has finished, the process returns to Joy.<br><br></font></td></tr>
+
+<tr><td><b>tailrec             </b></td><td><font color="darkred">[P] [T] [R1]  -&gt;  ...         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P. If that yields true, executes T.
+Else executes R1, recurses.<br><br></font></td></tr>
+
+<tr><td><b>take                </b></td><td><font color="darkred">A N  -&gt;  B                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Aggregate B is the result of retaining just the first N elements of A.<br><br></font></td></tr>
+
+<tr><td><b>tan                 </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the tangent of F.<br><br></font></td></tr>
+
+<tr><td><b>tanh                </b></td><td><font color="darkred">F  -&gt;  G                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">G is the hyperbolic tangent of F.<br><br></font></td></tr>
+
+<tr><td><b>ternary             </b></td><td><font color="darkred">X Y Z [P]  -&gt;  R              </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, which leaves R on top of the stack.
+No matter how many parameters this consumes,
+exactly three are removed from the stack.<br><br></font></td></tr>
+
+<tr><td><b>time                </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the current time (in seconds since the Epoch).<br><br></font></td></tr>
+
+<tr><td><b>times               </b></td><td><font color="darkred">N [P]  -&gt;  ...                </font></td></tr>
+<tr><td></td><td><font color="darkblue">N times executes P.<br><br></font></td></tr>
+
+<tr><td><b>treegenrec          </b></td><td><font color="darkred">T [O1] [O2] [C]  -&gt;  ...      </font></td></tr>
+<tr><td></td><td><font color="darkblue">T is a tree. If T is a leaf, executes O1.
+Else executes O2 and then [[O1] [O2] [C] treegenrec] C.<br><br></font></td></tr>
+
+<tr><td><b>treerec             </b></td><td><font color="darkred">T [O] [C]  -&gt;  ...            </font></td></tr>
+<tr><td></td><td><font color="darkblue">T is a tree. If T is a leaf, executes O. Else executes [[O] [C] treerec] C.<br><br></font></td></tr>
+
+<tr><td><b>treestep            </b></td><td><font color="darkred">T [P]  -&gt;  ...                </font></td></tr>
+<tr><td></td><td><font color="darkblue">Recursively traverses leaves of tree T, executes P for each leaf.<br><br></font></td></tr>
+
+<tr><td><b>true                </b></td><td><font color="darkred">-&gt;  true                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes the value true.<br><br></font></td></tr>
+
+<tr><td><b>trunc               </b></td><td><font color="darkred">F  -&gt;  I                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">I is an integer equal to the float F truncated toward zero.<br><br></font></td></tr>
+
+<tr><td><b>unary               </b></td><td><font color="darkred">X [P]  -&gt;  R                  </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P, which leaves R on top of the stack.
+No matter how many parameters this consumes,
+exactly one is removed from the stack.<br><br></font></td></tr>
+
+<tr><td><b>unary2              </b></td><td><font color="darkred">X1 X2 [P]  -&gt;  R1 R2          </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P twice, with X1 and X2 on top of the stack.
+Returns the two values R1 and R2.<br><br></font></td></tr>
+
+<tr><td><b>unary3              </b></td><td><font color="darkred">X1 X2 X3 [P]  -&gt;  R1 R2 R3    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P three times, with Xi, returns Ri (i = 1..3).<br><br></font></td></tr>
+
+<tr><td><b>unary4              </b></td><td><font color="darkred">X1 X2 X3 X4 [P]  -&gt;  R1 R2 R3 R4</font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P four times, with Xi, returns Ri (i = 1..4).<br><br></font></td></tr>
+
+<tr><td><b>uncons              </b></td><td><font color="darkred">A  -&gt;  F R                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">F and R are the first and the rest of non-empty aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>undeferror          </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes current value of undefined-is-error flag.<br><br></font></td></tr>
+
+<tr><td><b>undefs              </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Push a list of all undefined symbols in the current symbol table.<br><br></font></td></tr>
+
+<tr><td><b>unstack             </b></td><td><font color="darkred">[X Y ..]  -&gt;  ..Y X           </font></td></tr>
+<tr><td></td><td><font color="darkblue">The list [X Y ..] becomes the new stack.<br><br></font></td></tr>
+
+<tr><td><b>unswons             </b></td><td><font color="darkred">A  -&gt;  R F                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">R and F are the rest and the first of non-empty aggregate A.<br><br></font></td></tr>
+
+<tr><td><b>user                </b></td><td><font color="darkred">X  -&gt;  B                      </font></td></tr>
+<tr><td></td><td><font color="darkblue">Tests whether X is a user-defined symbol.<br><br></font></td></tr>
+
+<tr><td><b>while               </b></td><td><font color="darkred">[B] [D]  -&gt;  ...              </font></td></tr>
+<tr><td></td><td><font color="darkblue">While executing B yields true executes D.<br><br></font></td></tr>
+
+<tr><td><b>x                   </b></td><td><font color="darkred">[P]i  -&gt;  ...                 </font></td></tr>
+<tr><td></td><td><font color="darkblue">Executes P without popping [P]. So, [P] x  ==  [P] P.<br><br></font></td></tr>
+
+<tr><td><b>xor                 </b></td><td><font color="darkred">X Y  -&gt;  Z                    </font></td></tr>
+<tr><td></td><td><font color="darkblue">Z is the symmetric difference of sets X and Y,
+logical exclusive disjunction for truth values.<br><br></font></td></tr>
+
+</tbody></table></p><h2>Hidden Primitives</h2><table>
+<tbody><tr><td><b>__ANON_FUNCT        </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">op for anonymous function call.<br><br></font></td></tr>
+
+<tr><td><b>__COPIED            </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">no message ever, used for gc.<br><br></font></td></tr>
+
+<tr><td><b>__USR               </b></td><td><font color="darkred">usg                           </font></td></tr>
+<tr><td></td><td><font color="darkblue">user node.<br><br></font></td></tr>
+
+<tr><td><b>__dump              </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">debugging only: pushes the dump as a list.<br><br></font></td></tr>
+
+<tr><td><b>__html_manual       </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes this manual of all Joy primitives to output file in HTML style.<br><br></font></td></tr>
+
+<tr><td><b>__latex_manual      </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Writes this manual of all Joy primitives to output file in Latex style but without the head and tail.<br><br></font></td></tr>
+
+<tr><td><b>__manual_list       </b></td><td><font color="darkred">-&gt;  L                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes a list L of lists (one per operator) of three documentation strings<br><br></font></td></tr>
+
+<tr><td><b>__memoryindex       </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes current value of memory.<br><br></font></td></tr>
+
+<tr><td><b>__memorymax         </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes value of total size of memory.<br><br></font></td></tr>
+
+<tr><td><b>__settracegc        </b></td><td><font color="darkred">I  -&gt;                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">Sets value of flag for tracing garbage collection to I (= 0..5).<br><br></font></td></tr>
+
+<tr><td><b>__symtabindex       </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes current size of the symbol table.<br><br></font></td></tr>
+
+<tr><td><b>__symtabmax         </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Pushes value of maximum size of the symbol table.<br><br></font></td></tr>
+
+<tr><td><b>_help               </b></td><td><font color="darkred">-&gt;                            </font></td></tr>
+<tr><td></td><td><font color="darkblue">Lists all hidden symbols in library and then all hidden inbuilt symbols.<br><br></font></td></tr>
+
+</tbody></table><h2>Types</h2><table>
+<tbody><tr><td><b> character type     </b></td><td><font color="darkred">-&gt;  C                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of characters. Literals are written with a single quote.
+Examples:  'A  '7  ';  and so on. Unix style escapes are allowed.<br><br></font></td></tr>
+
+<tr><td><b> file type          </b></td><td><font color="darkred">-&gt;  FILE:                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of references to open I/O streams,
+typically but not necessarily files.
+The only literals of this type are stdin, stdout, and stderr.<br><br></font></td></tr>
+
+<tr><td><b> float type         </b></td><td><font color="darkred">-&gt;  F                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of floating-point numbers.
+Literals of this type are written with embedded decimal points (like 1.2)
+and optional exponent specifiers (like 1.5E2)<br><br></font></td></tr>
+
+<tr><td><b> integer type       </b></td><td><font color="darkred">-&gt;  I                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of negative, zero or positive integers.
+Literals are written in decimal notation. Examples:  -123   0   42.<br><br></font></td></tr>
+
+<tr><td><b> list type          </b></td><td><font color="darkred">-&gt;  [...]                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of lists of values of any type (including lists),
+or the type of quoted programs which may contain operators or combinators.
+Literals of this type are written inside square brackets.
+Examples: []  [3 512 -7]  [john mary]  ['A 'C ['B]]  [dup *].<br><br></font></td></tr>
+
+<tr><td><b> set type           </b></td><td><font color="darkred">-&gt;  {...}                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of sets of small non-negative integers.
+The maximum is platform dependent, typically the range is 0..31.
+Literals are written inside curly braces.
+Examples:  {}  {0}  {1 3 5}  {19 18 17}.<br><br></font></td></tr>
+
+<tr><td><b> string type        </b></td><td><font color="darkred">-&gt;  "..."                     </font></td></tr>
+<tr><td></td><td><font color="darkblue">The type of strings of characters. Literals are written inside double quotes.
+Examples: ""  "A"  "hello world" "123".
+Unix style escapes are accepted.<br><br></font></td></tr>
+
+<tr><td><b> truth value type   </b></td><td><font color="darkred">-&gt;  B                         </font></td></tr>
+<tr><td></td><td><font color="darkblue">The logical type, or the type of truth values.
+It has just two literals: true and false.<br><br></font></td></tr>
+
+</tbody></table>
+
+
+<p></p>
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade"><a name="7. References"><h2>7 References</h2></a><p>
+
+</p><ol>
+
+<li><a href="https://www.latrobe.edu.au/humanities/research/research-projects/past-projects/joy-programming-language">The Joy Language Homepage</a>, Manfred von Thun.
+
+</li></ol>
+
+<p></p>
+<!--------------------------------------------------------------------------->
+<hr width="100%" size="4" noshade="noshade">
+<font size="-1"><pre>$Id: hlplib.m4,v 1.1 2003/02/27 19:07:17 nickf Exp nickf $:</pre></font>
+<!--
+     FILE ARCHIVED ON 05:00:08 May 27, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 13:51:26 Jan 20, 2020.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  RedisCDXSource: 280.747
+  exclusion.robots.policy: 0.296
+  exclusion.robots: 0.319
+  LoadShardBlock: 1288.632 (3)
+  load_resource: 655.46
+  CDXLines.iter: 26.081 (3)
+  PetaboxLoader3.resolve: 808.056 (3)
+  PetaboxLoader3.datanode: 1032.777 (4)
+  captures_list: 1603.721
+  esindex: 0.022
+--></font></font></body></html>

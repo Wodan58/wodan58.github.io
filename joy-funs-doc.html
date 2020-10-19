@@ -1,0 +1,4262 @@
+<?xml version="1.0" encoding="iso-8859-1"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Atoms and Definitions of JOY</title>
+<link rel="stylesheet" href="rabbit.css" type="text/css" />
+<meta content="joy/rabbit" name="GENERATOR" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="joy,rabbit,concatenative,doc,docs,documentation" name="keywords" />
+</head>
+<body><a name="home" id="home"></a>
+<h1 class="simplelogo">Atoms and Definitions of JOY</h1>
+<h1 class="headline">February, 10th 2002</h1>
+<h1 class="subtitle">Abstract</h1>
+<center>This document is containing a brief description<br />
+of all Atoms, defined by the JOY-System and<br />
+of all visible definitions, defined by the basic Joy Libraries.<br />
+The basic Libraries are <br />
+inilib, agglib, seqlib and numlib.<br />
+<br />
+This document is up to date with Joy as it could be downloaded from<br />
+the Joy Home Page at February, 10th 2002.</center>
+<br />
+<br />
+<a name="contents" id="contents"><strong><a href="#contents">Contents:</a>
+</strong>
+</a>
+<blockquote><div class="box"><ul><li><a href="#MainContents-1"> Joy Types / Aggregates</a>
+</li>
+<li><a href="#MainContents-2"> Joy Types / Char, Truth, File</a>
+</li>
+<li><a href="#MainContents-3"> Joy Types / Numerics</a>
+</li>
+<li><a href="#MainContents-4"> Stack Manipulation</a>
+</li>
+<li><a href="#MainContents-5">Aggregates /  at, of, drop, pair, rest, size, take, unpair, ....</a>
+</li>
+<li><a href="#MainContents-6">Aggregates / Tests</a>
+</li>
+<li><a href="#MainContents-7">Aggregates / average, flatten, frontlist, insert, delete, variance, ....</a>
+</li>
+<li><a href="#MainContents-8">Aggregates / cons and concat</a>
+</li>
+<li><a href="#MainContents-9">Aggregates / first, second,...</a>
+</li>
+<li><a href="#MainContents-10">Aggregates / merge, qsort, reverse, transpose, zip</a>
+</li>
+<li><a href="#MainContents-11">Aggregates / trees</a>
+</li>
+<li><a href="#MainContents-12">Characters</a>
+</li>
+<li><a href="#MainContents-13">Logic</a>
+</li>
+<li><a href="#MainContents-14">Numerics / Binary</a>
+</li>
+<li><a href="#MainContents-15">Numerics / Unary</a>
+</li>
+<li><a href="#MainContents-16">Numerics / algorithm: fact, fib, ...</a>
+</li>
+<li><a href="#MainContents-17">Numerics / float</a>
+</li>
+<li><a href="#MainContents-18">Numerics / random, Maxint</a>
+</li>
+<li><a href="#MainContents-19">combinators /  Recursive</a>
+</li>
+<li><a href="#MainContents-20">combinators /  dips</a>
+</li>
+<li><a href="#MainContents-21">combinators / apply:  i, i2, b, x, infra, cleave,...</a>
+</li>
+<li><a href="#MainContents-22">combinators / apply: app, nullary, unary, binary,...</a>
+</li>
+<li><a href="#MainContents-23">combinators / branches and loops</a>
+</li>
+<li><a href="#MainContents-24">combinators / functionals on aggregates</a>
+</li>
+<li><a href="#MainContents-25">files and Streams</a>
+</li>
+<li><a href="#MainContents-26">format</a>
+</li>
+<li><a href="#MainContents-27">joy / Help and Debug</a>
+</li>
+<li><a href="#MainContents-28">joy / Library Loading</a>
+</li>
+<li><a href="#MainContents-29">joy / Program: quit, abort, name, body, ...</a>
+</li>
+<li><a href="#MainContents-30">std-input and -output</a>
+</li>
+<li><a href="#MainContents-31">system</a>
+</li>
+<li><a href="#MainContents-32">time and date</a>
+</li>
+</ul>
+</div>
+</blockquote>
+<blockquote><table border="1" cellpadding="2" class="data"><caption><a name="abbr" id="abbr"><strong><a href="#abbr">Abbreviations</a>
+</strong>
+</a>
+</caption>
+<tbody><tr><th>A</th>
+<td>Aggregate: Set, String or List</td>
+</tr>
+<tr><th>B</th>
+<td>Boolean: true or false</td>
+</tr>
+<tr><th>C</th>
+<td>Character</td>
+</tr>
+<tr><th>F</th>
+<td>Float</td>
+</tr>
+<tr><th>I</th>
+<td>Integer</td>
+</tr>
+<tr><th>L</th>
+<td>List</td>
+</tr>
+<tr><th>N</th>
+<td>Number</td>
+</tr>
+<tr><th>P</th>
+<td>Program</td>
+</tr>
+<tr><th>Seq</th>
+<td>Sequence: String or List</td>
+</tr>
+<tr><th>Set</th>
+<td>Set</td>
+</tr>
+<tr><th>Str</th>
+<td>String</td>
+</tr>
+<tr><th>T</th>
+<td>Tree</td>
+</tr>
+<tr><th>U</th>
+<td>User defined symbol</td>
+</tr>
+<tr><th>X Y Z</th>
+<td>Anything</td>
+</tr>
+<tr><th>-></th>
+<td>Type specifier</td>
+</tr>
+<tr><th>=></th>
+<td>Evaluates to</td>
+</tr>
+<tr><th>...</th>
+<td>Resulting type depends on parameter stack.</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p><strong>Note: </strong>
+The following descriptions do include a type specification, the definition and/or a describing text and sometimes examples. A type specification like 'I1 I2 -> I3' does not mean there are three different types of integer. The incoming and outgoing values are just enumerated in order to make them addressable by the following text.<br />
+<br />
+<a href="http://www.latrobe.edu.au/philosophy/phimvt/joy.html">[Joy Home Page]</a>
+<br />
+<br />
+For questions and discussion about JOY please contact the JOY mailing list at <cite><a href="mailto:concatenative@yahoogroups.com">concatenative@yahoogroups.com</a>
+</cite>
+.<br />
+Generated at Monday 11-FEB-02 21:52:12 by <a href="http://groups.yahoo.com/group/concatenative/files/rabbit"><big><strong>Rabbit</strong>
+</big>
+</a>
+.</p>
+<br />
+<hr size="3" width="75%" noshade="" />
+<br />
+<br />
+<br />
+<center><a name="MainContents-1" id="MainContents-1"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-2">[Next]</a>
+</center>
+<h1> Joy Types / Aggregates</h1>
+<blockquote><dl><dt><strong> list type</strong>
+</dt>
+<dd><code>-> L</code>
+<br />
+interp.c<br />
+The type of lists of values of any type (including lists)  or the type of quoted programs which may contain operators or combinators. Literals of this type are written inside square brackets. <div style="background-color: #ffcc99; border: none;"><ul><li><code>[] => []</code>
+</li>
+<li><code>[ 3 512 -7] => [ 3 512 -7]</code>
+</li>
+<li><code>[ john mary] => [ john mary]</code>
+</li>
+<li><code>[ 'A 'C[ 'B]] => [ 'A 'C[ 'B]]</code>
+</li>
+<li><code>[ dup *] => [ dup *]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong> set type</strong>
+</dt>
+<dd><code>-> Set</code>
+<br />
+interp.c<br />
+The type of sets of small non-negative integers. The maximum is platform dependent, typically the range is 0..31. Literals are written inside curly braces.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{} => {}</code>
+</li>
+<li><code>{ 0} => { 0}</code>
+</li>
+<li><code>{ 1 3 5} => { 1 3 5}</code>
+</li>
+<li><code>{ 17 18 19} => { 17 18 19}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong> string type</strong>
+</dt>
+<dd><code>->  Str </code>
+<br />
+interp.c<br />
+The type of strings of characters. Literals are written inside double quotes.<br />
+Unix style escapes are accepted: \n - newline, \t - tabulator and so on.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"" => ""</code>
+</li>
+<li><code>"A" => "A"</code>
+</li>
+<li><code>"hello world" => "hello world"</code>
+</li>
+<li><code>"123" => "123"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-2" id="MainContents-2"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-3">[Next]</a>
+<a href="#MainContents-1">[Previous]</a>
+</center>
+<h1> Joy Types / Char, Truth, File</h1>
+<blockquote><dl><dt><strong> character type</strong>
+</dt>
+<dd><code>->  C</code>
+<br />
+interp.c<br />
+The type of characters. Literals are written with a single quote. Examples: <code> 'A  '7  ';</code>
+ and so on. Unix style escapes are allowed.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 'a =>  'a</code>
+</li>
+<li><code> '0 =>  '0</code>
+</li>
+<li><code> '# =>  '#</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong> file type</strong>
+</dt>
+<dd><code>-> STREAM</code>
+<br />
+interp.c<br />
+The type of references to open I/O streams, typically but not necessarily files.  The only literals of this type are stdin  stdout  and stderr.<div style="background-color: #ffcc99; border: none;"><ul><li><code> stdin =>   file type</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong> truth value type</strong>
+</dt>
+<dd><code>->  B</code>
+<br />
+interp.c<br />
+The logical type  or the type of truth values. It has just two literals: true and false.<div style="background-color: #ffcc99; border: none;"><ul><li><code> true =>  true</code>
+</li>
+<li><code> false =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-3" id="MainContents-3"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-4">[Next]</a>
+<a href="#MainContents-2">[Previous]</a>
+</center>
+<h1> Joy Types / Numerics</h1>
+<blockquote><dl><dt><strong> float type</strong>
+</dt>
+<dd><code>->  F</code>
+<br />
+interp.c<br />
+The type of floating-point numbers.  Literals of this type are written with embedded decimal points (like 1.2) and optional exponent specifiers (like 1.5E2).<div style="background-color: #ffcc99; border: none;"><ul><li><code>    1.20 =>     1.20</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong> integer type</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+The type of negative  zero or positive integers. Literals are written in decimal notation.<div style="background-color: #ffcc99; border: none;"><ul><li><code> -123 =>  -123</code>
+</li>
+<li><code> 0 =>  0</code>
+</li>
+<li><code> 42 =>  42</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-4" id="MainContents-4"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-5">[Next]</a>
+<a href="#MainContents-3">[Previous]</a>
+</center>
+<h1> Stack Manipulation</h1>
+<blockquote><dl><dt><strong>dup</strong>
+</dt>
+<dd><code> X  ->   X X</code>
+<br />
+interp.c<br />
+Pushes an extra copy of X onto stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 42 dup =>  42 42</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>dup2</strong>
+</dt>
+<dd><code>X Y -> X Y X Y</code>
+<br />
+inilib<br />
+<code class="db">== dupd dup swapd;</code>
+<br />
+<br />
+</dd>
+<dt><strong>dupd</strong>
+</dt>
+<dd><code>Y Z  ->  Y Y Z</code>
+<br />
+interp.c<br />
+As if defined by:   dupd  ==  [dup] dip;<br />
+</dd>
+<dt><strong>id</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Identity function, does nothing. Any program of the form  P id Q  is equivalent to just  P Q.<br />
+</dd>
+<dt><strong>newstack</strong>
+</dt>
+<dd><code>... -></code>
+<br />
+inilib<br />
+<code class="db">== [] unstack;</code>
+<br />
+ Remove the stack and continue with the empty stack.<br />
+</dd>
+<dt><strong>pop</strong>
+</dt>
+<dd><code>X  -></code>
+<br />
+interp.c<br />
+Removes X from top of the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 pop =>  1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>pop2</strong>
+</dt>
+<dd><code>Y Z ->    </code>
+<br />
+inilib<br />
+<code class="db">== pop pop;</code>
+<br />
+<br />
+</dd>
+<dt><strong>popd</strong>
+</dt>
+<dd><code>Y Z  ->  Z</code>
+<br />
+interp.c<br />
+As if defined by:   popd  ==  [pop] dip;<br />
+</dd>
+<dt><strong>rolldown</strong>
+</dt>
+<dd><code>X Y Z  ->  Y Z X</code>
+<br />
+interp.c<br />
+Moves Y and Z down and moves X up.<br />
+</dd>
+<dt><strong>rolldownd</strong>
+</dt>
+<dd><code>X Y Z W  ->  Y Z X W</code>
+<br />
+interp.c<br />
+As if defined by:   rolldownd  ==  [rolldown] dip;<br />
+</dd>
+<dt><strong>rollup</strong>
+</dt>
+<dd><code>X Y Z  ->  Z X Y</code>
+<br />
+interp.c<br />
+Moves X and Y up and moves Z down.<br />
+</dd>
+<dt><strong>rollupd</strong>
+</dt>
+<dd><code>X Y Z W  ->  Z X Y W</code>
+<br />
+interp.c<br />
+As if defined by:   rollupd  ==  [rollup] dip;<br />
+</dd>
+<dt><strong>rotate</strong>
+</dt>
+<dd><code>X Y Z  ->  Z Y X</code>
+<br />
+interp.c<br />
+Interchanges X and Z.<br />
+</dd>
+<dt><strong>rotated</strong>
+</dt>
+<dd><code>X Y Z W  ->  Z Y X W</code>
+<br />
+interp.c<br />
+As if defined by:   rotated  ==  [rotate] dip;<br />
+</dd>
+<dt><strong>stack</strong>
+</dt>
+<dd><code>.. X Y Z  ->  .. X Y Z [Z Y X ..]</code>
+<br />
+interp.c<br />
+Pushes the stack as a list.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3 stack =>  1 2 3[ 3 2 1]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swap</strong>
+</dt>
+<dd><code> X Y  ->   Y X</code>
+<br />
+interp.c<br />
+Interchanges X and Y.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 swap =>  2 1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swapd</strong>
+</dt>
+<dd><code>X Y Z  ->  Y X Z</code>
+<br />
+interp.c<br />
+As if defined by:   swapd  ==  [swap] dip;<br />
+</dd>
+<dt><strong>unstack</strong>
+</dt>
+<dd><code>[X Y ..]  ->  ..Y X</code>
+<br />
+interp.c<br />
+The list [X Y ..] becomes the new stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3[ 'a 'b] unstack =>  'b 'a</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-5" id="MainContents-5"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-6">[Next]</a>
+<a href="#MainContents-4">[Previous]</a>
+</center>
+<h1>Aggregates /  at, of, drop, pair, rest, size, take, unpair, ....</h1>
+<blockquote><dl><dt><strong>at</strong>
+</dt>
+<dd><code>A I  ->  X</code>
+<br />
+interp.c<br />
+X is the member of A at position I. The first item is at position 0.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 1 at =>  2</code>
+</li>
+<li><code> 1[ 1 2 3] of =>  2</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>drop</strong>
+</dt>
+<dd><code>A N -> A</code>
+<br />
+interp.c<br />
+Result is A with its first N elements deleted.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 2 drop => [ 3]</code>
+</li>
+<li><code>{ 1 2 3} 2 drop => { 3}</code>
+</li>
+<li><code>"abc" 2 drop => "c"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>elements</strong>
+</dt>
+<dd><code>L -> Set</code>
+<br />
+agglib<br />
+<code class="db">== {}swap [swons]step;</code>
+<br />
+Returns all members of L, doubles removed. The elements of L must fit the sets range.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 1 2 3] elements => { 1 2 3}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>of</strong>
+</dt>
+<dd><code>I A  ->  X</code>
+<br />
+interp.c<br />
+X is the member of A at position I. The first item is at position 0.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 1 at =>  2</code>
+</li>
+<li><code> 1[ 1 2 3] of =>  2</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>pair</strong>
+</dt>
+<dd><code>X Y -> L</code>
+<br />
+was: stdlib<br />
+<code class="db">== [] cons cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>"Frank" 17 pair => ["Frank" 17]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>pairlist</strong>
+</dt>
+<dd><code>X X -> L</code>
+<br />
+agglib<br />
+<code class="db">== [] cons cons;</code>
+<br />
+<br />
+</dd>
+<dt><strong>pairset</strong>
+</dt>
+<dd><code>I I -> Set</code>
+<br />
+agglib<br />
+<code class="db">== {} cons cons;</code>
+<br />
+<br />
+</dd>
+<dt><strong>pairstring</strong>
+</dt>
+<dd><code>C C -> Str</code>
+<br />
+agglib<br />
+<code class="db">== "" cons cons;</code>
+<br />
+<br />
+</dd>
+<dt><strong>rest</strong>
+</dt>
+<dd><code>A -> A</code>
+<br />
+interp.c<br />
+Result is the non-empty aggregate A with its first member removed.<br />
+</dd>
+<dt><strong>restd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [rest] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>set2string</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">==  ""<span style="color: blue; ">[<span style="background: #cccccc; color: black; ">[ chr]</span>
+ dip cons]</span>
+ foldr;</code>
+<br />
+<br />
+</dd>
+<dt><strong>setsize</strong>
+</dt>
+<dd><code>->  setsize</code>
+<br />
+interp.c<br />
+Pushes the maximum number of elements in a set (platform dependent). Typically it is 32  and set members are in the range 0..31.<div style="background-color: #ffcc99; border: none;"><ul><li><code> setsize =>  32</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>shunt</strong>
+</dt>
+<dd><code>A A -> A</code>
+<br />
+agglib<br />
+<code class="db">== [swons] step;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[][ 1 2 3] shunt => [ 3 2 1]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>size</strong>
+</dt>
+<dd><code>A  ->  I</code>
+<br />
+interp.c<br />
+Integer I is the size of aggregate A.<br />
+</dd>
+<dt><strong>string2set</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== {} swap shunt;</code>
+<br />
+<br />
+</dd>
+<dt><strong>take</strong>
+</dt>
+<dd><code>A I -> A</code>
+<br />
+interp.c<br />
+Retain just the first I elements of A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 2 take => [ 1 2]</code>
+</li>
+<li><code>{ 1 2 3} 2 take => { 1 2}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unitlist</strong>
+</dt>
+<dd><code>X -> L</code>
+<br />
+agglib<br />
+<code class="db">== [] cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 unitlist => [ 1]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unitset</strong>
+</dt>
+<dd><code>I -> Set</code>
+<br />
+agglib<br />
+<code class="db">== {} cons;</code>
+<br />
+<br />
+</dd>
+<dt><strong>unitstring</strong>
+</dt>
+<dd><code>C -> Str</code>
+<br />
+agglib<br />
+<code class="db">== "" const] dip;;</code>
+<br />
+<br />
+</dd>
+<dt><strong>unpair</strong>
+</dt>
+<dd><code>A -> X Y</code>
+<br />
+agglib<br />
+<code class="db">== uncons uncons pop;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4] unpair =>  1 2</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-6" id="MainContents-6"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-7">[Next]</a>
+<a href="#MainContents-5">[Previous]</a>
+</center>
+<h1>Aggregates / Tests</h1>
+<blockquote><dl><dt><strong>all</strong>
+</dt>
+<dd><code>A [P:test]  ->  X</code>
+<br />
+interp.c<br />
+Applies test P to members of aggregate A, returns true if all pass.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ 5 >] all =>  false</code>
+</li>
+<li><code>[ 1 2 3 4][ 5 <] all =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>compare</strong>
+</dt>
+<dd><code>A A  ->  I</code>
+<br />
+interp.c<br />
+I (=-1 0 +1) is the comparison of aggregates A1 and A2.  The values correspond to the predicates &lt;=  =  &gt;=.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{ 1 2 3}{ 1 2 3} compare =>  0</code>
+</li>
+<li><code>{ 1 2 3}{ 1 2 4} compare =>  4</code>
+</li>
+<li><code>{ 1 2 3}{ 1 31} compare =>  -3</code>
+</li>
+<li><code>"1 2 3"" 1 2 3" compare =>  17</code>
+</li>
+<li><code> 1 1 compare =>  0</code>
+</li>
+<li><code> 1 10 compare =>  -9</code>
+</li>
+<li><code> true false compare =>  1</code>
+</li>
+<li><code> false true compare =>  -1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>equal</strong>
+</dt>
+<dd><code>T T  ->  B</code>
+<br />
+interp.c<br />
+(Recursively) tests whether two trees are identical.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1[ 'a[ 5] 2]][ 1[ 'a[ 5] 2]] equal =>  true</code>
+</li>
+<li><code>[ 1[ 'a[ 5] 2]][ 1[ 'a[ 6] 2]] equal =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>has</strong>
+</dt>
+<dd><code>A X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether aggregate A has X as a member.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 3 has =>  true</code>
+</li>
+<li><code> 3[ 1 2 3] in =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>in</strong>
+</dt>
+<dd><code>X A  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a member of aggregate A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 3 has =>  true</code>
+</li>
+<li><code> 3[ 1 2 3] in =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>leaf</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is not a list.<br />
+</dd>
+<dt><strong>list</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a list.<br />
+</dd>
+<dt><strong>null</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests for empty aggregate X or zero numeric.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 0 null =>  true</code>
+</li>
+<li><code>[] null =>  true</code>
+</li>
+<li><code>{} null =>  true</code>
+</li>
+<li><code>"" null =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>null2</strong>
+</dt>
+<dd><code>X Y -> B</code>
+<br />
+agglib<br />
+<code class="db">== nulld null or;</code>
+<br />
+ Tests whether X or Y is null.<br />
+</dd>
+<dt><strong>nulld</strong>
+</dt>
+<dd><code>X Y -> B Y</code>
+<br />
+agglib<br />
+<code class="db">== [null] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>set</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a set.<br />
+</dd>
+<dt><strong>small</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+interp.c<br />
+X has to be an aggregate or an integer. <br />
+Tests whether aggregate X has 0 or 1 members  or integer X is 0 or 1.<div style="background-color: #ffcc99; border: none;"><ul><li><code> -1 small =>  true</code>
+</li>
+<li><code> 0 small =>  true</code>
+</li>
+<li><code> 1 small =>  true</code>
+</li>
+<li><code> 2 small =>  false</code>
+</li>
+<li><code>[] small =>  true</code>
+</li>
+<li><code>[ 1] small =>  true</code>
+</li>
+<li><code>[ 1 2] small =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>some</strong>
+</dt>
+<dd><code>A [P:test] -> B</code>
+<br />
+interp.c<br />
+Applies test to members of aggregate A and returns true if some ( that is one or more ) pass, false if not.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ odd] some =>  true</code>
+</li>
+<li><code>[ 2 4 6][ odd] some =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>string</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a string.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-7" id="MainContents-7"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-8">[Next]</a>
+<a href="#MainContents-6">[Previous]</a>
+</center>
+<h1>Aggregates / average, flatten, frontlist, insert, delete, variance, ....</h1>
+<blockquote><dl><dt><strong>average</strong>
+</dt>
+<dd><code>L -> N <br /> Set -> I</code>
+<br />
+agglib<br />
+<code class="db">== [sum] [size] cleave /;</code>
+<br />
+<br />
+</dd>
+<dt><strong>cartproduct</strong>
+</dt>
+<dd><code>L L -> L</code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2][ 'a 'b] cartproduct => [[ 2 'b][ 2 'a][ 1 'b][ 1 'a]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>delete</strong>
+</dt>
+<dd><code>A X -> A</code>
+<br />
+seqlib<br />
+Delete first occurance of X out of A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"delete" 'e delete => "dlete"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>flatten</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+<code class="db">== <span style="color: blue; ">[ null]</span>
+<span style="color: blue; ">[]</span>
+<span style="color: blue; ">[ uncons]</span>
+<span style="color: blue; ">[ concat]</span>
+ linrec;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[[ 1 2 3][ 4 5 6][ 7[ 'a 'b] 9]] flatten => [ 1 2 3 4 5 6 7[ 'a 'b] 9]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>from-to</strong>
+</dt>
+<dd><code>I I A -> A<br />C C A -> A</code>
+<br />
+agglib<br />
+Create an aggregate containing values from I1 to I2 for sets and lists, from C1 to C2 for strings.<br />
+</dd>
+<dt><strong>from-to-list</strong>
+</dt>
+<dd><code>I I -> L</code>
+<br />
+agglib<br />
+<code class="db">== [] from-to;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 5 10 from-to-list => [ 5 6 7 8 9 10]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>from-to-set</strong>
+</dt>
+<dd><code>I I -> Set    </code>
+<br />
+agglib<br />
+<code class="db">== {} from-to;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 5 10 from-to-set => { 5 6 7 8 9 10}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>from-to-string</strong>
+</dt>
+<dd><code>C C -> Str</code>
+<br />
+agglib<br />
+<code class="db">== "" from-to";</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 'a 'f from-to-string => "abcdef"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>frontlist</strong>
+</dt>
+<dd><code>A -> A</code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] frontlist => [[][ 1][ 1 2][ 1 2 3]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>frontlist1</strong>
+</dt>
+<dd><code>A -> A</code>
+<br />
+seqlib<br />
+<code class="db">== <span style="color: blue; ">[ null]</span>
+<span style="color: blue; ">[<span style="background: #cccccc; color: black; ">[]</span>
+ cons]</span>
+<span style="color: blue; ">[ uncons]</span>
+<span style="color: blue; ">[<span style="background: #cccccc; color: black; ">[ cons]</span>
+ map popd<span style="background: #cccccc; color: black; ">[]</span>
+ swons]</span>
+ linrec;</code>
+<br />
+Thompson p 247<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] frontlist1 => [[][ 1][ 1 2][ 1 2 3]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>insert</strong>
+</dt>
+<dd><code>A X -> A</code>
+<br />
+seqlib<br />
+Insert X in A at sorted position.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4 1]    3.50 insert => [ 1 2 3    3.50 4 1]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>insert-old</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+Alternative implementation of insert.<br />
+</dd>
+<dt><strong>insertlist</strong>
+</dt>
+<dd><code>L X -> L</code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3]"X" insertlist => [["X" 1 2 3][ 1"X" 2 3][ 1 2"X" 3][ 1 2 3"X"]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>orlist</strong>
+</dt>
+<dd><code>[P] -> [P]</code>
+<br />
+seqlib<br />
+<code class="db">== [list] swap disjoin;</code>
+<br />
+Creates a quoted program that evaluates to true, if [P] returns true or X is a list.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ set] orlist => [[ list][ true][ set] ifte]</code>
+</li>
+<li><code>{ 1 2 3}[ set] orlist[ sum][] ifte =>  6</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>orlistfilter</strong>
+</dt>
+<dd><code>[P] -> [P]</code>
+<br />
+seqlib<br />
+<code class="db">== orlist[filter]cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ set] orlistfilter => [[[ list][ true][ set] ifte] filter]</code>
+</li>
+<li><code>[ 1{ 1 2}[ 99 88]"string"][ set] orlistfilter i => [{ 1 2}[ 99 88]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>permlist</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+Create a list of all permutations of L.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] permlist => [[ 1 2 3][ 2 1 3][ 2 3 1][ 1 3 2][ 3 1 2][ 3 2 1]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>powerlist1</strong>
+</dt>
+<dd><code>L ->L</code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] powerlist1 => [[][ 3][ 2][ 2 3][ 1][ 1 3][ 1 2][ 1 2 3]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>powerlist2</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] powerlist2 => [[ 1 2 3][ 1 2][ 1 3][ 1][ 2 3][ 2][ 3][]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>product</strong>
+</dt>
+<dd><code>L|Set -> N</code>
+<br />
+seqlib<br />
+<code class="db">==  1<span style="color: blue; ">[ *]</span>
+ fold;</code>
+<br />
+Calculate the product of all list or set items.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4 5] product =>  120</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>restlist</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+<code class="db">== <span style="color: blue; ">[ null]</span>
+<span style="color: blue; ">[<span style="background: #cccccc; color: black; ">[]</span>
+ cons]</span>
+<span style="color: blue; ">[ dup rest]</span>
+<span style="color: blue; ">[ cons]</span>
+ linrec;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4] restlist => [[ 1 2 3 4][ 2 3 4][ 3 4][ 4][]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>scalarproduct</strong>
+</dt>
+<dd><code>L L -> N</code>
+<br />
+seqlib<br />
+<code class="db">== <span style="color: blue; ">[ 0]</span>
+ dip2<span style="color: blue; ">[ null2]</span>
+<span style="color: blue; ">[ pop2]</span>
+<span style="color: blue; ">[ uncons2<span style="background: #cccccc; color: black; ">[ * +]</span>
+ dip2]</span>
+ tailrec;</code>
+<br />
+Scalarproduct.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 2 3 1][ 6 4 12] scalarproduct =>  36</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>subseqlist</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] subseqlist => [[ 1][ 1 2][ 1 2 3][ 2][ 2 3][ 3][]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>sum</strong>
+</dt>
+<dd><code>L|Seq -> N</code>
+<br />
+agglib<br />
+<code class="db">== 0[+]fold;</code>
+<br />
+Calculate the sum of all list or set items.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4 5] sum =>  15</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>variance</strong>
+</dt>
+<dd><code>L -> N</code>
+<br />
+agglib<br />
+Calculate variance of lists items.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-8" id="MainContents-8"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-9">[Next]</a>
+<a href="#MainContents-7">[Previous]</a>
+</center>
+<h1>Aggregates / cons and concat</h1>
+<blockquote><dl><dt><strong>concat</strong>
+</dt>
+<dd><code>A A -> A</code>
+<br />
+interp.c<br />
+Evaluates to the concatenation of two aggregates.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ 3 4 5 6] concat => [ 1 2 3 4 3 4 5 6]</code>
+</li>
+<li><code>"abcd""efgh" concat => "abcdefgh"</code>
+</li>
+<li><code>{ 1 2 3 4}{ 3 4 5 6} concat => { 1 2 3 4 5 6}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>cons</strong>
+</dt>
+<dd><code>X A  ->  A</code>
+<br />
+interp.c<br />
+Result is A with a new member X (first member for sequences).<div style="background-color: #ffcc99; border: none;"><ul><li><code> 9[ 1 2 3] cons => [ 9 1 2 3]</code>
+</li>
+<li><code> 'z"abc" cons => "zabc"</code>
+</li>
+<li><code> 9{ 1 2 3} cons => { 1 2 3 9}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>cons2</strong>
+</dt>
+<dd><code>X Y A A -> A A</code>
+<br />
+agglib<br />
+<code class="db">== swapd cons consd;</code>
+<br />
+Cons 2 values to 2 aggregates.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2[][] cons2 => [ 1][ 2]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>consd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [cons] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>enconcat</strong>
+</dt>
+<dd><code>X A1 A2 -> A</code>
+<br />
+interp.c<br />
+The concatenation of two aggregates A1 and A2 with X inserted between them.<br />
+As if defined by <code>enconcat == swapd cons concat;</code>
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 0[ 1 2 3 4][ 3 4 5 6] enconcat => [ 1 2 3 4 0 3 4 5 6]</code>
+</li>
+<li><code> '0"abcd""efgh" enconcat => "abcd0efgh"</code>
+</li>
+<li><code> 0{ 1 2 3 4}{ 3 4 5 6} enconcat => { 0 1 2 3 4 5 6}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swoncat</strong>
+</dt>
+<dd><code>A A -> A</code>
+<br />
+inilib<br />
+<code class="db">== swap concat;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ 3 4 5 6] swoncat => [ 3 4 5 6 1 2 3 4]</code>
+</li>
+<li><code>"abcd""efgh" swoncat => "efghabcd"</code>
+</li>
+<li><code>{ 1 2 3 4}{ 3 4 5 6} swoncat => { 1 2 3 4 5 6}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swons</strong>
+</dt>
+<dd><code>A X  ->  A</code>
+<br />
+interp.c<br />
+Result is A with a new member X (first member for sequences).<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] 9 swons => [ 9 1 2 3]</code>
+</li>
+<li><code>"abc" 'z swons => "zabc"</code>
+</li>
+<li><code>{ 1 2 3} 9 swons => { 1 2 3 9}</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swons2</strong>
+</dt>
+<dd><code>A A X Y -> A A</code>
+<br />
+agglib<br />
+<code class="db">== swapd swons swonsd;</code>
+<br />
+Swons 2 items to 2 aggregates.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"ext"[ 1 2 3] 't 999 swons2 => "text"[ 999 1 2 3]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>swonsd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [swons] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>uncons</strong>
+</dt>
+<dd><code>A  ->  X A</code>
+<br />
+interp.c<br />
+Returns the first and the rest of non-empty aggregate A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] uncons =>  1[ 2 3]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>uncons2</strong>
+</dt>
+<dd><code>A A -> X Y A A</code>
+<br />
+agglib<br />
+<code class="db">==  unconsd uncons swapd;</code>
+<br />
+Uncons 2 values from 2 aggregates.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 999 1 2 3]"text" uncons2 =>  999 't[ 1 2 3]"ext"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unconsd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [uncons] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>unswons</strong>
+</dt>
+<dd><code>A  ->  A X</code>
+<br />
+interp.c<br />
+Returns the rest and the first of non-empty aggregate A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] unswons => [ 2 3] 1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unswons2</strong>
+</dt>
+<dd><code>A A -> A A X Y</code>
+<br />
+agglib<br />
+<code class="db">== <span style="color: blue; ">[ unswons]</span>
+ dip unswons swapd;</code>
+<br />
+Unswons 2 items from 2 aggregates.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3]"text" unswons2 => [ 2 3]"ext" 1 't</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unswonsd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [unswons] dip;</code>
+<br />
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-9" id="MainContents-9"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-10">[Next]</a>
+<a href="#MainContents-8">[Previous]</a>
+</center>
+<h1>Aggregates / first, second,...</h1>
+<blockquote><dl><dt><strong>fifth</strong>
+</dt>
+<dd><code>A -> A</code>
+<br />
+agglib<br />
+<code class="db">==  4 drop first;</code>
+<br />
+<br />
+</dd>
+<dt><strong>first</strong>
+</dt>
+<dd><code>A -> X</code>
+<br />
+interp.c<br />
+X is the first member of the non-empty aggregate A.<br />
+</dd>
+<dt><strong>firstd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [first] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>fourth</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+agglib<br />
+<code class="db">==  3 drop first;</code>
+<br />
+<br />
+</dd>
+<dt><strong>second</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== rest first;</code>
+<br />
+<br />
+</dd>
+<dt><strong>secondd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== <span style="color: blue; ">[ secondd]</span>
+ dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>third</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== rest rest first;</code>
+<br />
+<br />
+</dd>
+<dt><strong>thirdd</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [third] dip;</code>
+<br />
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-10" id="MainContents-10"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-11">[Next]</a>
+<a href="#MainContents-9">[Previous]</a>
+</center>
+<h1>Aggregates / merge, qsort, reverse, transpose, zip</h1>
+<blockquote><dl><dt><strong>merge</strong>
+</dt>
+<dd><code>Seq Seq -> Seq</code>
+<br />
+seqlib<br />
+Concat 2 sorted sequences with sorted result.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ 2 3 4 5] merge => [ 1 2 2 3 3 4 4 5]</code>
+</li>
+<li><code>"aabc""abde" merge => "aaabbcde"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>merge1</strong>
+</dt>
+<dd><code>Seq Seq -> Seq</code>
+<br />
+seqlib<br />
+Concat 2 sorted sequences of sequences with sorted result.<br />
+</dd>
+<dt><strong>mk_qsort</strong>
+</dt>
+<dd><code>L [P] -> L</code>
+<br />
+seqlib<br />
+Sort a sequence. The new order is obtained after applying P on every list item.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[[ 1 2 3][ 5][ 700 -699]][ sum] mk_qsort => [[ 700 -699][ 5][ 1 2 3]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>qsort</strong>
+</dt>
+<dd><code>A -> A</code>
+<br />
+seqlib<br />
+<code class="db">== [small] [] [uncons [&gt;] split] [swapd cons concat] binrec;</code>
+<br />
+Sort a sequence.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"string." qsort => ".ginrst"</code>
+</li>
+<li><code>[ 1 3 2] qsort => [ 1 2 3]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>qsort1</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+<code class="db">== [small] [] [uncons [[first] unary2 &gt;] split] [swapd cons concat] binrec;</code>
+<br />
+ Sort a sequence of sequences.<br />
+</dd>
+<dt><strong>qsort1-1</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+ Sort a sequence of sequences. Like qsort1, but different implementation.<br />
+</dd>
+<dt><strong>reverse</strong>
+</dt>
+<dd><code>S -> S</code>
+<br />
+seqlib<br />
+<code class="db">== [[]] [""] iflist swap shunts;</code>
+<br />
+Reverse a list or string.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3] reverse => [ 3 2 1]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>reverselist</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+<code class="db">== [] swap shunt ;</code>
+<br />
+Reverse a list.<br />
+</dd>
+<dt><strong>reversestring</strong>
+</dt>
+<dd><code>Str -> Str</code>
+<br />
+seqlib<br />
+<code class="db">== "" swap shunt ;</code>
+<br />
+Reverse a string.<br />
+</dd>
+<dt><strong>transpose</strong>
+</dt>
+<dd><code>L -> L</code>
+<br />
+seqlib<br />
+Transpose a list of lists.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[[ 1 2 3 4][ 'a 'b 'c]] transpose => [[ 1 'a][ 2 'b][ 3 'c]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>zip</strong>
+</dt>
+<dd><code>A A -> A</code>
+<br />
+agglib<br />
+<code class="db">== [null2] [pop2 []] [uncons2] [[pairlist] dip cons] linrec;</code>
+<br />
+Zip 2 aggregates into a list of pairs.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ 10 20 30] zip => [[ 1 10][ 2 20][ 3 30]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>zipwith</strong>
+</dt>
+<dd><code>A A [P] -> A</code>
+<br />
+was: stdlib<br />
+<code class="db">== [[null2] [pop2 []] [uncons2]]dip [dip cons]cons linrec;</code>
+<br />
+Zip 2 aggregates, combining by P.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ 10 20 30][ +] zipwith => [ 11 22 33]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-11" id="MainContents-11"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-12">[Next]</a>
+<a href="#MainContents-10">[Previous]</a>
+</center>
+<h1>Aggregates / trees</h1>
+<blockquote><dl><dt><strong>treeflatten</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>treereverse</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>treesample</strong>
+</dt>
+<dd><code>  </code>
+<br />
+seqlib<br />
+<code class="db">== <span style="color: blue; ">[<span style="background: #cccccc; color: black; ">[ 1 2<span style="background: #cccccc; color: blue ">[ 3 4]</span>
+ 5<span style="background: #cccccc; color: blue ">[<span style="background: #ffff00; color: black;">[<span style="background: #ffff00; color: red;">[ 6]</span>
+]</span>
+]</span>
+ 7]</span>
+ 8]</span>
+;</code>
+<br />
+<br />
+</dd>
+<dt><strong>treeshunt</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>treestrip</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-12" id="MainContents-12"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-13">[Next]</a>
+<a href="#MainContents-11">[Previous]</a>
+</center>
+<h1>Characters</h1>
+<blockquote><dl><dt><strong>char</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a character.<br />
+</dd>
+<dt><strong>chr</strong>
+</dt>
+<dd><code>I -> C</code>
+<br />
+interp.c<br />
+C is the character whose Ascii value is integer I (or logical or character).<br />
+</dd>
+<dt><strong>ord</strong>
+</dt>
+<dd><code>C -> I</code>
+<br />
+interp.c<br />
+Integer I is the Ascii value of character C (or logical or integer).<br />
+</dd>
+<dt><strong>to-lower</strong>
+</dt>
+<dd><code>C -> C</code>
+<br />
+inilib<br />
+<code class="db">== ['a  ] [32 +] [] ifte;</code>
+<br />
+<br />
+</dd>
+<dt><strong>to-upper</strong>
+</dt>
+<dd><code>C -> C</code>
+<br />
+inilib<br />
+<code class="db">== ['a &gt;=] [32 -] [] ifte;</code>
+<br />
+ <br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-13" id="MainContents-13"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-14">[Next]</a>
+<a href="#MainContents-12">[Previous]</a>
+</center>
+<h1>Logic</h1>
+<blockquote><dl><dt><strong>!=</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X not equal to Y.  Also supports float.<br />
+</dd>
+<dt><strong>&gt;</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X greater than Y.  Also supports float.<br />
+Qsort is using &gt; in order to obtain the arrangement.<div style="background-color: #ffcc99; border: none;"><ul><li><code>["dup""dup2""dup3" dup dup2"1""Xx"] qsort => ["1""Xx""dup" dup"dup2" dup2"dup3"]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>&gt;=</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X greater than or equal to Y.  Also supports float.<br />
+</dd>
+<dt><strong>&lt;</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X less than Y.  Also supports float.<br />
+</dd>
+<dt><strong>&lt;=</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X less than or equal to Y.  Also supports float.<br />
+</dd>
+<dt><strong>=</strong>
+</dt>
+<dd><code>X Y  ->  B</code>
+<br />
+interp.c<br />
+Either both X and Y are numeric or both are strings or symbols. Tests whether X equal to Y.  Also supports float.<br />
+</dd>
+<dt><strong>and</strong>
+</dt>
+<dd><code>X Y  ->  Z</code>
+<br />
+interp.c<br />
+Result is the intersection of two sets or the logical conjunction of two truth values.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{ 1 2 3}{ 2 3 4} and => { 2 3}</code>
+</li>
+<li><code> true false and =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>boolean</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+inilib<br />
+True if X is a logical or a set.<br />
+</dd>
+<dt><strong>choice</strong>
+</dt>
+<dd><code>B X Y -> Z</code>
+<br />
+interp.c<br />
+Result is X if B is true and Y if B is false.<br />
+</dd>
+<dt><strong>conjoin</strong>
+</dt>
+<dd><code>[P][P] -> [P]</code>
+<br />
+inilib<br />
+<code class="db">== [[false] ifte] cons cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ P1][ P2] conjoin => [[ P1][ P2][ false] ifte]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>disjoin</strong>
+</dt>
+<dd><code>[P][P] -> [P]</code>
+<br />
+inilib<br />
+<code class="db">== [ifte] cons [true] swons cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ P1][ P2] disjoin => [[ P1][ true][ P2] ifte]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>false</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+interp.c<br />
+Pushes the value false.<div style="background-color: #ffcc99; border: none;"><ul><li><code> false =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>falsity</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+inilib<br />
+<code class="db">== false;</code>
+<br />
+<br />
+</dd>
+<dt><strong>logical</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is a logical.<br />
+</dd>
+<dt><strong>negate</strong>
+</dt>
+<dd><code>X -> [P]</code>
+<br />
+inilib<br />
+<code class="db">== [[false] [true] ifte] cons;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ small] negate => [[ small][ false][ true] ifte]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>not</strong>
+</dt>
+<dd><code>X  ->  Y</code>
+<br />
+interp.c<br />
+Y is the complement of a set, the logical negation of a truth value.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{ 1 2 3} not => { 0 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31}</code>
+</li>
+<li><code> true not =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>or</strong>
+</dt>
+<dd><code>X Y  ->  Z</code>
+<br />
+interp.c<br />
+Z is the union of two sets, the logical disjunction of two truth values.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{ 1 2 3}{ 2 3 4} or => { 1 2 3 4}</code>
+</li>
+<li><code> true false or =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>sequand</strong>
+</dt>
+<dd><code>X [P:condition][P:if-true] -> ...</code>
+<br />
+inilib<br />
+<code class="db">== [pop false] ifte;</code>
+<br />
+<br />
+</dd>
+<dt><strong>sequor</strong>
+</dt>
+<dd><code>X [P:condition][P:if-false] -> ...</code>
+<br />
+inilib<br />
+<code class="db">== [pop true] swap ifte;</code>
+<br />
+<br />
+</dd>
+<dt><strong>true</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+interp.c<br />
+Pushes the value true.<div style="background-color: #ffcc99; border: none;"><ul><li><code> true =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>truth</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+inilib<br />
+<code class="db">== true;</code>
+<br />
+<br />
+</dd>
+<dt><strong>xor</strong>
+</dt>
+<dd><code>X Y  ->  Z</code>
+<br />
+interp.c<br />
+Z is the symmetric difference of two sets, the logical exclusive disjunction of two truth values.<div style="background-color: #ffcc99; border: none;"><ul><li><code>{ 1 2 3}{ 2 3 4} xor => { 1 4}</code>
+</li>
+<li><code> true false xor =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-14" id="MainContents-14"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-15">[Next]</a>
+<a href="#MainContents-13">[Previous]</a>
+</center>
+<h1>Numerics / Binary</h1>
+<blockquote><dl><dt><strong>*</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Result is the product of two numbers.  Also supports float.<br />
+</dd>
+<dt><strong>+</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Result is the adding of two numbers. Also supports float.<br />
+</dd>
+<dt><strong>-</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Numeric N is the result of subtracting two numbers. Also supports float.<br />
+</dd>
+<dt><strong>/</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Result is the (rounded) ratio of two integers or the quotient of two numbers.  Also supports float.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 10 3 / =>  3</code>
+</li>
+<li><code>   10.00 3 / =>     3.33</code>
+</li>
+<li><code> 10    3.00 / =>     3.33</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>abs</strong>
+</dt>
+<dd><code>N -> N</code>
+<br />
+interp.c<br />
+Result is the absolute value (0 1 2..) of number N. Also supports float.<br />
+</dd>
+<dt><strong>div</strong>
+</dt>
+<dd><code>I I -> I I</code>
+<br />
+interp.c<br />
+Result are the quotient and remainder of dividing two integers.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 7 3 div =>  2 1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>ipow</strong>
+</dt>
+<dd><code>N I -> N</code>
+<br />
+was: stdlib<br />
+<code class="db">== 1 rotate [*] cons times;</code>
+<br />
+I times N * N, that is N raised to I-th power.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2 3 ipow =>  8</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>max</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Result is the maximum of two numbers. Also supports float.<br />
+</dd>
+<dt><strong>min</strong>
+</dt>
+<dd><code>N N -> N</code>
+<br />
+interp.c<br />
+Result is the minimum of two numbers. Also supports float.<br />
+</dd>
+<dt><strong>null2</strong>
+</dt>
+<dd><code>X Y -> B</code>
+<br />
+agglib<br />
+<code class="db">== nulld null or;</code>
+<br />
+ Tests whether X or Y is null.<br />
+</dd>
+<dt><strong>rem</strong>
+</dt>
+<dd><code>I I -> I</code>
+<br />
+interp.c<br />
+Result is the remainder of dividing two integers.  Also supports float.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 7 3 rem =>  1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-15" id="MainContents-15"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-16">[Next]</a>
+<a href="#MainContents-14">[Previous]</a>
+</center>
+<h1>Numerics / Unary</h1>
+<blockquote><dl><dt><strong>even</strong>
+</dt>
+<dd><code>N -> B</code>
+<br />
+numlib<br />
+<code class="db">== 2 rem null;</code>
+<br />
+Tests whether number N is even.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2 even =>  true</code>
+</li>
+<li><code> 3 even =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>integer</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests whether X is an integer.<br />
+</dd>
+<dt><strong>neg</strong>
+</dt>
+<dd><code>N -> N</code>
+<br />
+interp.c<br />
+Result is the negative of a number.  Also supports float.<br />
+</dd>
+<dt><strong>negative</strong>
+</dt>
+<dd><code>N -> B</code>
+<br />
+numlib<br />
+<code class="db">== 0 &lt;;</code>
+<br />
+<br />
+</dd>
+<dt><strong>null</strong>
+</dt>
+<dd><code>X  ->  B</code>
+<br />
+interp.c<br />
+Tests for empty aggregate X or zero numeric.<br />
+</dd>
+<dt><strong>nulld</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [null] dip;</code>
+<br />
+<br />
+</dd>
+<dt><strong>numerical</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+inilib<br />
+True if X is an integer or a float.<br />
+</dd>
+<dt><strong>odd</strong>
+</dt>
+<dd><code>N -> B</code>
+<br />
+numlib<br />
+<code class="db">== even not;</code>
+<br />
+Tests whether a number is not even.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2 odd =>  false</code>
+</li>
+<li><code> 3 odd =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>positive</strong>
+</dt>
+<dd><code>N -> B</code>
+<br />
+numlib<br />
+<code class="db">== 0 &gt;;</code>
+<br />
+<br />
+</dd>
+<dt><strong>pred</strong>
+</dt>
+<dd><code>N -> N</code>
+<br />
+interp.c<br />
+Result is the predecessor of numeric N.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2 pred =>  1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>sign</strong>
+</dt>
+<dd><code>I -> I</code>
+<br />
+interp.c<br />
+Result is the sign (-1 or 0 or +1) of a number. Also supports float.<div style="background-color: #ffcc99; border: none;"><ul><li><code> -7 sign =>  -1</code>
+</li>
+<li><code> 0 sign =>  0</code>
+</li>
+<li><code>    7.20 sign =>     1.00</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>small</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+interp.c<br />
+X has to be an aggregate or an integer. <br />
+Tests whether aggregate X has 0 or 1 members  or numeric 0 or 1.<div style="background-color: #ffcc99; border: none;"><ul><li><code> -1 small =>  true</code>
+</li>
+<li><code> 0 small =>  true</code>
+</li>
+<li><code> 1 small =>  true</code>
+</li>
+<li><code> 2 small =>  false</code>
+</li>
+<li><code>[] small =>  true</code>
+</li>
+<li><code>[ 1] small =>  true</code>
+</li>
+<li><code>[ 1 2] small =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>succ</strong>
+</dt>
+<dd><code>M  ->  N</code>
+<br />
+interp.c<br />
+Numeric N is the successor of numeric M.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-16" id="MainContents-16"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-17">[Next]</a>
+<a href="#MainContents-15">[Previous]</a>
+</center>
+<h1>Numerics / algorithm: fact, fib, ...</h1>
+<blockquote><dl><dt><strong>cube-root</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>deriv</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>fact</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>fib</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>gcd</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>newton</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>prime</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+<dt><strong>qroots</strong>
+</dt>
+<dd><code>F:a F:b F:c -> </code>
+<br />
+numlib<br />
+find roots of the quadratic equation with coefficients a b c :<br />
+a * X^2  +  b * X   +  c  =  0<br />
+</dd>
+<dt><strong>use-newton</strong>
+</dt>
+<dd><code>     </code>
+<br />
+numlib<br />
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-17" id="MainContents-17"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-18">[Next]</a>
+<a href="#MainContents-16">[Previous]</a>
+</center>
+<h1>Numerics / float</h1>
+<blockquote><dl><dt><strong>acos</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the arc cosine of F.<br />
+</dd>
+<dt><strong>asin</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the arc sine of F.<br />
+</dd>
+<dt><strong>atan</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the arc tangent of F.<br />
+</dd>
+<dt><strong>atan2</strong>
+</dt>
+<dd><code>F F -> F</code>
+<br />
+interp.c<br />
+Result is the arc tangent of the quotient of two floats.<br />
+</dd>
+<dt><strong>ceil</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the float ceiling of F.<div style="background-color: #ffcc99; border: none;"><ul><li><code>    1.25 ceil =>     2.00</code>
+</li>
+<li><code>    1.52 ceil =>     2.00</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>celsius</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+numlib<br />
+<code class="db">==  32 - 5 * 9 /;</code>
+<br />
+Convert Fahrenheit to Celsius.<br />
+</dd>
+<dt><strong>cos</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the cosine of F.<br />
+</dd>
+<dt><strong>cosdeg</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+numlib<br />
+<code class="db">== radians cos;</code>
+<br />
+Cosine calculated from degree-value.<br />
+</dd>
+<dt><strong>cosh</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the hyperbolic cosine of F.<br />
+</dd>
+<dt><strong>e</strong>
+</dt>
+<dd><code>-> F</code>
+<br />
+numlib<br />
+<code class="db">== 1.0 exp;</code>
+<br />
+<br />
+</dd>
+<dt><strong>exp</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is e (2.718281828...) raised to the Fth power.<br />
+</dd>
+<dt><strong>fahrenheit</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+numlib<br />
+<code class="db">==  9 * 5 / 32 +;</code>
+<br />
+Convert Celsius to Fahrenheit.<br />
+</dd>
+<dt><strong>float</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+interp.c<br />
+Tests whether X is a float.<br />
+</dd>
+<dt><strong>floor</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the floor of F.<div style="background-color: #ffcc99; border: none;"><ul><li><code>    1.25 floor =>     1.00</code>
+</li>
+<li><code>    1.52 floor =>     1.00</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>frexp</strong>
+</dt>
+<dd><code>F -> F I</code>
+<br />
+interp.c<br />
+Result is the mantissa and the exponent of F.  Unless F = 0  0.5 &lt;= abs(F2) &lt; 1.0.<br />
+</dd>
+<dt><strong>ldexp</strong>
+</dt>
+<dd><code>F I -> F</code>
+<br />
+interp.c<br />
+Result is F times 2 to the Ith power.<br />
+</dd>
+<dt><strong>log</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the natural logarithm of F.<br />
+</dd>
+<dt><strong>log10</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+F is the common logarithm of F.<br />
+</dd>
+<dt><strong>modf</strong>
+</dt>
+<dd><code>F -> F F</code>
+<br />
+interp.c<br />
+Results are the fractional part and the integer part (but expressed as a float) of F.<div style="background-color: #ffcc99; border: none;"><ul><li><code>   12.25 modf =>     0.25   12.00</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>pi</strong>
+</dt>
+<dd><code>-> F</code>
+<br />
+numlib<br />
+<code class="db">== 3.14159265;</code>
+<br />
+<br />
+</dd>
+<dt><strong>pow</strong>
+</dt>
+<dd><code>F1 F2 -> F</code>
+<br />
+interp.c<br />
+Result is F1 raised to the F2th power.<br />
+</dd>
+<dt><strong>radians</strong>
+</dt>
+<dd><code>N -> F</code>
+<br />
+numlib<br />
+<code class="db">== pi * 180 /;</code>
+<br />
+Convert degree to radians.<br />
+</dd>
+<dt><strong>sin</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the sine of F.<br />
+</dd>
+<dt><strong>sindeg</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+numlib<br />
+<code class="db">== radians sin;</code>
+<br />
+Sine calculated from degree-value.<br />
+</dd>
+<dt><strong>sinh</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the hyperbolic sine of F.<br />
+</dd>
+<dt><strong>sqrt</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the square root of F.<br />
+</dd>
+<dt><strong>tan</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the tangent of F.<br />
+</dd>
+<dt><strong>tandeg</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+numlib<br />
+<code class="db">== radians tan;</code>
+<br />
+Tangent calculated from degree-value.<br />
+</dd>
+<dt><strong>tanh</strong>
+</dt>
+<dd><code>F -> F</code>
+<br />
+interp.c<br />
+Result is the hyperbolic tangent of F.<br />
+</dd>
+<dt><strong>trunc</strong>
+</dt>
+<dd><code>F -> I</code>
+<br />
+interp.c<br />
+Result is an integer equal to the float F truncated toward zero.<div style="background-color: #ffcc99; border: none;"><ul><li><code>    1.25 trunc =>  1</code>
+</li>
+<li><code>    1.52 trunc =>  1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-18" id="MainContents-18"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-19">[Next]</a>
+<a href="#MainContents-17">[Previous]</a>
+</center>
+<h1>Numerics / random, Maxint</h1>
+<blockquote><dl><dt><strong>maxint</strong>
+</dt>
+<dd><code>->  maxint</code>
+<br />
+interp.c<br />
+Pushes largest integer (platform dependent). Typically it is 32 bits.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2147483647 =>  2147483647</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>rand</strong>
+</dt>
+<dd><code>  -> I</code>
+<br />
+interp.c<br />
+I is a random integer.<br />
+</dd>
+<dt><strong>srand</strong>
+</dt>
+<dd><code>I  ->  </code>
+<br />
+interp.c<br />
+Sets the random integer seed to integer I.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-19" id="MainContents-19"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-20">[Next]</a>
+<a href="#MainContents-18">[Previous]</a>
+</center>
+<h1>combinators /  Recursive</h1>
+<blockquote><dl><dt><strong>binrec</strong>
+</dt>
+<dd><code>[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...</code>
+<br />
+interp.c<br />
+Executes P:condition. If that yields true  executes P:if-true. <br />
+Else uses P:R1 to produce two intermediates, recurses on both and then executes P:R2 to combines their results.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 3 5 2 4][ small][][ uncons[ >] split][ enconcat] binrec => [ 1 2 3 4 5]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>condlinrec</strong>
+</dt>
+<dd><code>[ [C1] [C2] .. [P:default] ]  ->  ...</code>
+<br />
+interp.c<br />
+Each <code>[Ci]</code>
+ is of the forms <code>[[P:condition] [P:if-true]]</code>
+ or <code>[[P:condition] [P:R1] [P:R2]]</code>
+. <br />
+Tries each P:condition. If that yields true and there is just a P:if-true executes that and exits. <br />
+ If there are P:R1 and P:R2  executes P:R1, recurses and executes P:R2. <br />
+Subsequent case are ignored. <br />
+If no P:condition yields true then [P:default] is used. It is of the forms [[T]] or [[R1] [R2]]. <br />
+For the former executes T.<br />
+For the latter executes R1, recurses and executes R2.<br />
+</dd>
+<dt><strong>genrec</strong>
+</dt>
+<dd><code>[P:condition] [P:if-true] [P:R1] [P:R2]  ->  ...</code>
+<br />
+interp.c<br />
+Executes P:condition. If that yields true executes P:if-true. <br />
+Else executes P:R1 and then <br />
+<code>[[P:condition] [P:if-true] [P:R1] [P:R2] genrec] P:R2</code>
+.<br />
+</dd>
+<dt><strong>linrec</strong>
+</dt>
+<dd><code>[P:condition] [P:if-true] [P:R1] [P:R2] -> ...</code>
+<br />
+interp.c<br />
+Executes P:condition. If that yields true executes P:if-true. Else executes P:R1, recurses and executes P:R2.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[ 1 2 3 4 5][ null][ pop][ uncons][ *] linrec =>  120</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>primrec</strong>
+</dt>
+<dd><code>X [P:initial] [P:combine] -> X</code>
+<br />
+interp.c<br />
+Executes P:initial to obtain an initial value. <br />
+If X is an integer uses increasing positive integers from 1 up to X and combines by P:combine for new X. <br />
+For aggregate X uses successive members and combines by P:combine for new X.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 5[ 1][ *] primrec =>  120</code>
+</li>
+<li><code>[ 1 2 3 4 5][ 1][ *] primrec =>  120</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>tailrec</strong>
+</dt>
+<dd><code>[P:condition] [P:if-true] [P:R1] -> ...</code>
+<br />
+interp.c<br />
+Executes P:condition. If that yields true executes P:if-true. <br />
+Else executes P:R1 and recurses.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[ 1 2 3 4 5][ null][ pop][ uncons[ *] dip] tailrec =>  120</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>treegenrec</strong>
+</dt>
+<dd><code>T [P:O1] [P:O2] [P:C]  ->  ...</code>
+<br />
+interp.c<br />
+T is a tree. If T is a leaf  executes P:O1. <br />
+Else executes P:O2 and then <br />
+<code>[[P:O1] [P:O2] [P:C] treegenrec] P:C</code>
+.<br />
+</dd>
+<dt><strong>treerec</strong>
+</dt>
+<dd><code>T [P:O] [P:C]  ->  ...</code>
+<br />
+interp.c<br />
+T is a tree. If T is a leaf  executes P:O. <br />
+Else executes <code>[[O] [C] treerec] C</code>
+.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-20" id="MainContents-20"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-21">[Next]</a>
+<a href="#MainContents-19">[Previous]</a>
+</center>
+<h1>combinators /  dips</h1>
+<blockquote><dl><dt><strong>dip</strong>
+</dt>
+<dd><code>X [P] -> ... X</code>
+<br />
+interp.c<br />
+Saves X, executes P and pushes X back.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3["diver"] dip =>  1 2"diver" 3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>dip2</strong>
+</dt>
+<dd><code>X Y [P] -> ... X Y</code>
+<br />
+inilib<br />
+<code class="db">== [dip] cons dip;</code>
+<br />
+Saves X and Y, executes P and restores X and Y. <br />
+Equivalent to dipd.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3["diver"] dip2 =>  1"diver" 2 3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>dip3</strong>
+</dt>
+<dd><code>X Y Z [P] -> ... X Y Z</code>
+<br />
+inilib<br />
+<code class="db">== [dip2]cons dip;</code>
+<br />
+Saves X Y Z, executes P and restores X Y Z.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3["diver"] dip3 => "diver" 1 2 3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>dipd</strong>
+</dt>
+<dd><code>X Y [P] -> ... X Y</code>
+<br />
+inilib<br />
+<code class="db">== [dip] cons dip;</code>
+<br />
+Saves X and Y, executes P and restores X and Y. <br />
+Equivalent to dip2.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3["diver"] dipd =>  1"diver" 2 3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-21" id="MainContents-21"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-22">[Next]</a>
+<a href="#MainContents-20">[Previous]</a>
+</center>
+<h1>combinators / apply:  i, i2, b, x, infra, cleave,...</h1>
+<blockquote><dl><dt><strong>all</strong>
+</dt>
+<dd><code>A [P:test]  ->  X</code>
+<br />
+interp.c<br />
+Applies test P to members of aggregate A, returns true if all pass.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ 5 >] all =>  false</code>
+</li>
+<li><code>[ 1 2 3 4][ 5 <] all =>  true</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>b</strong>
+</dt>
+<dd><code>[P] [P] -> ...</code>
+<br />
+was: stdlib<br />
+<code class="db">== [i]dip i;</code>
+<br />
+Executes both quoted programs.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 16 2 4[ *][ /] b =>  2</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>call</strong>
+</dt>
+<dd><code>Symbol -> ...</code>
+<br />
+inilib<br />
+<code class="db">== <span style="color: blue; ">[]</span>
+ cons i;</code>
+<br />
+Execute the symbol.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2"+" intern call =>  3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>cleave</strong>
+</dt>
+<dd><code>X [P] [P]  ->  Y Z</code>
+<br />
+interp.c<br />
+Executes both quotations, each with X on top of the stack and each producing one result.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 3[ 2 *][ 3 *] cleave =>  6 9</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>construct</strong>
+</dt>
+<dd><code>[P:init] [[P1] [P2] ..]  ->  X1 X2  ..</code>
+<br />
+interp.c<br />
+Saves state of stack and then executes [P:init]. Then executes each [Pi] to give Xi pushed onto saved stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 4 5[ pop][[ 10 +][ 20 +][ 30]] construct =>  4 5 14 24 30</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>i</strong>
+</dt>
+<dd><code>[P]  ->  ...</code>
+<br />
+interp.c<br />
+Executes P. So  [P] i  ==  P.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 *] i =>  1 6</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>i2</strong>
+</dt>
+<dd><code>... X [P1][P2] -> ...</code>
+<br />
+inilib<br />
+<code class="db">== [dip]dip i;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 4 5 6[ *][ +] i2 =>  26</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>infra</strong>
+</dt>
+<dd><code>L [P]  ->  L</code>
+<br />
+interp.c<br />
+Using list L as stack, executes P and returns a new list. The first element of L is used as the top of stack, and after execution of P the top of stack becomes the first element of new L.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 2 3 4 5][ *] infra => [ 6 4 5]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>some</strong>
+</dt>
+<dd><code>A [P:test] -> B</code>
+<br />
+interp.c<br />
+Applies test to members of aggregate A and returns true if some ( that is one or more ) pass, false if not.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ odd] some =>  true</code>
+</li>
+<li><code>[ 2 4 6][ odd] some =>  false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>x</strong>
+</dt>
+<dd><code>[P] -> ...</code>
+<br />
+interp.c<br />
+Executes P without popping [P]. So  [P] x  ==  [P] P.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2[ cons] x =>  1[ 2 cons]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-22" id="MainContents-22"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-23">[Next]</a>
+<a href="#MainContents-21">[Previous]</a>
+</center>
+<h1>combinators / apply: app, nullary, unary, binary,...</h1>
+<blockquote><dl><dt><strong>app1</strong>
+</dt>
+<dd><code>X [P] -> X</code>
+<br />
+interp.c<br />
+Executes P, pushes result new X on stack without old X.<br />
+</dd>
+<dt><strong>app11</strong>
+</dt>
+<dd><code>X X [P] -> X</code>
+<br />
+interp.c<br />
+Executes P  pushes result on stack.<br />
+</dd>
+<dt><strong>app12</strong>
+</dt>
+<dd><code>X Y Z [P]  -> X X</code>
+<br />
+interp.c<br />
+Executes P twice  with Y and Z  returns 2 values.<br />
+</dd>
+<dt><strong>app2</strong>
+</dt>
+<dd><code>X X [P] -> X X</code>
+<br />
+interp.c<br />
+<code class="db">== unary2;</code>
+<br />
+Obsolescent.<br />
+</dd>
+<dt><strong>app3</strong>
+</dt>
+<dd><code>X X X [P] -> X X X</code>
+<br />
+interp.c<br />
+<code class="db">== unary3;</code>
+<br />
+Obsolescent.<br />
+</dd>
+<dt><strong>app4</strong>
+</dt>
+<dd><code>X X X X [P] -> X X X X</code>
+<br />
+interp.c<br />
+<code class="db">== unary4;</code>
+<br />
+Obsolescent.<br />
+</dd>
+<dt><strong>binary</strong>
+</dt>
+<dd><code>X Y [P]  ->  Z</code>
+<br />
+interp.c<br />
+Executes P  which leaves Z on top of the stack. No matter how many parameters this consumes, exactly two are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3[ 9] binary =>  1 9</code>
+</li>
+<li><code> 1 2 3[ + +] binary =>  1 6</code>
+</li>
+<li><code> 1 2 3[] binary =>  1 3</code>
+</li>
+<li><code> 1 2 3[ 99 999] binary =>  1 999</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>nullary</strong>
+</dt>
+<dd><code>[P] -> X</code>
+<br />
+interp.c<br />
+Executes P  which leaves X on top of the stack. No matter how many parameters this consumes  none are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3[ +] nullary =>  1 2 3 5</code>
+</li>
+<li><code> 1 2 3[] nullary =>  1 2 3 3</code>
+</li>
+<li><code> 1 2 3[ 7 8 9] nullary =>  1 2 3 9</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>nullary2</strong>
+</dt>
+<dd><code>X1 X2 [P] -> X1 X2 X:P(rest-of-stack..X1) X:P(rest-of-stack..X2)</code>
+<br />
+inilib<br />
+<code class="db">== [nullary]cons dup i2 swapd;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 2 3[ 10 +] nullary2 =>  2 3 12 13</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>ternary</strong>
+</dt>
+<dd><code>X Y Z [P] -> X</code>
+<br />
+interp.c<br />
+Executes P  which leaves new X on top of the stack. No matter how many parameters this consumes, exactly three are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1 2 3[ 9] ternary =>  9</code>
+</li>
+<li><code> 1 2 3[ + +] ternary =>  6</code>
+</li>
+<li><code> 1 2 3[] ternary =>  3</code>
+</li>
+<li><code> 1 2 3[ 99 999] ternary =>  999</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unary</strong>
+</dt>
+<dd><code>X [P]  ->  Y</code>
+<br />
+interp.c<br />
+Executes P  which leaves Y on top of the stack. No matter how many parameters this consumes  exactly one is removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 100 5 1[ * +] unary =>  100 5 105</code>
+</li>
+<li><code> 1 2 3[] unary =>  1 2 3</code>
+</li>
+<li><code> 1 2 3[ 7 8 9] unary =>  1 2 9</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unary2</strong>
+</dt>
+<dd><code>X Y [P] -> X Y</code>
+<br />
+interp.c<br />
+Executes P twice, with X and Y on top of the stack returning new X and new Y. <br />
+No matter how many parameters both executions consume, exactly two are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 100 5 1 2[ * +] unary2 =>  100 5 105 110</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unary3</strong>
+</dt>
+<dd><code>X Y Z [P] -> X Y Z</code>
+<br />
+interp.c<br />
+Executes P three times, with X Y and Z on top of the stack returning new X, new Y and new Z. <br />
+No matter how many parameters the executions consume, exactly tree are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 100 5 1 2 3[ * +] unary3 =>  100 5 105 110 115</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>unary4</strong>
+</dt>
+<dd><code>X X X X [P] -> X X X X</code>
+<br />
+interp.c<br />
+Executes P four times, with X:1-4 on top of the stack returning four new X. <br />
+No matter how many parameters the executions consume, exactly four are removed from the stack.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 100 5 1 2 3 4[ * +] unary4 =>  100 5 105 110 115 120</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-23" id="MainContents-23"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-24">[Next]</a>
+<a href="#MainContents-22">[Previous]</a>
+</center>
+<h1>combinators / branches and loops</h1>
+<blockquote><dl><dt><strong>branch</strong>
+</dt>
+<dd><code>B [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If B is true then executes P1 else executes P2.<div style="background-color: #ffcc99; border: none;"><ul><li><code> true["true"]["false"] branch => "true"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>case</strong>
+</dt>
+<dd><code>X [..[Xi Pi].. [P:default]]  ->  ...</code>
+<br />
+interp.c<br />
+Indexing on the value of X, execute the matching Pi or P:default.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[[ 1"one"][ 2"two"]["default"]] case => "one"</code>
+</li>
+<li><code> 2[[ 1"one"][ 2"two"]["default"]] case => "two"</code>
+</li>
+<li><code> 'D[[ 1"one"][ 2"two"]["default"]] case =>  'D"default"</code>
+</li>
+<li><code> 9[[ 1["one"]][ 2"two"][ 9"default"]] case =>  9 9"default"</code>
+</li>
+<li><code> 1[[ 1 4 5 *][ 2"two"]["default"]] case =>  20</code>
+</li>
+<li><code> 1[[ 1["one"]][ 2"two"]["default"]] case => ["one"]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>cond</strong>
+</dt>
+<dd><code>[ ...[[Pi:condition] Pi:if-true]... [P:Default]]  ->  ...</code>
+<br />
+interp.c<br />
+Tries each condition. If a condition yields true executes the corresponding if-true and exits. <br />
+If no condition yields true executes default. <div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[[[ 1 =] pop"One"][[ 2 =] pop"Two"][ pop"Default"]] cond => "One"</code>
+</li>
+<li><code> 2[[[ 1 =] pop"One"][[ 2 =] pop"Two"][ pop"Default"]] cond => "Two"</code>
+</li>
+<li><code> 'D[[[ 1 =] pop"One"][[ 2 =] pop"Two"][ pop"Default"]] cond => "Default"</code>
+</li>
+<li><code> 1[[[ 1 =] pop 4 5 *][[ 2 =] pop"Two"][ pop"Default"]] cond =>  20</code>
+</li>
+<li><code> 1[[[ 1 =] pop["One"]][[ 2 =] pop"Two"][ pop"Default"]] cond => ["One"]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>conts</strong>
+</dt>
+<dd><code>->  [[P] [Q] ..]</code>
+<br />
+interp.c<br />
+Pushes current continuations. Buggy, do not use. <br />
+</dd>
+<dt><strong>forever</strong>
+</dt>
+<dd><code>[P] -> ...</code>
+<br />
+inilib<br />
+<code class="db">==  2147483647 swap times;</code>
+<br />
+<br />
+</dd>
+<dt><strong>ifchar</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a character  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>iffile</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a file  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>iffloat</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a float  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>ifinteger</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is an integer  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>iflist</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a list  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>iflogical</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a logical or truth value  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>ifset</strong>
+</dt>
+<dd><code>X [P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a set  executes P1 else executes P2.<br />
+</dd>
+<dt><strong>ifstring</strong>
+</dt>
+<dd><code>X [P:if-true] [P:if-false]  ->  ...</code>
+<br />
+interp.c<br />
+If X is a string executes P:if-true else executes P:if-false.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"text"["true"]["false"] ifstring => "text""true"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>ifte</strong>
+</dt>
+<dd><code>[P:condition] [P:if-true] [P:if-false]  ->  ...</code>
+<br />
+interp.c<br />
+Executes P:condition. If that yields true  then executes P:if-true else executes P:if-false.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1234[ 1234 =]["true"]["false"] ifte =>  1234"true"</code>
+</li>
+<li><code> 1234[ 1234 =][ pop"true"][ pop"false"] ifte => "true"</code>
+</li>
+<li><code> 1234[ odd][][ 1 +] ifte =>  1235</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>opcase</strong>
+</dt>
+<dd><code>X [..[X Xs]..]  ->  [Xs]</code>
+<br />
+interp.c<br />
+Indexing on type of X  returns the list [Xs].<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[[ 1"integer"][ 'c"char"][[]"list"]["default"]] opcase =>  1["integer"]</code>
+</li>
+<li><code> 2[[ 1"integer"][ 'c"char"][[]"list"]["default"]] opcase =>  2["integer"]</code>
+</li>
+<li><code> 'a[[ 1"integer"][ 'c"char"][[]"list"]["default"]] opcase =>  'a["char"]</code>
+</li>
+<li><code>[ 1][[ 1"integer"][ 'c"char"][[]"list"]["default"]] opcase => [ 1]["list"]</code>
+</li>
+<li><code>{}[[ 1"integer"][ 'c"char"][[]"list"]["default"]] opcase => {}["default"]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>repeat</strong>
+</dt>
+<dd><code>[P:body][P:condition] -> ...</code>
+<br />
+inilib<br />
+<code class="db">==  dupd swap<span style="color: blue; ">[ i]</span>
+ dip2 while;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[ 1 +][ 10 =] repeat =>  2</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>times</strong>
+</dt>
+<dd><code>N [P]  ->  ...</code>
+<br />
+interp.c<br />
+Executes N times P.<br />
+</dd>
+<dt><strong>while</strong>
+</dt>
+<dd><code>[P1] [P2]  ->  ...</code>
+<br />
+interp.c<br />
+While executing P1 yields true executes P2.<div style="background-color: #ffcc99; border: none;"><ul><li><code> 1[ 10 =][ 1 +] while =>  1</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-24" id="MainContents-24"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-25">[Next]</a>
+<a href="#MainContents-23">[Previous]</a>
+</center>
+<h1>combinators / functionals on aggregates</h1>
+<blockquote><dl><dt><strong>filter</strong>
+</dt>
+<dd><code>A [P] -> A</code>
+<br />
+interp.c<br />
+Uses test P to filter an aggregate and produces a sametype aggregate.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ odd] filter => [ 1 3]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>fold</strong>
+</dt>
+<dd><code>A X [P] -> X</code>
+<br />
+interp.c<br />
+Starting with X sequentially pushes members of aggregate A and combines with binary operator P to produce new X.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4] 0[ +] fold =>  10</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>fold2</strong>
+</dt>
+<dd><code>A A X [P] -> A</code>
+<br />
+agglib<br />
+<code class="db">== rollupd stepr2;</code>
+<br />
+Starting with X sequentially pushes members of both aggregates and combines with ternary operator P to produce new X.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ 6 7 8][][ pair swons] fold2 => [[ 3 8][ 2 7][ 1 6]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>foldr</strong>
+</dt>
+<dd><code>A X [P] -> X</code>
+<br />
+agglib<br />
+<code class="db">== [ [[null]]dip	(*P1*) []cons [pop]swoncat (*P2*) [uncons] ]dip	(*P3*) linrec;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>["some ""strings ""to ""concat "]""[ concat] foldr => "some strings to concat "</code>
+</li>
+<li><code>["some ""strings ""to ""concat "]""[ concat] fold => "some strings to concat "</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>foldr2</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [ [[null2]]dip(* P1 ) []cons[pop2]swoncat(* P2 *) [uncons2](* P3 *) ]dip linrec;</code>
+<br />
+<br />
+</dd>
+<dt><strong>interleave2</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [cons cons] foldr2;</code>
+<br />
+<br />
+</dd>
+<dt><strong>interleave2list</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [] interleave2;</code>
+<br />
+<br />
+</dd>
+<dt><strong>map</strong>
+</dt>
+<dd><code>A [P] -> A</code>
+<br />
+interp.c<br />
+Executes P on each member of aggregate A and collects results in a sametype aggregate.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ odd] map => [ true false true false]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>mapr</strong>
+</dt>
+<dd><code>A [P] -> A</code>
+<br />
+agglib<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ odd] mapr => [ true false true false]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>mapr2</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [ [null2] [pop2[]] [uncons2] ]dip(* P1 P2 P3 *) [dip cons]cons(* P4 *) linrec;</code>
+<br />
+<br />
+<br />
+</dd>
+<dt><strong>pairstep</strong>
+</dt>
+<dd><code>    </code>
+<br />
+agglib<br />
+<code class="db">== [dupd] swoncat [step pop] cons cons step;</code>
+<br />
+<br />
+</dd>
+<dt><strong>split</strong>
+</dt>
+<dd><code>A [P] -> A A</code>
+<br />
+interp.c<br />
+Uses test P to split aggregate A into two aggregates of the same type.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ odd] split => [ 1 3][ 2 4]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>step</strong>
+</dt>
+<dd><code>A [P] -> ...</code>
+<br />
+interp.c<br />
+Sequentially putting members of aggregate A onto stack, executes P for each member of A.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3 4][ odd] step =>  true false true false</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>step2</strong>
+</dt>
+<dd><code>A A [P] -> ...</code>
+<br />
+was: stdlib<br />
+<code class="db">== [[dup] dip] swoncat [step pop] cons cons step;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[][ 1 2 3][ 4 5 6 0][ pair swap[ swons] dip] step2 => [[ 3 0][ 3 6][ 3 5][ 3 4][ 2 0][ 2 6][ 2 5][ 2 4][ 1 0][ 1 6][ 1 5][ 1 4]]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>stepr2</strong>
+</dt>
+<dd><code>A A [P] -> ...</code>
+<br />
+agglib<br />
+<code class="db">== [ [null2]  [pop pop] ]dip(* P1 P2 *)	[dip]cons [dip]cons [uncons2]swoncat(* P3 *) tailrec;</code>
+<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ 1 2 3][ 4 5 6 0][ pair] stepr2 => [ 1 4][ 2 5][ 3 6]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>treefilter</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>treemap</strong>
+</dt>
+<dd><code>    </code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>treestep</strong>
+</dt>
+<dd><code>T [P]  ->  ...</code>
+<br />
+interp.c<br />
+Recursively traverses leaves of tree T  executes P for each leaf.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-25" id="MainContents-25"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-26">[Next]</a>
+<a href="#MainContents-24">[Previous]</a>
+</center>
+<h1>files and Streams</h1>
+<blockquote><dl><dt><strong>fclose</strong>
+</dt>
+<dd><code>STREAM -></code>
+<br />
+interp.c<br />
+The stream is closed and removed from the stack.<br />
+</dd>
+<dt><strong>feof</strong>
+</dt>
+<dd><code>STREAM -> STREAM B</code>
+<br />
+interp.c<br />
+B is the end-of-file status of stream.<br />
+</dd>
+<dt><strong>ferror</strong>
+</dt>
+<dd><code>STREAM -> STREAM B</code>
+<br />
+interp.c<br />
+B is the error status of stream.<br />
+</dd>
+<dt><strong>fflush</strong>
+</dt>
+<dd><code>STREAM -> STREAM</code>
+<br />
+interp.c<br />
+Flush stream forcing all buffered output to be written.<br />
+</dd>
+<dt><strong>fgetch</strong>
+</dt>
+<dd><code>STREAM -> STREAM C</code>
+<br />
+interp.c<br />
+C is the next available character from stream.<br />
+</dd>
+<dt><strong>fgets</strong>
+</dt>
+<dd><code>STREAM  ->  STREAM Str</code>
+<br />
+interp.c<br />
+Str is the next available line from stream.<br />
+</dd>
+<dt><strong>file</strong>
+</dt>
+<dd><code>Str -> B</code>
+<br />
+interp.c<br />
+Tests whether string Str is a file.<br />
+</dd>
+<dt><strong>fopen</strong>
+</dt>
+<dd><code>Str C -> STREAM</code>
+<br />
+interp.c<br />
+The file system object with pathname Str is opened with mode C (r  w  a  etc.) and stream object STREAM is pushed. <br />
+If the open fails  file:NULL is pushed.<br />
+</dd>
+<dt><strong>fput</strong>
+</dt>
+<dd><code>STREAM X  ->  STREAM</code>
+<br />
+interp.c<br />
+Writes X to stream.<br />
+</dd>
+<dt><strong>fputch</strong>
+</dt>
+<dd><code>STREAM C  ->  STREAM</code>
+<br />
+interp.c<br />
+The character C is written to the current position of stream.<br />
+</dd>
+<dt><strong>fputchars</strong>
+</dt>
+<dd><code>STREAM Str  ->  STREAM</code>
+<br />
+interp.c<br />
+The string Str is written without quotes to the current position of stream.<br />
+</dd>
+<dt><strong>fputstring</strong>
+</dt>
+<dd><code>STREAM Str  ->  STREAM</code>
+<br />
+interp.c<br />
+<code class="db">== fputchars;</code>
+<br />
+ Temporary alternative to fputchars.<br />
+</dd>
+<dt><strong>fread</strong>
+</dt>
+<dd><code>STREAM I  ->  STREAM L</code>
+<br />
+interp.c<br />
+I bytes are read from the current position of stream  and returned as a list of integers.<br />
+</dd>
+<dt><strong>fremove</strong>
+</dt>
+<dd><code>Str  ->  B</code>
+<br />
+interp.c<br />
+The file system object with pathname Str is removed from the file system.  B is a boolean indicating success or failure.<br />
+</dd>
+<dt><strong>frename</strong>
+</dt>
+<dd><code>Str1 Str2  ->  B</code>
+<br />
+interp.c<br />
+The file system object with pathname Str1 is renamed to Str2. B is a boolean indicating success or failure.<br />
+</dd>
+<dt><strong>fseek</strong>
+</dt>
+<dd><code>STREAM I1 I2 -> STREAM</code>
+<br />
+interp.c<br />
+Stream is repositioned to position I1 relative to whence-point I2  where I2 = 0  1  2 for beginning  current position  end respectively?<br />
+</dd>
+<dt><strong>ftell</strong>
+</dt>
+<dd><code>STREAM  ->  STREAM I</code>
+<br />
+interp.c<br />
+I is the current position of stream.<br />
+</dd>
+<dt><strong>fwrite</strong>
+</dt>
+<dd><code>STREAM L  ->  STREAM</code>
+<br />
+interp.c<br />
+A list of integers is written as bytes to the current position of stream.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-26" id="MainContents-26"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-27">[Next]</a>
+<a href="#MainContents-25">[Previous]</a>
+</center>
+<h1>format</h1>
+<blockquote><dl><dt><strong>format</strong>
+</dt>
+<dd><code>I C I1 I2 -> Str</code>
+<br />
+interp.c<br />
+Result is the formatted version of integer I in mode C with maximum width I1 and minimum width I2.<br />
+Possible modes of C:<br />
+'d or 'i: decimal<br />
+'o: octal<br />
+'x or X: hex <div style="background-color: #ffcc99; border: none;"><ul><li><code> 12 'd 1 1 format => "12"</code>
+</li>
+<li><code> 12 'd 8 2 format => "      12"</code>
+</li>
+<li><code> 12 'd 8 3 format => "     012"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>formatf</strong>
+</dt>
+<dd><code>F C I1 I2 -> Str</code>
+<br />
+interp.c<br />
+Result is the formatted version of Float F in mode C with maximum width I1 and precision I2.<br />
+Possible modes of C:<br />
+'e or E: exponential<br />
+'f: fractional<br />
+'g or G: general<div style="background-color: #ffcc99; border: none;"><ul><li><code>   12.89 'e 10 4 formatf => "1.2890e+01"</code>
+</li>
+<li><code>   12.89 'f 10 4 formatf => "   12.8900"</code>
+</li>
+<li><code>   12.89 'g 10 4 formatf => "     12.89"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>strtod</strong>
+</dt>
+<dd><code>Str -> F</code>
+<br />
+interp.c<br />
+String Str is converted to float F.<br />
+</dd>
+<dt><strong>strtol</strong>
+</dt>
+<dd><code>Str I -> I</code>
+<br />
+interp.c<br />
+String Str is converted to an integer using base I.  If I = 0  assumes base 10  but leading "0" means base 8 and leading "0x" means base 16.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"12" 3 strtol =>  5</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-27" id="MainContents-27"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-28">[Next]</a>
+<a href="#MainContents-26">[Previous]</a>
+</center>
+<h1>joy / Help and Debug</h1>
+<blockquote><dl><dt><strong>__dump</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+debugging only: pushes the dump as a list.<br />
+</dd>
+<dt><strong>__latex_manual</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Writes manual of all Joy primitives in Latex to output file.<br />
+</dd>
+<dt><strong>__memoryindex</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Pushes current value of memory.<br />
+</dd>
+<dt><strong>__memorymax</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Pushes value of total size of memory.<br />
+</dd>
+<dt><strong>__settracegc</strong>
+</dt>
+<dd><code>I  -></code>
+<br />
+interp.c<br />
+Sets value of flag for tracing garbage collection to I (= 0..5).<br />
+</dd>
+<dt><strong>__symtabindex</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Pushes current size of the symbol table.<br />
+</dd>
+<dt><strong>__symtabmax</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Pushes value of maximum size of the symbol table.<br />
+</dd>
+<dt><strong>_help</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Lists all hidden symbols in library and then all hidden inbuilt symbols.<br />
+</dd>
+<dt><strong>autoput</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+Pushes current value of flag for automatic output.<br />
+</dd>
+<dt><strong>echo</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+Pushes value of echo flag.<br />
+</dd>
+<dt><strong>help</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Lists all defined symbols  including those from library files. Then lists all primitives of raw Joy.<br />
+</dd>
+<dt><strong>helpdetail</strong>
+</dt>
+<dd><code>L -></code>
+<br />
+interp.c<br />
+Gives brief help on each item of L. <br />
+</dd>
+<dt><strong>manual</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Writes manual of all Joy primitives to output file.<br />
+</dd>
+<dt><strong>setautoput</strong>
+</dt>
+<dd><code>I  -></code>
+<br />
+interp.c<br />
+Sets value of flag for automatic put to I. The automatic output is executed as soon as Joy is returning to its main execution loop.<br />
+0:  none<br />
+1: execute one put<br />
+2: print the stack<br />
+</dd>
+<dt><strong>setecho</strong>
+</dt>
+<dd><code>I -></code>
+<br />
+interp.c<br />
+Sets the value of echo flag for listing of source code lines at stdout while including new files. This results in a mix of code lines with the results these lines produce. <br />
+0: no echo<br />
+1: echo<br />
+2: echo with tab<br />
+3: echo with tab and linenumber.<br />
+</dd>
+<dt><strong>setundeferror</strong>
+</dt>
+<dd><code>I  -></code>
+<br />
+interp.c<br />
+Sets flag that controls behavior of undefined functions. <br />
+0: no error<br />
+1: error<br />
+</dd>
+<dt><strong>undeferror</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+Pushes current value of undefined-is-error flag.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-28" id="MainContents-28"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-29">[Next]</a>
+<a href="#MainContents-27">[Previous]</a>
+</center>
+<h1>joy / Library Loading</h1>
+<blockquote><dl><dt><strong>AGGLIB</strong>
+</dt>
+<dd><code>-> Str</code>
+<br />
+agglib<br />
+<code class="db">==  "agglib.joy - aggregate library
+";</code>
+<br />
+<br />
+</dd>
+<dt><strong>INILIB</strong>
+</dt>
+<dd><code>-> Str</code>
+<br />
+inilib<br />
+<code class="db">==  "inilib.joy - the initial library, assumed everywhere
+";</code>
+<br />
+<br />
+</dd>
+<dt><strong>NUMLIB</strong>
+</dt>
+<dd><code>-> Str</code>
+<br />
+numlib<br />
+<code class="db">==  "numlib.joy - numerical library
+";</code>
+<br />
+<br />
+</dd>
+<dt><strong>SEQLIB</strong>
+</dt>
+<dd><code>-> Str</code>
+<br />
+seqlib<br />
+<code class="db">==  "seqlib.joy - sequence library, assumes agglib.joy
+";</code>
+<br />
+<br />
+</dd>
+<dt><strong>_agglib</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+agglib<br />
+<code class="db">== true;</code>
+<br />
+<br />
+</dd>
+<dt><strong>_inilib</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+inilib<br />
+<br />
+</dd>
+<dt><strong>_numlib</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+numlib<br />
+<code class="db">==  true;</code>
+<br />
+<br />
+</dd>
+<dt><strong>_seqlib</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+seqlib<br />
+<br />
+</dd>
+<dt><strong>all-libload</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">==  basic-libload special-libload;</code>
+<br />
+<br />
+</dd>
+<dt><strong>basic-libload</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">==  "agglib" libload "seqlib" libload "numlib" libload;</code>
+<br />
+<br />
+</dd>
+<dt><strong>include</strong>
+</dt>
+<dd><code>Str  -></code>
+<br />
+interp.c<br />
+Transfers input to file whose name is specified by Str. On end-of-file returns to previous input file.The specified filename has to provide a filename extension.<br />
+</dd>
+<dt><strong>libload</strong>
+</dt>
+<dd><code>Str -></code>
+<br />
+inilib<br />
+Str specifies a filename without filename extension. If there is no symbol '_filename' defined, the specified file is included.<br />
+</dd>
+<dt><strong>special-libload</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">==  "mtrlib" libload "tutlib" libload "lazlib" libload;</code>
+<br />
+<br />
+</dd>
+<dt><strong>verbose</strong>
+</dt>
+<dd><code>-> B</code>
+<br />
+inilib<br />
+<code class="db">== false;</code>
+<br />
+If verbose is defined as false, there comes no notice if a library has already been loaded.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-29" id="MainContents-29"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-30">[Next]</a>
+<a href="#MainContents-28">[Previous]</a>
+</center>
+<h1>joy / Program: quit, abort, name, body, ...</h1>
+<blockquote><dl><dt><strong>abort</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Aborts the execution of current Joy program and returns to Joy main cycle.<br />
+</dd>
+<dt><strong>body</strong>
+</dt>
+<dd><code>U  ->  [P]</code>
+<br />
+interp.c<br />
+Quotation [P] is the body of user-defined symbol U.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ qsort] first body => [[ small][][ uncons[ >] split][ swapd cons concat] binrec]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>gc</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Initiates garbage collection.<br />
+</dd>
+<dt><strong>intern</strong>
+</dt>
+<dd><code>Str -> U</code>
+<br />
+interp.c<br />
+Pushes the item whose name is string Str.<div style="background-color: #ffcc99; border: none;"><ul><li><code>"qsort" intern =>  qsort</code>
+</li>
+<li><code>"+" intern =>  +</code>
+</li>
+<li><code> 1 2"+" intern[] cons i =>  3</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>name</strong>
+</dt>
+<dd><code>U -> Str</code>
+<br />
+interp.c<br />
+Result is the type of U for literals, the name of U for atoms and definitions.<div style="background-color: #ffcc99; border: none;"><ul><li><code>[ qsort] first name => "qsort"</code>
+</li>
+<li><code>[ +] first name => "+"</code>
+</li>
+<li><code> 17 name => " integer type"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>quit</strong>
+</dt>
+<dd><code>-></code>
+<br />
+interp.c<br />
+Exit from Joy.<br />
+</dd>
+<dt><strong>user</strong>
+</dt>
+<dd><code>X -> B</code>
+<br />
+interp.c<br />
+Tests whether X is a user-defined symbol.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-30" id="MainContents-30"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-31">[Next]</a>
+<a href="#MainContents-29">[Previous]</a>
+</center>
+<h1>std-input and -output</h1>
+<blockquote><dl><dt><strong>ask</strong>
+</dt>
+<dd><code>Str -> X</code>
+<br />
+inilib<br />
+<code class="db">== "Please " putchars putchars newline getbr />
+;</code>
+<br />
+<br />
+</dd>
+<dt><strong>bell</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">== '\007 putch;</code>
+<br />
+<br />
+</dd>
+<dt><strong>get</strong>
+</dt>
+<dd><code>-> X</code>
+<br />
+interp.c<br />
+Reads a factor from input and pushes it onto stack. <br />
+<strong>Note: </strong>
+While including files (<code>"filename.joy" include</code>
+) the input into the Joy system is turned to the specified file. In that case get takes its input from the same file. <br />
+</dd>
+<dt><strong>newline</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">== '\n putch;</code>
+<br />
+<br />
+</dd>
+<dt><strong>put</strong>
+</dt>
+<dd><code>X  -></code>
+<br />
+interp.c<br />
+Writes X to output, pops X off stack.<br />
+</dd>
+<dt><strong>putch</strong>
+</dt>
+<dd><code>C|I -></code>
+<br />
+interp.c<br />
+Writes character C or whose ASCII is I to stdout.<br />
+</dd>
+<dt><strong>putchars</strong>
+</dt>
+<dd><code>Str -></code>
+<br />
+interp.c<br />
+Write Str without quotes to stdout.<br />
+</dd>
+<dt><strong>putlist</strong>
+</dt>
+<dd><code>L -></code>
+<br />
+seqlib<br />
+Print a list user-readable to stdout.<br />
+<code>[ [1 2 3] [4 5 6] [7 8 [1 2 3] 9] ] putlist</code>
+is printed as <br />
+<pre>[ [1 2 3]
+  [4 5 6]
+  [7 8 [1 2 3] 9] ]</pre>
+<br />
+</dd>
+<dt><strong>putln</strong>
+</dt>
+<dd><code>X -></code>
+<br />
+inilib<br />
+<code class="db">== put newline;</code>
+<br />
+<br />
+</dd>
+<dt><strong>putstrings</strong>
+</dt>
+<dd><code>L -></code>
+<br />
+inilib<br />
+<code class="db">== [putchars] step;</code>
+<br />
+<br />
+</dd>
+<dt><strong>space</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">== '\032 putch;</code>
+<br />
+<br />
+</dd>
+<dt><strong>stderr</strong>
+</dt>
+<dd><code>-> STREAM</code>
+<br />
+interp.c<br />
+Pushes the standard error stream.<br />
+</dd>
+<dt><strong>stdin</strong>
+</dt>
+<dd><code>-> STREAM</code>
+<br />
+interp.c<br />
+Pushes the standard input stream.<br />
+</dd>
+<dt><strong>stdout</strong>
+</dt>
+<dd><code>-> STREAM</code>
+<br />
+interp.c<br />
+Pushes the standard output stream.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-31" id="MainContents-31"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-32">[Next]</a>
+<a href="#MainContents-30">[Previous]</a>
+</center>
+<h1>system</h1>
+<blockquote><dl><dt><strong>getenv</strong>
+</dt>
+<dd><code>Str -> Str</code>
+<br />
+interp.c<br />
+Retrieves the value of the environment variable specified by Str.<br />
+</dd>
+<dt><strong>system</strong>
+</dt>
+<dd><code>Str -></code>
+<br />
+interp.c<br />
+Escapes to shell and executes Str. The string may cause execution of another program. When that has finished  the process returns to Joy.<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+<center><a name="MainContents-32" id="MainContents-32"></a>
+<a href="#contents">[Contents]</a>
+<a href="#MainContents-31">[Previous]</a>
+</center>
+<h1>time and date</h1>
+<blockquote><dl><dt><strong>clock</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+Pushes the integer value of current CPU usage in hundreds of a second.<br />
+</dd>
+<dt><strong>gmtime</strong>
+</dt>
+<dd><code>I -> L</code>
+<br />
+interp.c<br />
+Converts a time I into a list L representing universal time: <br />
+<br />
+[year month day hour minute second isdst yearday weekday].<br />
+<br />
+Month is 1 = January ... 12 = December.<br />
+isdst is true or false: (daylight savings/summer time). <br />
+weekday is 0 = Monday ... 7 = Sunday.<br />
+</dd>
+<dt><strong>localtime</strong>
+</dt>
+<dd><code>I -> L</code>
+<br />
+interp.c<br />
+Converts a time I into a list L representing local time: <br />
+<br />
+[year month day hour minute second isdst yearday weekday].<br />
+<br />
+Month is 1 = January ... 12 = December.<br />
+isdst is true or false (daylight savings/summer time). <br />
+weekday is 0 = Monday ... 7 = Sunday.<br />
+</dd>
+<dt><strong>localtime-strings</strong>
+</dt>
+<dd><code>-> L</code>
+<br />
+inilib<br />
+Push a list with current time as follows: <br />
+[year month day hour minute second isdst yearday weekday].<br />
+<div style="background-color: #ffcc99; border: none;"><ul><li><code> localtime-strings => ["2002""FEB""11""21""52""12""false""00041""Monday"]</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>mktime</strong>
+</dt>
+<dd><code>L -> I</code>
+<br />
+interp.c<br />
+Converts a list L representing local time into a time I. L has to be in the format generated by localtime.<br />
+</dd>
+<dt><strong>months</strong>
+</dt>
+<dd><code>-> L</code>
+<br />
+inilib<br />
+<code class="db">== <span style="color: blue; ">[ "JAN" "FEB" "MAR" "APR" "MAY" "JUN" "JUL" "AUG" "SEP" "OCT" "NOV" "DEC"]</span>
+;</code>
+<br />
+x<br />
+</dd>
+<dt><strong>now</strong>
+</dt>
+<dd><code>-> S    </code>
+<br />
+inilib<br />
+Push a string containing current time.<div style="background-color: #ffcc99; border: none;"><ul><li><code> now => "21:52:12"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>show-todaynow</strong>
+</dt>
+<dd><code>-></code>
+<br />
+inilib<br />
+<code class="db">==  today putchars space now putchars newline;</code>
+<br />
+Print current time and date to std-output.<br />
+</dd>
+<dt><strong>strftime</strong>
+</dt>
+<dd><code>L Str -> Str</code>
+<br />
+interp.c<br />
+Formats a list L in the format of localtime or gmtime using a string and pushes the result as string.<br />
+</dd>
+<dt><strong>time</strong>
+</dt>
+<dd><code>->  I</code>
+<br />
+interp.c<br />
+Pushes the current time (in seconds since the Epoch).<div style="background-color: #ffcc99; border: none;"><ul><li><code> time =>  1013460732</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>today</strong>
+</dt>
+<dd><code>-> Str</code>
+<br />
+inilib<br />
+Push a string containing todays date.<div style="background-color: #ffcc99; border: none;"><ul><li><code> today => "Monday 11-FEB-02"</code>
+</li>
+</ul>
+</div>
+<br />
+</dd>
+<dt><strong>weekdays</strong>
+</dt>
+<dd><code>-> L</code>
+<br />
+inilib<br />
+<code class="db">== [ "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"]li>
+;</code>
+<br />
+<br />
+</dd>
+</dl>
+</blockquote>
+<hr size="3" width="75%" noshade="" />
+</body>
+</html>

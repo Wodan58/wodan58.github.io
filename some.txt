@@ -1,0 +1,299 @@
+(*--=======================================================================*)
+
+(*		  some.joy			*)
+(* Heiko Kuhrt, Heiko.Kuhrt@t-online.de		*)
+(* 	     Sept01 Jan02 Mar03			*)
+(*=========================================================================*)
+LIBRA
+(*---- ERROR --------------------------------------------------------------*)
+error	== (**X Str*) "ERROR: "swoncat newputline putln abort;
+(*---- ASSERTION ----------------------------------------------------------*)
+assert == ##[P:test] Message
+	[pop i]
+		[pop2]
+		["!!! Assertion failed: "swoncat newputline abort]
+	ifte;
+stackassert == ##[stack-should(reversed)]
+	stack uncons reverse
+	##[should] [stack]
+	[equal]
+		[pop3]
+		["!!! Stack-assertion failed. !!!"newputline
+		 formatp "is:     "swoncat putline
+		 formatp "should: "swoncat putline
+		 abort]
+	ifte;
+(*---- PUT-STACK ----------------------------------------------------------*)
+put-stack-vertical ==
+	stack reverse dup size 
+	##[stack] size
+	[0 =][pop2]
+		[	pred dup [null][pop "TOS"putchars]['d 3 1 format putchars]ifte
+			": "putchars
+			[  uncons [formatx2 putline]dip  ]dip
+		]
+	tailrec;
+put-stack-horizontal ==	stack formatp2 putline;
+
+h   == put-stack-horizontal;
+v   == put-stack-vertical;
+(*---- CONTROL-POINT ------------------------------------------------------*)
+HIDE
+	putStackSize ==	(**[stack]*)dup size formatx putchars;
+	maxsplen == 67;
+	shortenIfLong == ##"stack"
+		[size maxsplen >]
+			[maxsplen resize "..."concat]
+			[]
+		ifte; 
+	putStack == formatp2 shortenIfLong putline;
+	joy-command == get 	["," !=][unitlist i get]while pop [formatp2]put-stack-horizontal;
+	cp-help == ["Commands: \n"
+			"\t q   - quit      a - abort     c   - continue\n"
+			"\tv,v2 - put_stack_vertical     h,h2 - put_stack_inaline \n"
+			"\t j   - joy_command(complete with ',' instead of '.')\n"
+		]putstrings;
+	serve-at-cp == (**  -> *)
+		"cp:"putchars stdin fgets popd 1 take   (* didn't get it to run with get *)
+		[
+			[["c"  =]	pop]
+			[["a"  =]	pop "Returning to main exec loop." putline 	abort]
+			[["q"  =]	pop 			quit]
+			[["h"  =]	pop  h			serve-at-cp]
+			[["v"  =]	pop  v 			serve-at-cp]
+			[["j"  =]	pop  joy-command	serve-at-cp]
+			[		pop  cp-help 		serve-at-cp]
+		]cond;
+IN
+tp ==   stack 	putStackSize " at tp:"putchars	putStack;
+cp == 	tp  serve-at-cp;
+END;
+ncp == (**Name-of-control-point*)putchars cp;
+ntp == (**Name-of-control-point*)putchars tp;
+(*-----------------------------------------*)
+cpifte == 
+	[	["ifte__if__enter" ncp ]["ifte__if__leave" ncp ]wrapconcat	  ]dipd
+	[	["ifte_then_enter" ncp ]["ifte_then_leave" ncp ]wrapconcat	  ]dip
+		["ifte_else_enter" ncp ]["ifte_else_leave" ncp ]wrapconcat
+	ifte;
+cpcond == 
+	;
+cpbinrec == 
+	[	["binrec__if__enter" ncp ]["binrec__if__leave" ncp ]wrapconcat	  ]dipdd
+	[	["binrec_then_enter" ncp ]["binrec_then_leave" ncp ]wrapconcat	  ]dipd
+	[	["binrec__R1__enter" ncp ]["binrec__R1__leave" ncp ]wrapconcat	  ]dip
+		["binrec__R2__enter" ncp ]["binrec__R2__leave" ncp ]wrapconcat
+	binrec;
+(*-----------------------------------------*)
+tpifte == 
+	[	["ifte__if__enter" ntp ]["ifte__if__leave" ntp ]wrapconcat	  ]dipd
+	[	["ifte_then_enter" ntp ]["ifte_then_leave" ntp ]wrapconcat	  ]dip
+		["ifte_else_enter" ntp ]["ifte_else_leave" ntp ]wrapconcat
+	ifte;
+tpcond == 
+	;
+tpbinrec == 
+	[	["binrec__if__enter" ntp ]["binrec__if__leave" ntp ]wrapconcat	  ]dipdd
+	[	["binrec_then_enter" ntp ]["binrec_then_leave" ntp ]wrapconcat	  ]dipd
+	[	["binrec__R1__enter" ntp ]["binrec__R1__leave" ntp ]wrapconcat	  ]dip
+		["binrec__R2__enter" ntp ]["binrec__R2__leave" ntp ]wrapconcat
+	binrec;
+wraptps == [dup formatx 20 resize [ntp]cons dup wrapconcat]map;
+tpapps  == [wraptps]dip apps;
+(*---- TEST ---------------------------------------------------------------*)
+HIDE
+	putDefName    == dup first name putline;
+	putQuotation  == (**[P:testi]*)		dup formatp "==" ";" wrapconcat putline;
+	evalQuotation == (**[P:testi]*)		[]swap infra reverse;
+	putResult     == (**[P:testi]*)		formatp putline;
+IN
+test ==  ##[tquotes-def-name]
+	putDefName   
+	dequote	 
+	##[ [P:test1] [P:test2] ... ]
+	uncons 	[putQuotation evalQuotation putResult]dip
+	[	"-------"putline
+		putQuotation
+		evalQuotation
+		putResult
+	]step;
+run-tests == (**[tquotes-def-names]*)
+	uncons [unitlist test]dip
+	[	"-------------------------"putline
+		unitlist test
+	]step
+END;
+(*---- FORMAT ASCII -------------------------------------------------------*)
+value-separator == "   ";
+doformatp == 	
+	[
+		[[string]  	" \"" "\""wrapconcat]
+		[[char]	  	""cons " '"swoncat]
+		[[integer] 	formi-nospaces " "swoncat]
+		[[logical] 	[" true"][" false"]branch]
+		[[float]   	'f 8 2 formatf]
+		[[set]		""[doformatp   concat]fold "{" "}" wrapconcat]
+		[[list]		""[doformatp   concat]fold "["  "]" wrapconcat]
+		[		name " "swoncat]
+	]cond;
+formatp  == ""[doformatp       		 concat ]fold;
+formatp2 == ""[doformatp value-separator concat3]fold;
+formatx  == unitlist formatp;
+formatx2 == [list]
+		[formatp2 "[""]"wrapconcat]
+		[formatx]
+	    ifte;
+
+formatstack == 	stack formatp2;
+(*---- DIVERSA ------------------------------------------------------------*)
+foldapps	== 
+	(** [ [P:app1]..[P:app-n] ]   I:n-ary   X:init [P:fold] -> X *)
+	[ [[nullary]map]dip [popd]times ]dip2	fold;
+fold-andconds	== true [and]   foldapps;
+fold-orconds  	== false[or]    foldapps;
+fold-strconcat 	== ""   [concat]foldapps;
+fold-listconcat	== []   [concat]foldapps;
+apps		== (** [ [P:app1]..[P:app-n] ] I:n-ary -> X1..Xn *)
+	[[nullary]map]dip  [popd]times  reverse []step;
+cleave3		== pair cons      1 [[nullary]map]dip  [popd]times []step;
+cleave4		== pair cons cons 1 [[nullary]map]dip  [popd]times []step;
+
+mald	== ##A [P:map] [P:fold] -> X
+	[map]dip
+	##A [P:fold]
+	unconsd swapd
+	##A:tl A:x [P:fold] 
+	fold;
+(*-------------------------------------------------------------------------*)
+intersect ==	## A I:Index -> A A
+	dup2   drop  [take]dip;
+HIDE
+	unconsX ==	## [hd:x:tl] I -> [hd] [tl] X
+		intersect unswons;
+	appP	==	## X [P] -> X
+		i;
+IN
+onitem	== ##  A [P] I:Index -> A
+	swap [unconsX]dip
+	appP 
+	rollup enconcat;
+END;
+(*-------------------------------------------------------------------------*)
+get-file-contents == (** filename -> file-contents *)
+	"r" fopen  
+	[""]dip [feof][fclose][fgets swap [concat]dip]tailrec;
+write-file-contents == (** contents filename  -> *)
+	"w"fopen
+	swap	
+	fputchars 	
+	fclose;
+(*------------------------------------*)
+formi-nospaces  == 'd 1 1 format;
+putline		== putchars newline;
+newputline	== newline putline;
+calld		== [call]dip;
+twice		== dup dip i;
+wrapconcat	== [swoncat]dip concat;
+concat3		== concat concat;
+absolute	== [0 <][-1 *][]ifte;
+dipdd		== [dipd]cons dip;
+dudip		== [dup]dip dip;
+pop3		== pop2 pop;
+concatall	== ""[concat]fold;
+dequote		== []swap infra reverse;
+docca 		== dequote concatall;
+doccaif == [	[[string]	]
+		[[list]    docca]
+		["doccaif: string or quotation expected: " error]
+		]cond;
+sdip		== [swap]dip dip;
+swap2		== rollupd rollup;
+over		== dupd swap;
+over2		== [dup2]dipd swap2;
+overd		== [over]dip;
+nop		== id;
+(*------------------------------------*)
+resize	== (** Str I:Length -> Str *)
+	""swap					# Str "" I
+		[null]
+		[pop]
+		[pred[  (** Str:new Str:in  -> Str *)
+			[swap null]['  swons][unswonsd cons]
+		     ifte]dip
+		]
+	tailrec 				# Str newstr 
+	popd reverse;				# newstr
+(*------------------------------------*)
+last  == reverse first;
+unzip == reverse [[][]]dip [unpair swons2]step;
+isin == ## X A -> B
+	swap [equal]cons some;
+needed-time == (** [P] -> [...]  F:Used-time-msec *) 
+	clock swap []swap infra clock rolldown - 1000.0 /;
+(*------------------------------------*)
+rqm == 	(* Replace Quotation Marks *)
+	(** Str -> Str *)
+	#[ ['\' =][pop '\" ][]ifte ]map;    (*"*)
+	nop;
+(*-------------------------------------------------------------------------*)
+(* saved, when stdlib went into gc. Originaly from Manfred von Thun. *)
+pair 	== [] cons cons;
+zipwith ==  
+        [[null2] [pop2 []] [uncons2]] dip
+        [dip cons] cons
+        linrec;
+ipow  	==  1 rotate [*] cons times;
+b 	== [i] dip i;
+step2	== [[dup] dip] swoncat [step pop] cons cons step;
+(*-------------------------------------------------------------------------*)
+joyshell == (** Str -> Str *)
+	 "in"write-file-contents
+	(* "joy <in >out"system *)
+	 "out"get-file-contents 
+	;
+(*=========================================================================*)
+flip 	== (** A B..X Y -> Y X..B A *)	stack reverse  			  unstack;
+dig 	== (** A B..X Y -> Y A B..X *)	stack uncons   reverse cons    reverse unstack;
+undig 	== (** A B..X Y -> B..X Y A *)	stack reverse  uncons  reverse cons    unstack;
+		
+HIDE
+	onstackitem ==  ## [P] I:index(0:stackbottom)
+			stack uncons uncons rollup swap
+			## [stack] [P] I
+			[reverse]dipd
+			onitem
+			reverse unstack;
+	getstackitem == ## I:index(0:stackbottom)
+			stack uncons swap
+			## [stack] I
+			dupd 
+			[reverse]dip drop uncons pop
+			## [stack] X
+			swons
+			unstack;
+IN
+initlocals	== ## [locals]
+		stack uncons reverse concat reverse unstack;
+getlocals	== ## N:NumberOfLocals -> [locals]
+		stack uncons   reverse  swap  
+		## [stack/reversed] N
+		[take][drop]cleave 
+		reverse cons
+		unstack;
+poplocals	== ## I:number-of-locals
+		stack uncons swap 
+		## [stack] I
+		[reverse]dip drop 
+		reverse unstack;
+setl	== [pop] rollup [concat]dip onstackitem;
+onl	== onstackitem;
+getl	== getstackitem;
+popl	== undig;
+END;
+(*-------------------------------------------------------------------------*)
+ENDLIBRA	== id.
+(*=========================================================================*)
+
+"some		is loaded.\n"putchars.
+
+(*=========================================================================*)

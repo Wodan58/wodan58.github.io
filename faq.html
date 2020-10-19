@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<p>Contents:</p>
+<ol style="list-style-type: decimal">
+<li>&quot;What is a functional language ?&quot;</li>
+<li>&quot;What really is expression evaluation ?&quot;</li>
+<li>&quot;What is an applicative functional language ?&quot;</li>
+<li>&quot;Do functional languages need function application ?&quot;</li>
+<li>&quot;What might a compositional functional language be ?&quot;</li>
+<li>&quot;What is a concatenative functional language ?&quot;</li>
+<li>&quot;Why distinguish between postfix and concatenative notation ?&quot;</li>
+<li>&quot;What is an environment ?&quot;</li>
+<li>&quot;Is an environment needed ?&quot;</li>
+<li>&quot;What about second order functions in a concatenative language ?&quot;</li>
+<li>&quot;What is the difference between a list and a quotation ?&quot;</li>
+<li>&quot;So, what is Joy ?&quot;</li>
+<li>&quot;Where can I find out more about Joy ?&quot;</li>
+</ol>
+<h2 id="what-is-a-functional-language">&quot;What is a functional language ?&quot;</h2>
+<p>The programs of functional languages are expressions, and computation proceeds by evaluating expressions. Functional languages differ from mainstream imperative languages (C, C++, Pascal, Ada) in one respect: imperative languages have assignment statements, which are commands to change the state, a collection of assignable variables. Functional languages have no state and hence no assignment statements.</p>
+<p>One of the simplest functional languages is the one we encountered in primary school, the language of arithmetical expressions. We learnt how to do evaluations such as the following:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (2 + 3)&#160; *&#160; (7 - 4)
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160; 5&#160;&#160;&#160;&#160; *&#160; (7 - 4)
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160; 5&#160;&#160;&#160;&#160; *&#160;&#160;&#160;&#160; 3
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;  15</code></pre>
+<p>Note that the evaluation steps in the second and third line could have been interchanged or even done in parallel. In contrast, in imperative languages it is not always possible to execute assignment statements in arbitrary order.</p>
+<p>Expressions need not be numerical, subexpressions can be of different types, and the operations can be unary. In the following the only operand is a list of numbers, here writen inside square brackets.</p>
+<pre><code>(1)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square(&#160; size(&#160; rest( [11 22 33] ) ) )
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square(&#160; size(&#160; [22 33]&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ) )
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square(&#160; 2&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; )
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4</code></pre>
+<p>This will serve as the running example in most of the remaining sections.</p>
+<h2 id="what-really-is-expression-evaluation">&quot;What really is expression evaluation ?&quot;</h2>
+<p>In the previous section the first example was a numerical expression:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (2 + 3)&#160; *&#160; (7 - 4)</code></pre>
+<p>The whole expression, the two parenthesised subexpressions, the four single digit numerals and the final two digit end result - all of them denote numbers. The three symbols &quot;+&quot;, &quot;*&quot; and &quot;-&quot; are infix operators which denote binary functions from two numbers to give a result number.</p>
+<p>In the second example:</p>
+<pre><code>(1)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square(&#160; size(&#160; rest( [11 22 33] ) ) )</code></pre>
+<p>the symbol &quot;[11 22 33]&quot; denotes a list of three elements which happen to be numbers. The symbol &quot;rest&quot; denotes a unary function from lists to lists, the symbol &quot;size&quot; denotes a unary function from lists to numbers, and &quot;square&quot; denotes a unary function from numbers to numbers.</p>
+<p>In both examples all lines of the evaluation denote the same number, the end results 15 and 4 respectively. Alternatively we say that all lines have the same value. So, single symbols denote all sorts of things, numbers, lists and various functions. Expressions always denote, or have, values.</p>
+<p>Denotations and values are semantic notions, and so is evaluation, the end result of the process of finding the value. By that we mean finding an expression that does not contain function or operator symbols, but has the same value. Typically, though by no means always, the final expression is shorter than the original.</p>
+<p>The actual evaluation process, however, is purely syntactic, it is just a matter of rewriting the given expression in accordance with certain rules. The rewriting rules are essentially derived from the semantics, but using the rules is a purely syntactic process. One can do it without knowing what the symbols mean, even without understanding the difference between a symbol and what it denotes. Most of us understood the difference between a numeral and a number only when we encountered notations to bases other than ten. (I am told that one textbook says that computers use hexadecimal numbers as addresses, which is nonsense.)</p>
+<p>The difference between a symbol and what it denotes will become important in what follows. This is because in Joy many symbols look more or less familiar, but there is an important difference between what they denote conventionally and what they denote in Joy. One can learn to program in Joy barely noticing the difference, but there is a deep shift in denotation. Some people might speak of a &quot;paradigm shift&quot;, but I would be reluctant to use the term here.</p>
+<h2 id="what-is-an-applicative-functional-language">&quot;What is an applicative functional language ?&quot;</h2>
+<p>All but the simplest functional languages at least internally use a binary application operator which here will be written with an explicit infix symbol &quot;@&quot;. An expression of the form &quot;f @ x&quot; is to be read as &quot;the function f applied to the argument x&quot;. The value of that expression is exactly the same as the value of &quot;f(x)&quot;. The evaluation of the running example now looks like this:</p>
+<pre><code>(2)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160; @&#160; (size&#160; @&#160; (rest&#160; @&#160; [11 22 33]) )
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160; @&#160; (size&#160; @&#160; [22 33]&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; )
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160; @&#160; 2
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4</code></pre>
+<p>Application is a second order function because one of its arguments, the one written on the left, is itself a function. The reason for hiding the explicit symbol &quot;@&quot; externally is that it just adds to the syntactic complexity. The reason for introducing application internally will be explained in Section ?.</p>
+<p>The best known applicative functional languages are:</p>
+<ul>
+<li>Lisp and Scheme (dynamic typing, strict or &quot;eager&quot;)</li>
+<li>ML (static typing, strict or &quot;eager&quot;)</li>
+<li>Erlang (optional static typing, strict or &quot;eager&quot;)</li>
+<li>Miranda and Haskell (static typing, nonstrict or &quot;lazy&quot;)</li>
+</ul>
+<p>Lisp, Scheme and ML are actually impure functional languages because they have assignment statements.</p>
+<h2 id="do-functional-languages-need-function-application">&quot;Do functional languages need function application ?&quot;</h2>
+<p>Because applicative functional languages have the higher order application function, it is possible to define other higher order functions. One example is the composition function, a binary operation on unary functions. Notationally it is often written in infix, using a small circle, or &quot;o&quot;, or &quot;.&quot;, as here. The definition is</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (f . g)&#160; @&#160; x&#160;&#160; ==&#160;&#160; f&#160; @&#160; (g&#160; @&#160; x)</code></pre>
+<p>Since the &quot;f&quot; and the &quot;g&quot; appear in the same order on the left side as in the applicative expression on the right, this is sometimes called &quot;applicative order&quot; notation for composition.</p>
+<p>The functions in the running examples are all unary, so it can be written in two ways:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (square&#160; .&#160; (size&#160; .&#160; rest))&#160;&#160; @&#160;&#160; [11 22 33]
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ((square&#160; .&#160; size)&#160; .&#160; rest)&#160;&#160; @&#160;&#160; [11 22 33]</code></pre>
+<p>Function composition is in fact associative, and hence the two have the same value. So the running example might as well be written without the inner parentheses as</p>
+<pre><code>(3)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (square&#160; .&#160; size&#160; .&#160; rest)&#160;&#160; @&#160;&#160; [11 22 33]</code></pre>
+<p>The change to function composition has eliminated the first two occurrences of &quot;@&quot; in (2) of the previous section.</p>
+<p>Application is not associative, and apart from being a function it has no formal properties at all. Could the last application &quot;@&quot; also be eliminated and turned into composition? Clearly not, because &quot;[11 22 33]&quot; does not denote a unary function. Therefore it seems that functional languages need application.</p>
+<h2 id="what-might-a-compositional-functional-language-be">&quot;What might a compositional functional language be ?&quot;</h2>
+<p>Suppose the expression &quot;[11 22 33]&quot; could denote a unary function, just as &quot;square&quot;, &quot;size&quot; and &quot;rest&quot; do. Then the running example would be written</p>
+<pre><code>(4)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160; .&#160; size&#160; .&#160; rest&#160; .&#160; [11 22 33]</code></pre>
+<p>The entire composition would have to be applied to a suitable suppressed argument.</p>
+<p>One suitable argument is a stack which is initially empty. Then &quot;[11 22 33]&quot; denotes not a list but a stack function which pushes a list. Similarly &quot;square&quot;, &quot;size&quot; and &quot;rest&quot; would denote stack functions which replace the top element of the stack. The previous result, &quot;4&quot;, denotes not a number but a stack function which pushes a number. Then all five symbols denote unary functions from stacks to stacks. What normally are binary operators &quot;+&quot; and &quot;*&quot; for addition and multiplication now also denote unary stack functions, they replace the top two elements of the stack by a single one. The idea is simple enough, and it is one of the key features of Joy.</p>
+<p>An alternative for function composition would use a reverse notation. It is sometimes defined using an infix operator, say &quot;;&quot;, instead of the previous &quot;.&quot;:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (f ; g)&#160; @&#160; x&#160;&#160; ==&#160;&#160; g&#160; @&#160; (f&#160; @&#160; x)</code></pre>
+<p>This is is known as &quot;diagrammatic order&quot; notation for composition. Then the running example would be written</p>
+<pre><code>(5)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [11 22 33]&#160; ;&#160; rest&#160; ;&#160; size&#160; ;&#160; square</code></pre>
+<p>One advantage of this notation is that the order in the notation reflects the order of the execution.</p>
+<p>Any functional language which completely replaces application, by explicit or implicit &quot;@&quot;, by composition, with explicit or implicit &quot;.&quot; or &quot;;&quot;, might be called a <strong>compositional</strong> functional language.</p>
+<h2 id="what-is-a-concatenative-functional-language">&quot;What is a concatenative functional language ?&quot;</h2>
+<p>An applicative functional language is based on the higher order function of application. A compositional functional language is based on the higher order function of composition. Either kind of language might have other kinds of higher order functions.</p>
+<p>Here is an example: the squaring function can be <strong>map</strong>ped over the elements of a list [1 2 3] to yield the result [1 4 9]. In a compositional language one might write</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160; map&#160; square</code></pre>
+<p>where &quot;map&quot; is an infix operator just like &quot;;&quot;. Now &quot;[1 2 3]&quot; and &quot;square&quot; denote unary stack functions, and the two are transformed by the higher order mapping function into another unary stack function, the one denoted by &quot;[1 4 9]&quot;.</p>
+<p>With two distinct infix operators &quot;;&quot; and &quot;map&quot;, there arises the possibility of expressions containing both. Typically it will be necessary to use parentheses too, as in the following:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; ([1 2 3]&#160; ;&#160; rest)&#160; map&#160; square
+&#160;&#160;&#160;&#160;&#160;&#160;&#160; ([1 2 3]&#160; map&#160; square)&#160; ;&#160; rest</code></pre>
+<p>It so happens that the two expressions denote the same function, the one denoted by &quot;[4 9]&quot;.</p>
+<p>Functional languages need the mapping function and several others, especially a conditional, or &quot;if-then-else&quot; of some kind. However, if a compositional language has no other function operator, then there is no point in ever writing the &quot;;&quot;. The running example would now be written as</p>
+<pre><code>(6)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [11 22 33]&#160;&#160; rest&#160;&#160; size&#160;&#160; square</code></pre>
+<p>Now the concatenation of any consecutive two or three or all four of the parts of (6) denote the composition of the stack functions that the parts denote. This is a desirable consequence. But it must not come at the price of not being able to express other higher order functions such as the mapping function or the conditional or the many others that a mature language needs. The topic is resumed in section 10.</p>
+<p>A language in which the concatenation of programs denote the composition of functions has been called a <strong>concatenative</strong> language. I first heard this terminology from Billy Tanksley.</p>
+<h2 id="why-distinguish-between-postfix-and-concatenative-notation">&quot;Why distinguish between postfix and concatenative notation ?&quot;</h2>
+<p>The running example (6) looks just like postfix notation: the operand is [11 22 33] and there are three unary operators. Similarly the first example in section 1 could be written in postfix as</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 2&#160;&#160; 3&#160;&#160; +&#160;&#160; 4&#160;&#160; 7&#160;&#160; -&#160;&#160; *</code></pre>
+<p>with four number operands and three binary operators. Just as in the evaluation of the original infix expression, the addition and the subtraction could be done in any order, even simultaneously. Just as in the original infix expression, the whole expression, the two subexpressions, the four single digit numerals - all of them denote numbers.</p>
+<p>The expression is also correct concatenative notation (though not in compositional languages that use &quot;;&quot;). So what is the difference? Consider some consecutive parts such as</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; +&#160;&#160;&#160;&#160;&#160;&#160; 3&#160; +&#160;&#160;&#160;&#160;&#160;&#160;&#160; +&#160; 4&#160;&#160;&#160;&#160;&#160;&#160;&#160; 3&#160; +&#160; 4&#160;&#160;&#160;&#160;&#160;&#160;&#160; 7&#160; -&#160; *</code></pre>
+<p>These do not denote numbers, they are not postfix expressions. However, they are perfectly correct concatenative expressions, each denoting, as always, unary functions from stacks to stacks.</p>
+<p>The difference between postfix notation and concatenative notation becomes even more obvious in the following. The square of a number is just the number multiplied with a <strong>dup</strong>licate of itself. Let &quot;dup&quot; denote a stack function which <strong>dup</strong>licates the top element of the stack. So the running example might be written as</p>
+<pre><code>(7)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [11 22 33]&#160;&#160; rest&#160;&#160; size&#160;&#160; dup&#160;&#160; *</code></pre>
+<p>The duplication operator only makes sense in compositional languages that use a stack (or perhaps something similar), and hence also in concatenative languages. Two others are for <strong>pop</strong>ping off the top element of the stack and for <strong>swap</strong>ping the top two elements.</p>
+<p>Postfix notation is used in some pocket calculators. Concatenative notation is used in Forth, Postscript and Joy. The unix utility <strong>dc</strong> (which similates a <strong>d</strong>esk <strong>c</strong>alculator) is often described as using postfix, but the presence of a duplication operator d actually makes it concatenative. The two other stack manipulators are easily defined in <strong>dc</strong>.</p>
+<h2 id="what-is-an-environment">&quot;What is an environment ?&quot;</h2>
+<p>The squaring function can be defined in just about any programming language. In infix notation the external definition might look similar to this:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square(x)&#160;&#160; ==&#160;&#160; x&#160; *&#160; x</code></pre>
+<p>Internally, and possibly externally too, the definition would be</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160;&#160; ==&#160;&#160; Lx :&#160; x * x</code></pre>
+<p>where &quot;Lx&quot; is sometimes written &quot;\x&quot; or &quot;lambda x&quot; or &quot;fun x&quot;. The expression on the right side of the definition then is to be read as &quot;the function of one argument x which yields the value x * x&quot;. An expression like that is known as a <strong>lambda abstraction</strong>.</p>
+<p>Such a definition would be used as in the evaluation</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160; square&#160; @&#160; 2
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; (Lx : x * x)&#160; @&#160; 2
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160; 2 * 2
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4</code></pre>
+<p>In the second line &quot;square&quot; is being replaced by its definition. This sets up an environment in which x = 2, in which the formal parameter x has been given the value of the actual parameter 2. An environment is a collection of associations of formal and actual parameters. In all but the simplest cases the environment will contain several such associations. In the third line this environment is used to replace the formal parameter x by the actual parameter 2. All this is completely hidden from the user when the first style of definition is used.</p>
+<p>The two operations of lambda abstraction and application are complementary. They form the heart of the lambda calculus which underlies all the mainstream functional languages.</p>
+<h2 id="is-an-environment-needed">&quot;Is an environment needed ?&quot;</h2>
+<p>The previous definitions of the squaring function as a lambda abstraction might be written in postfix or concatenative notation as</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160;&#160; ==&#160;&#160; Lx :&#160; x&#160; x&#160; *
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160;&#160; ==&#160;&#160; Ls :&#160; x&#160; dup&#160; *</code></pre>
+<p>For a compositional (and hence for concatenative) language the right hand side has to be read as &quot;the stack function for stacks in which there is a top element x and which for stacks without that top element yields the same result as x dup *&quot;. But one might also write without the explicit lambda abstraction as</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x &#160;square&#160;&#160; ==&#160;&#160; x&#160; x&#160; *
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x&#160; square&#160;&#160; ==&#160;&#160; x&#160; dup&#160; *</code></pre>
+<p>In the last of these both sides start with the formal parameter x, and otherwise there are no further occurrences of x on either side. Would it be possible for the two occurrences on the left and right to &quot;cancel out&quot;, so to speak? Yes indeed, and now the definition looks like this:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; square&#160;&#160; ==&#160;&#160; dup&#160; *</code></pre>
+<p>The full evaluation of the running example now looks like this:</p>
+<pre><code>(8)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [11 22 33]&#160;&#160; rest&#160;&#160; size&#160;&#160; square
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160; [22 33]&#160;&#160; size&#160;&#160; square
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160; 2&#160;&#160; square
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160; 2&#160;&#160; dup&#160;&#160; *
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160; 2&#160;&#160; 2&#160;&#160; *
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160; 4</code></pre>
+<p>Note how in line four the substitution of the right hand side of the definition is a simple textual substitution.</p>
+<p>The mainstream imperative languages have a <strong>state</strong> of associations between assignable variables and their current values. The values are changed by assignments during the run of the program. These languages also have an environment of formal / actual parameter associations that are set up by calls of defined functions or procedures. Purely functional languages have no state, but at least the mainstream applicative functional languages invariably have an environment. Compositional functional languages and hence concatenative functional languages have no state and need no environment. The concatenative language Joy has neither.</p>
+<h2 id="what-about-second-order-functions-in-a-concatenative-language">&quot;What about second order functions in a concatenative language ?&quot;</h2>
+<p>A concatenative language has an all but invisible second order function of function composition. In section 6 it was emphasised that there are many other second order functions that have to be fitted into the concatenative model. One of the second order functions mentioned there was the mapping function. The list [1 2 3] can be mapped by the squaring function to yield the list [1 4 9]. In concatenative syntax one can use either of these:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160; [square]&#160;&#160; map
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160; [dup&#160; *]&#160;&#160; map</code></pre>
+<p>Both lines are concatenations of three parts: (a) &quot;[1 2 3]&quot; which denotes a stack function to push a list, (b) &quot;[square]&quot; or &quot;[dup *]&quot; which denotes a stack function to push a &quot;quoted&quot; program without executing it, and (c) &quot;map&quot; which denotes a stack function to use the program from (b) on each member of the list from (a) to produce a list of the same size. Note that the second version was obtained from the first by simple textual substitution in accordance with the definition of &quot;square&quot;.</p>
+<p>The map function in Joy does all the work of a second order function, but actually it is a first order stack function like all others in Joy. It expects a stack whose top two elements are a list and a quoted program and it leaves behind a new list. The program is protected from execution by being enclosed in square brackets, and in this form it is called a quotation.</p>
+<p>Because the mapping function is only first order, it is possible to write</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160;&#160; [ [dup *] [dup dup * *] ]&#160;&#160;&#160; [map]&#160;&#160;&#160; map</code></pre>
+<p>which leaves [ [1 4 9] [1 8 27] ] on top of the stack, and below that the original [1 2 3].</p>
+<p>Another common word for higher order function is &quot;combinator&quot;, but in Joy it is used for what are really first order functions. Apart from &quot;map&quot;, Joy has a large number of combinators, and in programming they are used more often than in other languages.</p>
+<h2 id="what-is-the-difference-between-a-list-and-a-quotation">&quot;What is the difference between a list and a quotation ?&quot;</h2>
+<p>Lists and quotations use square brackets to enclose something - or possibly nothing. Isn't that confusing? Would it not be better to use a different notation for the two?</p>
+<p>Lists are passive data structures that can be manipulated for example by the rest operation. There are quite a few other well known list manipulation operations for building up lists, combining lists, and for taking them apart.</p>
+<p>Quotations are potentially active programs that can be passed as parameters to be eventually activated by combinators such as map. There are many other combinators in Joy. Some of them are similar to well known counterparts in other languages. But many of them are unique to Joy and do not make much sense elsewhere.</p>
+<p>So, why use the same notation for lists and quotations? The reason is that fundamentally they really are the same.</p>
+<p>On the one hand consider the program</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160; [4 5]&#160;&#160; map</code></pre>
+<p>The first list is used as the passive data structure, and at the very least its size, 3, determines the size of the result list of the program. The second list is the quotation. When activated by the map combinator three times, it will ignore the three arguments 1 or 2 or 3, and in each case simply push 4 and 5 on top. Whatever is on top will be the element of the result list, and that is the same on all three occasions. So the result list is [5 5 5].</p>
+<p>On the other hand, and more usefully, any list processing operation can be used on quotations. Consider</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160; [dup * dup *]&#160;&#160; map</code></pre>
+<p>which will compute the fourth powers of the elements of the list. Removing the first two parts of the quotation first,</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [1 2 3]&#160;&#160; [dup * dup *]&#160;&#160; rest&#160; rest&#160; map</code></pre>
+<p>will compute the second powers of the elements of the list.</p>
+<p>Instead of taking a quotation apart, with the rest operation, a more likely scenario is that a quotation is first constructed, possibly in several steps, and then used by a combinator. Many Joy programs do just that.</p>
+<p>The following two programs compute the same function:</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [dup *]&#160; map&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [square]&#160; map</code></pre>
+<p>because the quotations compute the same function. At the same time, of course,</p>
+<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [dup *]&#160; size&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [square]&#160; size</code></pre>
+<p>give different results, 2 and 1, because as lists they are different.</p>
+<p>So it is useful to speak of lists as passive data structures and quotations as inactive programs that might be activated by a combinator.</p>
+<h2 id="so-what-is-joy">&quot;So, what is Joy ?&quot;</h2>
+<p>What are the essentials of Joy?</p>
+<ol style="list-style-type: decimal">
+<li>Joy is a purely functional language, so there is no state and hence no assignment.</li>
+<li>Joy programs denote unary functions from stacks to stacks.</li>
+<li>Joy uses concatenative notation, so the concatenation of programs denotes the composition of the functions which the programs denote.</li>
+<li>Definitions do not use formal parameters, so there is no environment of associations.</li>
+<li>Combinators do the work of higher order functions, they take quoted programs as parameters.</li>
+<li>Lists are a special case of quotations, and both can be manipulated in the same way. So, as in Lisp, program = data.</li>
+</ol>
+<p>Apart from what is in this FAQ, what else does Joy have?</p>
+<ol style="list-style-type: decimal">
+<li>Atomic data: logical values, characters, integers, floats, files.</li>
+<li>Aggregate data: strings (of characters), sets of numbers (0...31), Quotations or lists (of anything, even recursively)</li>
+<li>Operations on data elements, and polymorphic operations on aggregates.</li>
+<li>Many combinators, including some polymorphic ones for aggregates, and many for common recursion patterns.</li>
+<li>Several standard libraries, with varying specialisation.</li>
+</ol>
+<p>How does one think about Joy programs? There are three useful styles:</p>
+<p>Imperative: programs are commands to modify the stack. - e.g. &quot;5&quot; means: push the number 5 ! - e.g. &quot;+&quot; means: add the top two numbers !</p>
+<p>Semantic: programs denote unary functions from stacks to stacks. - e.g. &quot;5&quot; denotes the functions which yields a new stack with the number 5 on top. - e.g. &quot;+&quot; denotes the function which yields a new stack with the top two numbers replaced by their sum.</p>
+<p>Syntactic: programs are mere text to be evaluated by rewriting. - e.g. &quot;5&quot; can be only be part of an expression to be rewritten - e.g. &quot;+&quot; is used in rewriting, so &quot;5 3 +&quot; is rewritten &quot;8&quot;</p>
+<p>The three explicit or conscious ways of thinking will, after some exposure and experience, merge into a single unified unconscious whole.</p>
+<h2 id="where-can-i-find-out-more-about-joy">&quot;Where can I find out more about Joy ?&quot;</h2>
+<p>Go back to the <a href="index.html">main Joy page</a></p>
+<ul>
+<li>Part 2 for
+<ul>
+<li>other introductions</li>
+<li>detailed papers on various aspects of the language</li>
+<li>examples of program development</li>
+</ul></li>
+<li>Part 3 for
+<ul>
+<li>C sources for the now abandoned prototype Joy0</li>
+<li>C sources for the current Joy1 (thanks to John Cowan)</li>
+<li>current Joy libraries</li>
+<li>miniature Joys in Prolog, Lisp and Pascal</li>
+</ul></li>
+<li>Part 4 for a mailing group, read past contributions
+<ul>
+<li>comparisons with other concatenative languages</li>
+<li>discussions of theoretical aspects</li>
+<li>proposals for extensions to Joy</li>
+<li>bug reports and fixes</li>
+</ul></li>
+</ul>
+<p>Any questions?</p>
+<ul>
+<li><a href="http://www.cs.nott.ac.uk/~pszgmh/faq.html">FAQ for comp.lang.functional</a> Functional languages in general</li>
+<li>Maybe <a href="faq1.html">Further Frequently Asked Questions about Joy</a></li>
+<li>Best of all, for a quick response, from different viewpoints, join the mailing list and ask there</li>
+<li>Otherwise, possibly with some delay because I am half retired, Mailto: <a href="mailto:phimvt@lure.latrobe.edu.au">Manfred von Thun</a><br />
+(email: phimvt@lure.latrobe.edu.au).</li>
+<li>Or contact <a href="http://fogus.me/important/von-thun">me</a> at home,
+<ul>
+<li>25 Pymm Avenue, Eltham 3095 VIC, Australia</li>
+<li>[Australia] (03) 9439 7340</li>
+</ul></li>
+</ul>
+<p>Back to homepage for <a href="http://www.latrobe.edu.au/humanities/research/research-projects/past-projects/joy-programming-language">Manfred von Thun</a>.</p>
+</body>
+</html>

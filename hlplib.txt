@@ -1,0 +1,110 @@
+(* FILE: hlplib.joy *)
+
+"seqlib" libload.
+
+LIBRA
+
+##### Public Definitions #############################################
+
+  help == (* Print a textual sorted, 4 column, list of definitions *)
+    help-names [help-print-line] help-print-entries pop;
+
+  _help == (* Print a textual sorted, 4 column, list of hidden defs. *)
+    help-hidden-names [help-print-line] help-print-entries pop;
+
+  manual == (* Print a list of primitive, hidden & type definitions *)
+    help-list help-hidden-list concat help-type-list concat
+    [help-print-tentry] help-print-entries pop;
+
+  _manual == (* Print a list of hidden definitions *)
+    help-hidden-list [help-print-tentry] help-print-entries pop;
+
+  __html_manual == (* Print the manual in HTML format *)
+    help-print-hhead
+    help-list [help-print-hentry] help-print-entries pop
+    "</TABLE><H2>Hidden Primitives</H2><TABLE>\n" putchars
+    help-hidden-list [help-print-hentry] help-print-entries pop
+    "</TABLE><H2>Types</H2><TABLE>\n" putchars
+    help-type-list [help-print-hentry] help-print-entries pop
+    help-print-hfoot;
+
+  __latex_manual == (* Print the manual in Latex format *)
+    help-list [help-print-lentry] help-print-entries pop;
+
+  helpdetail == (* A -> Print help for  *)
+    [help-list [first =] filter [help-print-tentry] map] map pop;
+
+##### Private Definitions ############################################
+
+  _hlplib == true;
+
+  help-sort == (* A:unsorted -> A:sorted *)
+    [small] [] [uncons [first [first] dip >] split] 
+    [swapd cons concat] binrec;
+
+  help-list == (* -> A *)
+    __manual_list help-sort [first first '  !=] filter
+    [first first '_ !=] filter;
+
+  help-hidden-list == (* -> A *)
+    __manual_list help-sort [first first ' !=] filter
+    [first first '_ =] filter;
+
+  help-type-list == (* -> A *)
+    __manual_list help-sort [ first first ' =] filter;
+
+  help-names == (* -> A *)
+    help-list [first] map 4 help-slice;
+
+  help-hidden-names == (* -> A *)
+    help-hidden-list [first] map 4 help-slice;
+
+  help-slice == (* A -> A:A *)
+    [] rolldown [null] [pop popd reverse]
+    [[dupd swap] dip swap dup2 take rollup drop swonsd] tailrec;
+
+  help-print-entries == (* A P -> *)
+    swap [null] [pop] [unswons rolldown dup [i] dip swap] tailrec;
+
+  help-print-line == (* A -> *)
+    [null] [] [unswons 16 help-pad] tailrec "\n" putchars pop;
+
+  help-print-tentry == (* A -> *)
+    dup first 20 help-pad " : " putchars 
+    dup second 30 help-pad "\n" putchars
+    third putchars "\n\n" putchars;
+
+  help-print-hhead == (* -> *)
+    "<HTML><BODY>\n" putchars
+    "<H2>Atoms of Joy</H2\n" putchars
+    "<TABLE><TR><TD><B>Last Updated:</B> " putchars show-todaynow
+    "</TD></TR></TABLE></P><H2>Basic Primitives</H2><P>\n<TABLE>" putchars;
+
+  help-print-hfoot == (* -> *)
+    "</TABLE>\n</BODY>\n</HTML>\n" putchars;
+
+  help-print-hentry == (* A -> *)
+    "<TR><TD><B>" putchars dup first 20 help-pad "</B></TD>" putchars 
+    "<TD><FONT COLOR=darkblue>" putchars dup second 30 help-pad 
+    "</FONT></TD></TR>\n" putchars
+    "<TR><TD></TD><TD><FONT COLOR=darkred>" putchars third putchars 
+    "<BR><BR></FONT></TD></TR>\n\n" putchars;
+
+  help-print-lentry == (* A -> *)
+    "\\item[\\JX{" putchars dup first putchars
+    "}]  \\verb#      : " putchars dup second putchars
+    "# \\\\\n{\\small\\verb#" putchars third putchars
+    "#}\n\n" putchars;
+
+  help-pad == (* S I -> S *)
+    [dup putchars size] dip swap - [" " putchars] times;
+
+######################################################################
+  
+HLPLIB == "hlplib.joy - help generation library".
+
+(* end LIBRA *)
+
+"hlplib  is loaded\n" putchars.
+
+(* END hlplib.joy *)
