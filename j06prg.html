@@ -172,7 +172,7 @@ END.</code></pre>
         [ concat ]
         linrec</code></pre>
 <p>The program uses <code>frontlist</code>, but because the latter is defined without recursion, it is possible to simply use the RHS of the definition of <code>frontlist</code> and insert that textually into the definition of <code>subseqlist</code>. The <code>frontlist</code> and <code>subseqlist</code> operators were adapted from recursive programs in <a href="joybibl.html#104">{Thompson91 p 247}</a>.</p>
-<p>The next program defines a unary operator powerlist which for any aggregate returns a list of all subaggregates. If the parameter aggregate has N members, the resulting list of subaggregates has <embed src="https://latex.codecogs.com/png.latex?2%5EN" title="2^N" /> members.</p>
+<p>The next program defines a unary operator powerlist which for any aggregate returns a list of all subaggregates. If the parameter aggregate has N members, the resulting list of subaggregates has <embed src="https://latex.codecogs.com/svg.latex?2^N" title="2^N" /> members.</p>
 <pre><code>    powerlist ==
         [ null ]
         [ unitlist ]

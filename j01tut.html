@@ -224,7 +224,7 @@ This revision includes references to John Cowan's (2001) extension.</p>
 <pre><code>        [ 1 [2 9] [[[16]]] 25 ]</code></pre>
 <p>All of these combinators can be defined in other functional languages, but they are less useful there. This is because their parameters have to be abstractions with variables, and not quotations as in Joy.</p>
 <h2 id="programming-with-aggregates">Programming with aggregates</h2>
-<p>The <em>aggregate</em> types of Joy are lists, sets and strings. There are several unary operators which take an aggregate as parameter and produce as value a list of subaggregates. One of these is the powerlist operator. For an aggregate of size <code>N</code> it produces a list of all the <img style="vertical-align:middle" src="https://latex.codecogs.com/png.latex?2%5EN" alt="2^N" title="2^N" /> subaggregates.</p>
+<p>The <em>aggregate</em> types of Joy are lists, sets and strings. There are several unary operators which take an aggregate as parameter and produce as value a list of subaggregates. One of these is the powerlist operator. For an aggregate of size <code>N</code> it produces a list of all the <img style="vertical-align:middle" src="https://latex.codecogs.com/svg.latex?2%5EN" alt="2^N" title="2^N" /> subaggregates.</p>
 <p>Here is an example:</p>
 <pre><code>        [1 2 3]  powerlist</code></pre>
 <p>produces as result</p>

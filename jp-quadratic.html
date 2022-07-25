@@ -3,11 +3,7 @@
 <p>14-FEB-05</p>
 <p><em>Abstract:</em> Complex expressions can be difficult to evaluate in Joy and in other stack-based languages, especially when some of the parameters are needed repeatedly for the computation of intermediate values. This note describes some techniques that can be valuable in such cases. The example used is the quadratic formula.</p>
 <p>An equation of the form a * x^2 + b * x + c = 0 has either no solution in the reals, or it has two solutions in the reals (&quot;not necessarily distinct&quot; as they say). The solutions, if any, are given by</p>
-<pre><code>             -b  +/- sqrt(b^2 - 4 * a * c)
-             -----------------------------
-                        2 * a</code></pre>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?%5Cfrac%7B-b%20%5Cpm%20%5Csqrt%7Bb%5E2%20-%204ac%7D%7D%7B2a%7D" title="\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}" />
+<embed src="https://latex.codecogs.com/svg.latex?%5Cfrac%7B-b%20%5Cpm%20%5Csqrt%7Bb%5E2%20-%204ac%7D%7D%7B2a%7D" title="\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}" />
 </div>
 <p>R. Kent Dybvig, The SCHEME Programming Languagage, 1987, p 44, gives the following definition</p>
 <pre><code>        (define quadratic-formula
