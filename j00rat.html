@@ -5,12 +5,12 @@ functional language</h1>
 <p><em>Abstract:</em> Joy is a high-level purely functional programming
 language which is not based on the application of functions but on the
 composition of functions. This paper gives a rationale for Joy by
-contrasting it with with other paradigms of functional languages. Joy
-differs from lambda calculus languages in that it has no variables and
-hence no abstraction. It differs from the combinatory calculus in that
-it does not use application. It differs from the categorical languages
-in <em>uniformly</em> using an untyped stack as the argument and value
-of the composed functions. One of the datatypes is that of programs, and
+contrasting it with other paradigms of functional languages. Joy differs
+from lambda calculus languages in that it has no variables and hence no
+abstraction. It differs from the combinatory calculus in that it does
+not use application. It differs from the categorical languages in
+<em>uniformly</em> using an untyped stack as the argument and value of
+the composed functions. One of the datatypes is that of programs, and
 the language makes extensive use of this, more than other reflective
 languages. The paper gives practical and theoretical introductions to
 various aspects of the language.</p>
@@ -867,7 +867,7 @@ counterpart.</p>
 <p>Two Joy combinators are needed, <code>k</code> and <code>s</code>,
 defined in the semantics by the evaluation function <code>EvP</code> for
 atoms:</p>
-<pre><code>EvA( k, [Y X | S])  =  EvP(Y, S)
+<pre><code>EvA( k, [Y X | S])    =  EvP(Y, S)
 EvA( s, [F G X | S])  =  EvP(F,[X | T])  where EvP(G, [X | S]) = T</code></pre>
 <p>In the above two clauses <code>Y</code>, <code>F</code> and
 <code>G</code> will be passed to the evaluation function
@@ -967,7 +967,7 @@ It is worth pointing out that the earlier list of primitives does not
 include or derive them. Now the substitution rule for quotation is
 simply this: if <code>Q1</code> and <code>Q2</code> denote the same
 program, then so do <code>[Q1]</code> and <code>[Q2]</code>. But taking
-quotation in this manner comes at a price — compilers, interpreters,
+quotation in this manner comes at a price – compilers, interpreters,
 optimisers, even pretty-printers and other important kinds of program
 processing programs become impossible, although one remedy might be to
 “certify and seal off” quotations after such processing. As Gödel

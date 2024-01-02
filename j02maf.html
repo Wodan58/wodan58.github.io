@@ -164,7 +164,7 @@ operation.</p>
 monoids. Examples are groups, rings, fields and Boolean algebras. They
 are studied in universal algebra and in category theory. One particular
 homomorphism can only be described as mind-blowing: this is Gödel’s
-arithmetisation of syntax - all syntactic operations on formulas of a
+arithmetisation of syntax – all syntactic operations on formulas of a
 theory are mapped onto corresponding arithmetic operations on their
 Gödel numbers. (See for example <a
 href="joybibl.html#73">{Mendelson64}</a>.)</p>
@@ -175,7 +175,7 @@ go further: the meaning of a formula is the set of valuations that make
 it true. The meaning function then is a homomorphism from the Boolean
 algebra of equivalence classes to the Boolean algebra of sets of
 valuations. This situation is typical in semantics: the meaning function
-is a homomorphism. The same holds for Joy - the meaning function is a
+is a homomorphism. The same holds for Joy – the meaning function is a
 homomorphism from Joy syntax to Joy semantics.</p>
 <h1 id="a-syntactic-monoid-and-a-semantic-monoid">A syntactic monoid and
 a semantic monoid</h1>
@@ -191,7 +191,7 @@ Collectively these constitute the syntactic monoid.</p>
 Joy uses postfix notation for the evaluation of arithmetic expressions.
 To add two numbers they are pushed onto a stack and then replaced by
 their sum. This terminology is helpful but can be misleading in several
-ways. The phrasing suggest a procedural or imperative interpretation:
+ways. The phrasing suggests a procedural or imperative interpretation:
 Joy programs consist of commands such as push this, push that, pop these
 and push their sum. But there is nothing procedural about Joy, as
 described here it is a purely functional language.</p>
@@ -244,7 +244,7 @@ The fact that function composition is associative and that the identity
 function is a left and right unit is expressed by</p>
 <pre><code>        (P  Q)  R   ==   P  (Q  R)
         id  P   ==   P   ==   P  id</code></pre>
-<p>The notation can be used to express what <em>look</em> like
+<p>The notation can be used to express what <em>looks</em> like
 identities of numbers; for example</p>
 <pre><code>        2  3  +   ==   5</code></pre>
 <p>expresses that the composition of the three <em>functions</em> on the
@@ -308,16 +308,16 @@ twice has no net effect, and that duplicating the top element and then
 popping off the duplicate has no net effect.</p>
 <p>There are many more laws: double negation has no net effect,
 reversing a sequence twice just leaves the original, and taking the
-successor and the predeccessor of a number - in either order - produces
+successor and the predeccessor of a number – in either order – produces
 no net effect. In the <em>algebra of Joy</em> these are expressed by the
 following:</p>
-<pre><code>        0  +   ==   id                  1  *   ==   id
-        []  concat   ==   id            []  swap  concat   ==   id
-        false  or   ==   id             true  and   ==   id
-        dup  and   ==   id              dup  or   ==   id
-        swap  swap   ==   id            dup  pop   ==   id
-        not  not   ==   id              reverse  reverse   ==   id
-        succ  pred   ==   id            pred  succ   ==   id</code></pre>
+<pre><code>        0  +        ==  id            1  *              ==  id
+        []  concat  ==  id            []  swap  concat  ==  id
+        false  or   ==  id            true  and         ==  id
+        dup  and    ==  id            dup  or           ==  id
+        swap  swap  ==  id            dup  pop          ==  id
+        not  not    ==  id            reverse  reverse  ==  id
+        succ  pred  ==  id            pred  succ        ==  id</code></pre>
 <p>Note that no variables were needed to express these laws.</p>
 <p>The identity function is a left and right unit element with respect
 to function composition. It is appropriate to remark here that there is
@@ -342,7 +342,7 @@ earlier, the two programs inside the brackets denote the same function.
 What this shows is that we cannot substitute their quotations for each
 other:</p>
 <pre><code>        [5]  size   =/=   [2 3 +]  size</code></pre>
-<p>What forbids the substitution is the quotation - by the square
+<p>What forbids the substitution is the quotation – by the square
 brackets. So quotations produce opaque contexts, quotation is an
 intensional constructor.</p>
 <p>However, there are contexts where substitution is permissable across
@@ -356,7 +356,7 @@ pops that program and executes it. So, if the quoted program
 <code>i</code> combinator will execute <code>P</code>:</p>
 <pre><code>        [P]  i   ==   P</code></pre>
 <p>For example, each of the following four programs compute the same
-function - the one which takes any stack as argument and returns as
+function – the one which takes any stack as argument and returns as
 value another stack which is like the argument stack but has the number
 <code>5</code> pushed on top.</p>
 <pre><code>         2  3  +                         5
@@ -368,7 +368,7 @@ identity function:</p>
 <p>Another law is this:</p>
 <pre><code>        i  ==  []  cons  i  i</code></pre>
 <p>Two programs <code>P</code> and <code>Q</code> may look very
-different - for example, they may differ in their sizes. But it could be
+different – for example, they may differ in their sizes. But it could be
 that they compute the same function. In that case the dequotations of
 their quotations also compute the same function:</p>
 <p>Hence</p>
@@ -408,9 +408,9 @@ the <code>b</code> combinator is the identity function. If either of the
 two programs computes the identity function, then the effect is the same
 as that of executing the other, which is the same as applying the
 <code>i</code> combinator to the other:</p>
-<pre><code>        []  []  b   ==   id
-        []  b   ==   i
-        []  swap  b   ==   i</code></pre>
+<pre><code>        []  []  b    ==  id
+        []  b        ==  i
+        []  swap  b  ==  i</code></pre>
 <p>The second equation could be reversed, and this shows that the
 <code>i</code> combinator could be <em>defined</em> in terms of the
 <code>b</code> combinator.</p>
@@ -590,7 +590,7 @@ combinators <code>C</code></p>
 <p>The two laws above may be combined: for all combinators C</p>
 <pre><code>        [i]  cons  C   ==   [C]  cons  i</code></pre>
 <p>So far we have only encountered one combinator which takes two quoted
-parameters - the <code>b</code> combinator. But Joy has a large number
+parameters – the <code>b</code> combinator. But Joy has a large number
 of combinators which take two, three or even four quoted parameters. The
 following concerns combinators which expect at least two quoted programs
 as parameters. For such combinators the first three laws holds

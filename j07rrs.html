@@ -121,7 +121,7 @@ reflexive transitive closure of <code>==&gt;</code>.</p>
 <code>x ==&gt; y</code> and <code>y ==&gt;&gt; z</code>.</p>
 <p>Here is an example for a fragment of a rewriting system for
 arithmetical expressions in Joy:</p>
-<pre><code>        2 3 +       =&gt;   5
+<pre><code>        2 3 +       =&gt;     5
         7 2 3 + *   ==&gt;    7 5 *
         7 2 3 + *   ==&gt;&gt;   35</code></pre>
 <p>In the second line the subexpression <code>2 3 +</code> on the left
@@ -180,7 +180,7 @@ rules</p>
 <pre><code>          P  ==&gt;  Q     :-   P  =&gt;  Q.
         P Q  ==&gt;  P R   :-   Q  ==&gt;  R.
         P R  ==&gt;  Q R   :-   P  ==&gt;  Q.</code></pre>
-<p>The last two clauses allow rewriting in a context — <code>P</code> on
+<p>The last two clauses allow rewriting in a context – <code>P</code> on
 the left or <code>R</code> on the right.</p>
 <p>The next rules for <code>==&gt;</code> concern combinators. In the
 following, <code>C</code>i is any combinator expecting at least i
@@ -212,7 +212,7 @@ program concatenation.</p>
 <pre><code>        newstack  newstack   =&gt;   newstack.
         P  newstack   =&gt;   newstack.</code></pre>
 <p>Since the stack is a list, it should be possible to put this list on
-top of the stack — that is to say, on top of itself. Also, it should be
+top of the stack – that is to say, on top of itself. Also, it should be
 possible to make the list on top of the stack become the stack. There
 are two operators that do just that: The stack operator pushes onto the
 stack a list containing all the elements of the stack. The unstack
@@ -220,8 +220,8 @@ operator expects a list on top of the stack and makes that the stack.
 The <code>unstack</code> operator undoes what the <code>stack</code>
 operator does, but the reverse is true only in special cases.</p>
 <pre><code>        newstack stack  =&gt;  newstack [].
-        [] unstack   =&gt;   newstack.
-        newstack  L   =&gt;  [L]  reverse  unstack.</code></pre>
+        [] unstack      =&gt;  newstack.
+        newstack  L     =&gt;  [L]  reverse  unstack.</code></pre>
 <p>In the last rule, <code>L</code> has to be a list of literals. Also,
 it should be noted that the stack is not always a sequence of values, it
 can also contain operators and combinators. So, strictly speaking the
@@ -309,8 +309,8 @@ operator</em>s are and, or and xor (exclusive or). The <em>unary
 operator</em> is not. Let <code>p</code> and <code>q</code> be truth
 values <code>true</code> or <code>false</code>.</p>
 <pre><code>        p  q  and   =&gt;   r.             ( r = p and q )
-        p  q  or.   =&gt;   r              ( r = p or  q )
-        p  q  xor.  =&gt;   r              ( r = p xor q )
+        p  q  or    =&gt;   r.             ( r = p or  q )
+        p  q  xor   =&gt;   r.             ( r = p xor q )
         p  not      =&gt;   r.             ( r = not p )</code></pre>
 <p>A <em>predicate</em> is a function which leaves a truth value on the
 stack. The <em>unary predicate</em>s null, small, odd, even, positive
@@ -393,7 +393,7 @@ useful only for sequences:</p>
         [a L]  reverse  =&gt;  [M a]   :-   L reverse  =&gt;  M.</code></pre>
 <p>These rules for <code>reverse</code> are correct but inefficient
 since appending to the right to produce <code>[M a]</code> requires
-copying — at least for the obvious implementation of lists. Most
+copying – at least for the obvious implementation of lists. Most
 implementations would use an <em>accumulating parameter</em> to optimise
 the <code>reverse</code> operator. It is of some interest that this
 optimisation can be expressed in rewrite rules:</p>
@@ -419,7 +419,7 @@ are analogous.</p>
         [a]      small   =&gt;   true.
         [a b L]  small   =&gt;   false.</code></pre>
 <p>The two binary predicates in and has test aggregates for members.</p>
-<pre><code>        a  []  in   =&gt;   false.
+<pre><code>        a  []  in      =&gt;   false.
         a  [a L]  in   =&gt;   true.
         a  [b L]  in   =&gt;   a  [L]  in</code></pre>
 <p>The has predicate is just the converse:</p>
@@ -500,13 +500,14 @@ then-part, its first parameter, on top, is the else-part.</p>
             L  I   =&gt;  M  true.
         L  [I]  [T]  [E]  ifte   =&gt;   E   :-
             L  I   =&gt;  M  false.</code></pre>
-<p>The binary whiledo combinator is similar to the <code>ifte</code>
-combinator in that it has a test, the while-part, which is second on the
-stack. The combinator repeatedly executes the while-part and while that
-yields <code>true</code> it executes the other part, the do-part.</p>
-<pre><code>        L  [W]  [D]  whiledo   =&gt;   L   :-
+<p>The binary while<del>do</del> combinator is similar to the
+<code>ifte</code> combinator in that it has a test, the while-part,
+which is second on the stack. The combinator repeatedly executes the
+while-part and while that yields <code>true</code> it executes the other
+part, the do-part.</p>
+<pre><code>        L  [W]  [D]  while   =&gt;   L   :-
             L  W   =&gt;   M  false.
-        L  [W]  [D]  whiledo   =&gt;   L  D  [W]  [D]  whiledo   :-
+        L  [W]  [D]  while   =&gt;   L  D  [W]  [D]  while   :-
             L  W   =&gt;   M  true.</code></pre>
 <p>The ternary tailrec combinator for <em>tail recursion</em> also has a
 test, the third parameter. If that yields true, the second parameter is
@@ -900,8 +901,8 @@ style:</p>
 in the left column are in the earlier style, those in the right are in
 the new style.</p>
 <pre><code>        Chr      succ    =&gt;  Chr.       succ    =&gt;  Chr-&gt;Chr.
-        Int  Int  &gt;      =&gt;  Log.       &gt;       =&gt;  (Int Int)-&gt;Log.
-        Log  Log  and    =&gt;  Log.       and     =&gt;  (Log Log)-&gt;Log.
+        Int Int  &gt;       =&gt;  Log.       &gt;       =&gt;  (Int Int)-&gt;Log.
+        Log Log  and     =&gt;  Log.       and     =&gt;  (Log Log)-&gt;Log.
         [T Lst]  first   =&gt;  T.         first   =&gt;  [T Lst]-&gt;T.
         [T Lst]  rest    =&gt;  Lst.       rest    =&gt;  [T Lst]-&gt;Lst.
         T  Lst   cons    =&gt;  [T Lst].   cons    =&gt;  (T Lst)-&gt;[T Lst].
@@ -920,7 +921,7 @@ simplified to the type <code>Int</code> in line 4.</p>
 4.                                                    Int</code></pre>
 <p>For combinators only a few examples will be given here, for i and
 map.</p>
-<pre><code>        i   =&gt;   [T] -&gt; T.
+<pre><code>        i     =&gt;   [T] -&gt; T.
         map   =&gt;   ([T1 -&gt; T2]) -&gt; ([T1] -&gt; [T2]).</code></pre>
 <p>The formalism used in this section is that of <em>categorial
 grammar</em>s. These have their origin in the (simple) theory of types

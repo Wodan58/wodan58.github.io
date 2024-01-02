@@ -1,53 +1,25 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
-  <title></title>
-  <style type="text/css">code{white-space: pre;}</style>
-</head>
-<body>
 <p>30-OCT-01 Fixed Bugs in file interp.c :</p>
-<ul>
-<li><ol style="list-style-type: decimal">
-<li>division (/) by zero when one or both operands are floats</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: decimal">
-<li>fremove and frename gave wrong truth value<br />
-(now success =&gt; true)</li>
-</ol></li>
-<li><ol start="3" style="list-style-type: decimal">
-<li>nullary, unary, binary, ternary had two bugs:</li>
-</ol>
-<ul>
-<li><ol style="list-style-type: lower-alpha">
-<li>coredump when there was nothing to push<br />
-e.g. 11 22 [pop pop] nullary</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: lower-alpha">
-<li>produced circular (&quot;infinite&quot;) list when no<br />
+<ol type="1">
+<li><p>division (/) by zero when one or both operands are
+floats</p></li>
+<li><p>fremove and frename gave wrong truth value<br />
+(now success =&gt; true)</p></li>
+<li><p>nullary, unary, binary, ternary had two bugs:</p>
+<ol type="a">
+<li><p>coredump when there was nothing to push<br />
+e.g. 11 22 [pop pop] nullary</p></li>
+<li><p>produced circular ("infinite") list when no<br />
 new node had been created<br />
-e.g. 11 22 [pop] nullary</li>
+e.g. 11 22 [pop] nullary</p></li>
 </ol></li>
-</ul></li>
-<li><ol start="4" style="list-style-type: decimal">
-<li>app4 combinator was wrong.<br />
-Also renamed: app2 -&gt; unary2, app3 -&gt; unary3, app4 -&gt; unary4<br />
-the old names can still be used, but are declared obsolete.</li>
+<li><p>app4 combinator was wrong.<br />
+Also renamed: app2 -&gt; unary2, app3 -&gt; unary3, app4 -&gt;
+unary4<br />
+the old names can still be used, but are declared obsolete.</p></li>
+<li><p>Small additions to (raw) Joy:</p>
+<ol type="a">
+<li><p>putchars – previously defined in library file inilib.joy</p></li>
+<li><p>fputchars (analogous, for specified file)<br />
+fputstring (== fputchars for Heiko Kuhrt's program)</p></li>
 </ol></li>
-<li><ol start="5" style="list-style-type: decimal">
-<li>Small additions to (raw) Joy:</li>
 </ol>
-<ul>
-<li><ol style="list-style-type: lower-alpha">
-<li>putchars - previously defined in library file inilib.joy</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: lower-alpha">
-<li>fputchars (analogous, for specified file)<br />
-fputstring (== fputchars for Heiko Kuhrt's program)</li>
-</ol></li>
-</ul></li>
-</ul>
-</body>
-</html>

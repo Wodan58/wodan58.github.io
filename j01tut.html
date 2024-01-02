@@ -1,4 +1,4 @@
-<p>Main page for the programming language Joy</a>.</p>
+<p>Main page for the programming language Joy.</p>
 <h1 id="an-informal-tutorial-on-joy">An informal tutorial on Joy</h1>
 <p><em>by Manfred von Thun</em></p>
 <p>Revised February 2003<br />
@@ -179,9 +179,9 @@ stack and replace them by the result. For example, the program</p>
 <pre><code>        20  3  4  +  *  6  -  100  rem</code></pre>
 <p>evaluates to 34, and this value is left on top of the stack. There
 are also some unary operators specific to integers like the abs operator
-which takes the absolute value, and the signum operator which yields
-<code>-1</code>, <code>0</code> or <code>+1</code>, depending on whether
-its parameter is negative, zero or positive.</p>
+which takes the absolute value, and the sign<del>um</del> operator which
+yields <code>-1</code>, <code>0</code> or <code>+1</code>, depending on
+whether its parameter is negative, zero or positive.</p>
 <p>Apart from the positive and negative integers or whole numbers, Joy
 has floating point numbers or “floats”. Literals of this type are
 written with a decimal point and at least one digit after that.
@@ -289,7 +289,7 @@ operator.</p>
         {5 2 3}  rest                                             {3 5}</code></pre>
 <p>For all three types of aggregates the members other than the first
 can be extracted by repeatedly taking the rest and finally the first of
-that. This can be cumbersome for extracting member deep inside. An
+that. This can be cumbersome for extracting a member deep inside. An
 alternative is to use the at operator to <em>index</em> into the
 aggregate, by extracting a member <strong>at</strong> a numerically
 specified position. For example, the following are two equivalent
@@ -341,7 +341,7 @@ tutorial.</p>
 <p>Lists are really just a special case of <em>quoted program</em>s.
 Lists only contain values of the various types, but quoted programs may
 contain other elements such as operators and some others that are
-explained below. A <em>quotation</em> can be treated as passive data
+explained below. A <em>quotation</em> can be treated as a passive data
 structure just like a list. For example,</p>
 <pre><code>        [ +  20  *  10  4  - ]</code></pre>
 <p>has size <code>6</code>, its second and third elements are
@@ -349,7 +349,7 @@ structure just like a list. For example,</p>
 concatenated with other quotations. But passive quotations can also be
 made active by <em>dequotation</em>.</p>
 <p>If the above quotation occurs in a program, then it results in the
-quotation being pushed onto the stack - just as a list would be pushed.
+quotation being pushed onto the stack – just as a list would be pushed.
 There are many other ways in which that quotation could end up on top of
 the stack, by being concatenated from its parts, by extraction from a
 larger quotation, or by being read from the input. No matter how it got
@@ -451,8 +451,8 @@ operations: The program causes the computation of the sum to occur
 before the computation of the size. But it does not matter in which
 order they are computed, in fact on a machine with several processors
 the sum and the size could be computed in parallel. Joy has a combinator
-which addresses this problem: there is one <strong>one</strong> data
-parameters, the aggregate, which is to be fed to <strong>two</strong>
+which addresses this problem: there is <strong>one</strong> data
+parameter, the aggregate, which is to be fed to <strong>two</strong>
 functions. From each of the functions a value is to be
 <strong>constr</strong>ucted. Because of the one datum and the two
 functions, the combinator is called
@@ -478,7 +478,7 @@ purely functional subsets of) Lisp, Scheme, ML and Haskell. All of these
 are based on the application of functions to arguments or actual
 parameters.</p>
 <p>In definitions and abstractions of functions the formal parameters
-have to be named - <code>x</code>, <code>y</code> and so on, or
+have to be named – <code>x</code>, <code>y</code> and so on, or
 something more informative. This is different in Joy. It is based on the
 composition of functions and not on the application of functions to
 arguments. In definitions and abstractions of functions the arguments do
@@ -624,7 +624,7 @@ into a set:</p>
         [{}]  [cons]  primrec</code></pre>
 <p>In fact, the first can also be applied to a list and the second can
 also be applied to a set. But in that case they just compute the
-identity. They can even be applied to numbers - and then they produce a
+identity. They can even be applied to numbers – and then they produce a
 list or a set of numbers from the parameter down to 1.</p>
 <p>In many recursive definitions there are two recursive calls of the
 function being defined. This is the pattern of <em>binary
@@ -696,8 +696,7 @@ in Joy.</p>
 There are several unary operators which take an aggregate as parameter
 and produce as value a list of subaggregates. One of these is the
 powerlist operator. For an aggregate of size <code>N</code> it produces
-a list of all the <embed
-src="https://latex.codecogs.com/svg.latex?2%5EN" /> subaggregates.</p>
+a list of all the 2<sup>N</sup> subaggregates.</p>
 <p>Here is an example:</p>
 <pre><code>        [1 2 3]  powerlist</code></pre>
 <p>produces as result</p>
@@ -708,7 +707,7 @@ sort the list according to size. The mk_qsort combinator expects an
 aggregate and a quoted operator as parameters and it applies the
 operator to each member of the aggregate to use as the basis for sorting
 them.</p>
-<pre><code>        [1 2 3]  powerlist  [size]  mk_qsort</code></pre>
+<pre><code>        [1 2 3]  powerlist  [size]  mk\_qsort</code></pre>
 <p>produces as a result</p>
 <pre><code>        [ [] [1] [2] [3] [1 2] [1 3] [2 3] [1 2 3] ]</code></pre>
 <p>The powerlist operators can also be applied to a string. The result

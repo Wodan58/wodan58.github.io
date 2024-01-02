@@ -46,7 +46,7 @@ program (here in a fantasy language):</p>
     VAR I
     FOR I := 1 TO N DO
         P := P * I
-        RETURN P</code></pre>
+    RETURN P</code></pre>
 <p>The upper limit N ensures that the body of the loop will be executed
 exactly N times. In addition, the FOR-loop will increment the variable I
 exactly as required. But we could do the incrementing explicitly:</p>
@@ -80,7 +80,7 @@ dip combinator. Hence the initialisation is:</p>
 <p>The body of the Joy loop has to do what the body of the imperative
 loop does:</p>
 <pre><code>       P := P * I
-        I := I + 1</code></pre>
+       I := I + 1</code></pre>
 <p>The counterpart of P has to be multiplied by the counterpart of I,
 but there has to be another copy of I available to be incremented by 1.
 So the body of the Joy loop has to start with a dup operator to make
@@ -148,7 +148,7 @@ by the parameter N.</p>
     RETURN L</code></pre>
 <p>The mutual assignment operator “=:=” swaps the values of the two
 variables. It might be implemented instead by</p>
-<pre><code>   TEMP := L; L := R; R ;= TEMP</code></pre>
+<pre><code>   TEMP := L; L := R; R := TEMP</code></pre>
 <p>The program translates readily into Joy. A call to the Joy program
 will be of the form</p>
 <pre><code>   N  fibonacci</code></pre>
@@ -289,7 +289,7 @@ should be inserted above or below the given number on top of the stack.
 Individually the two conjuncts for the termination are best written
 as</p>
 <pre><code>   dup * &gt;
-    rem 0 &gt;</code></pre>
+   rem 0 &gt;</code></pre>
 <p>which suggests that the test value is above the argument. Hence the
 initialisation should simply push the inital test value 2. Also, the
 test value should remain above the argument, and the incrementing is
@@ -381,7 +381,7 @@ and it produces another quotation:</p>
 <pre><code>   [F]  deriv   ==&gt; [ dup 0.001 + [F] unary2 swap - 0.001 / ]     (* app2 *)</code></pre>
 <p>The required quotation is constructed from [F] by the following
 program:</p>
-<pre><code>    deriv == [unary2 swap - 0.001 /] cons  [dup 0.001 +] swoncat; (* app2 *)</code></pre>
+<pre><code>   deriv == [unary2 swap - 0.001 /] cons  [dup 0.001 +] swoncat;  (* app2 *)</code></pre>
 <p>For example, the value of the derivative of the cube function for the
 argument 3.14 can be computed by</p>
 <pre><code>   3.14   [ dup dup * * ]  deriv  i     ==&gt;     29.5882</code></pre>

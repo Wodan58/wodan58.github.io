@@ -246,7 +246,7 @@ these two, namely swons. So the st-push operation can be defined by</p>
 <pre><code>        st-push  ==  swons</code></pre>
 <p>An essential predicate is st-null for testing whether a stack is
 empty or null. However it will not do to just use <code>null</code>,
-since this will remove the stack — but typically the stack is intended
+since this will remove the stack – but typically the stack is intended
 for further applications. So, to avoid losing the stack, it has to be
 <code>dup</code>licated first, and then the <code>null</code> test can
 be applied to the duplicate:</p>
@@ -677,7 +677,7 @@ to look like this:</p>
 <pre><code>        A1   [ A2  [ .. P ]  step  pop ]   step</code></pre>
 <p>Since <code>P</code> must be allowed to consume a current member of
 <code>A1</code> but this still has to be available for the next inner
-<code>step</code>, that member of <code>A1</code> first has do be
+<code>step</code>, that member of <code>A1</code> first has to be
 duplicated, below the current member of <code>A2</code>. So the dots are
 just <code>[dup] dip</code>. In sum, the required program is</p>
 <pre><code>        A1   [ A2  [ [dup]  dip  P ]  step  pop ]   step</code></pre>
@@ -1342,7 +1342,7 @@ condlinrec. If the tree is <code>null</code>, it is left as it is. If
 the <code>first</code> is <code>null</code>, then the <code>rest</code>
 is taken and <code>condlinrec</code> recurses. If the <code>first</code>
 of the <code>first</code> is a list, then that is
-<code>unswonsed</code>, <code>condlinrec</code> recurses and on return
+<code>unswons</code>ed, <code>condlinrec</code> recurses and on return
 does nothing further. In all other cases the tree is left as it is.</p>
 <pre><code>HIDE                                                    (* tree *)
     error        ==  &quot;non-empty tree needed for&quot; putchars putchars abort;

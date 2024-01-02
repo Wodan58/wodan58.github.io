@@ -1,17 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
-  <title></title>
-  <style type="text/css">code{white-space: pre;}</style>
-</head>
-<body>
 <h1 id="nested-recursion">Nested Recursion</h1>
 <p><em>by Manfred von Thun</em></p>
 <p>Contents:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><a href="#TOC-1">Introduction</a></li>
 <li><a href="#TOC-2">Recursive Definitions</a></li>
 <li><a href="#TOC-3">Self-application</a></li>
@@ -19,317 +9,446 @@
 <li><a href="#TOC-5">A nested recursion combinator</a></li>
 </ol>
 <h2 id="TOC-1"><strong>Introduction</strong></h2>
-<p>This note was prompted by Nick Forde's version of a Joy operator which computes the Ackermann function which is one of the few well-known functions that use nested recursion. He was trying to avoid explicit recursion in the definition, but found that none of the recursion combinators of Joy <em>at the time</em> were up to the task. His finding prompted the inclusion of a new Joy combinator <em>condnestrec</em> into the language.</p>
-<p>This note gives definitions of (the common simplification of) Ackermann's function, of McCarthy's 91-function, of a function producing a Hamiltonian path over a hypercube, of a function producing Gray sequences, and of the Hanoi problem. All involve nested recursion. Several possible definition methods are used.</p>
-<p>The definitions and the output of the examples in this note were obtained by running the file <a href="https://github.com/Wodan58/joy1/blob/master/lib/jp-nestrec.joy">jp-nestrec.joy</a> Only the descriptive text in this note was added later.</p>
+<p>This note was prompted by Nick Forde's version of a Joy operator
+which computes the Ackermann function which is one of the few well-known
+functions that use nested recursion. He was trying to avoid explicit
+recursion in the definition, but found that none of the recursion
+combinators of Joy <em>at the time</em> were up to the task. His finding
+prompted the inclusion of a new Joy combinator <em>condnestrec</em> into
+the language.</p>
+<p>This note gives definitions of (the common simplification of)
+Ackermann's function, of McCarthy's 91-function, of a function producing
+a Hamiltonian path over a hypercube, of a function producing Gray
+sequences, and of the Hanoi problem. All involve nested recursion.
+Several possible definition methods are used.</p>
+<p>The definitions and the output of the examples in this note were
+obtained by running the file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/jp-nestrec.joy">jp-nestrec.joy</a>
+Only the descriptive text in this note was added later.</p>
 <h2 id="TOC-2"><strong>Recursive Definitions</strong></h2>
-<p>The following is the more or less standard definition of the factorial function:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; fact(n) = 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; IF n = 0 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; THEN 1 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ELSE&#160; n * fact(n-1) </code></pre>
-<p>&#160; Here is the corresponding recursive definition in Joy:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; r-fact == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ pop 1] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dup pred r-fact *] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ifte. </code></pre>
-<p>The following tests this definition - redundantly, of course. Note that the response from Joy is indented to the left. The same style will be used in all later tests.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 0 1 2 3 4 5 6 ]&#160; [r-fact]&#160; map. 
+<p>The following is the more or less standard definition of the
+factorial function:</p>
+<pre><code>            fact(n) = 
+               IF n = 0 
+               THEN 1 
+               ELSE  n * fact(n-1) </code></pre>
+<p>  Here is the corresponding recursive definition in Joy:</p>
+<pre><code>        DEFINE
+            r-fact == 
+               [ null ] 
+               [ pop 1] 
+               [ dup pred r-fact *] 
+               ifte. </code></pre>
+<p>The following tests this definition – redundantly, of course. Note
+that the response from Joy is indented to the left. The same style will
+be used in all later tests.</p>
+<pre><code>        [ 0 1 2 3 4 5 6 ]  [r-fact]  map. 
 [1 1 2 6 24 120 720]</code></pre>
-<p>The next definition is of a not so familiar function originally due to McCarthy, his intriguing &quot;91 function&quot;:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; mcc91(i) = 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; IF i &gt; 100 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; THEN i - 10 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ELSE mcc91(mcc91(i + 11)) </code></pre>
-<p>Note one very important feature not shared with the factorial function: In the ELSE-part the recursive call to itself relies on the result of another recursive call to itself. There are very few function definitions in which this pattern appears. The following is the corresponding definition in Joy, note the double recursive call in the second last line:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;r-mcc91 == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 100 &gt; ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 10 - ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 11 + r-mcc91 r-mcc91 ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ifte. </code></pre>
+<p>The next definition is of a not so familiar function originally due
+to McCarthy, his intriguing "91 function":</p>
+<pre><code>            mcc91(i) = 
+               IF i &gt; 100 
+               THEN i - 10 
+               ELSE mcc91(mcc91(i + 11)) </code></pre>
+<p>Note one very important feature not shared with the factorial
+function: In the ELSE-part the recursive call to itself relies on the
+result of another recursive call to itself. There are very few function
+definitions in which this pattern appears. The following is the
+corresponding definition in Joy, note the double recursive call in the
+second last line:</p>
+<pre><code>        DEFINE 
+            r-mcc91 == 
+               [ 100 &gt; ] 
+               [ 10 - ] 
+               [ 11 + r-mcc91 r-mcc91 ] 
+               ifte. </code></pre>
 <p>Here is a simple test for some representative values:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ -7 42 99 100 101 102 345 ]&#160; [r-mcc91]&#160; map. 
+<pre><code>        [ -7 42 99 100 101 102 345 ]  [r-mcc91]  map. 
 [91 91 91 91 91 92 335]</code></pre>
-<p>The Ackermann function widely quoted in the literature is actually a simplification of the function originally defined by Ackermann to show that there are terminating recursive functions that are not primitive recursive. Both the original and the descendent due to Peters grow at an extraordinary rate. Here is the now common definition:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; ack(m, n) = 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; IF m = 0&#160; THEN n + 1 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ELSEIF n = 0&#160; THEN ack(m - 1, 1) 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ELSE ack(m - 1, ack(m, n - 1)) </code></pre>
+<p>The Ackermann function widely quoted in the literature is actually a
+simplification of the function originally defined by Ackermann to show
+that there are terminating recursive functions that are not primitive
+recursive. Both the original and the descendent due to Peters grow at an
+extraordinary rate. Here is the now common definition:</p>
+<pre><code>            ack(m, n) = 
+               IF m = 0  THEN n + 1 
+               ELSEIF n = 0  THEN ack(m - 1, 1) 
+               ELSE ack(m - 1, ack(m, n - 1)) </code></pre>
 <p>and its counterpart in Joy:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;r-ack == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; #&#160;&#160;&#160;&#160;&#160;&#160; stack putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [pop null]&#160; popd succ ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [null]&#160; pop pred 1 r-ack ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup pred swap] dip pred r-ack r-ack ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; cond. </code></pre>
-<p>&#160; The line that has been commented out with the hash character is useful if one wants to see a trace of what is sitting on the stack. The following tests are complete from (0,0) up to (3,5), and give some indication of the behaviour. The final line only gives the value for (4,0) because computation for (4,1) crashes the Joy stack (and also, it seems, calculations in other languages).</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [0 0] [0 1] [0 2] [0 3] [0 4] [0 5] ]&#160;&#160; [i r-ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [1 0] [1 1] [1 2] [1 3] [1 4] [1 5] ]&#160;&#160; [i r-ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [2 0] [2 1] [2 2] [2 3] [2 4] [2 5] ]&#160;&#160; [i r-ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]&#160;&#160; [i r-ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [4 0]&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ]&#160;&#160; [i r-ack]&#160; map. 
+<pre><code>        DEFINE 
+            r-ack == 
+        #       stack putln 
+               [ [ [pop null]  popd succ ] 
+                 [ [null]  pop pred 1 r-ack ] 
+                 [ [dup pred swap] dip pred r-ack r-ack ] ] 
+               cond. </code></pre>
+<p>The line that has been commented out with the hash character is
+useful if one wants to see a trace of what is sitting on the stack. The
+following tests are complete from (0,0) up to (3,5), and give some
+indication of the behaviour. The final line only gives the value for
+(4,0) because computation for (4,1) crashes the Joy stack (and also, it
+seems, calculations in other languages).</p>
+<pre><code>        [ [0 0] [0 1] [0 2] [0 3] [0 4] [0 5] ]   [i r-ack]  map  putln 
+        [ [1 0] [1 1] [1 2] [1 3] [1 4] [1 5] ]   [i r-ack]  map  putln 
+        [ [2 0] [2 1] [2 2] [2 3] [2 4] [2 5] ]   [i r-ack]  map  putln 
+        [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]   [i r-ack]  map  putln 
+        [ [4 0]                               ]   [i r-ack]  map. 
 [1 2 3 4 5 6] 
 [2 3 4 5 6 7] 
 [3 5 7 9 11 13] 
 [5 13 29 61 125 253] 
 [13]</code></pre>
-<p>In the Towers of Hanoi puzzle the disks have to be moved in a particular order. Ignoring what the target peg is, for three disks the order is 1 2 1 3 1 2 1. In general for n disks it is a sequence of <img style="vertical-align:middle" src="https://latex.codecogs.com/svg.latex?2%5En-1" alt="2^n-1" title="2^n-1" /> steps. In the usual implementation of the Hanoi program the disks that have to be moved are not mentioned at all. The sequence of steps is also one that performs a Hamiltonian path on an n-dimensional hypercube. The following is the Joy program:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;r-hamilhyp ==&#160;&#160; #&#160; [] n&#160; =&gt;&#160; [...] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ pop ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dup rollup pred&#160;&#160;&#160;&#160;&#160;&#160; r-hamilhyp 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;dupd cons swap pred&#160;&#160; r-hamilhyp ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ifte. </code></pre>
-<p>Note that unlike the program for the 91-function and the Ackermann function, the two recursive calls are not consecutive. Since the sequences are less known than the Hanoi program, here are several test outputs:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; []&#160; 3&#160; r-hamilhyp. 
+<p>In the Towers of Hanoi puzzle the disks have to be moved in a
+particular order. Ignoring what the target peg is, for three disks the
+order is 1 2 1 3 1 2 1. In general for n disks it is a sequence of <span
+class="math inline">2<sup>N</sup> - 1</span> steps. In the usual
+implementation of the Hanoi program the disks that have to be moved are
+not mentioned at all. The sequence of steps is also one that performs a
+Hamiltonian path on an n-dimensional hypercube. The following is the Joy
+program:</p>
+<pre><code>        DEFINE 
+            r-hamilhyp ==   #  [] n  =&gt;  [...] 
+               [ null ] 
+               [ pop ] 
+               [ dup rollup pred       r-hamilhyp 
+                 dupd cons swap pred   r-hamilhyp ] 
+               ifte. </code></pre>
+<p>Note that unlike the program for the 91-function and the Ackermann
+function, the two recursive calls are not consecutive. Since the
+sequences are less known than the Hanoi program, here are several test
+outputs:</p>
+<pre><code>        []  3  r-hamilhyp. 
 [1 2 1 3 1 2 1]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [] &#160;4&#160; r-hamilhyp. 
+        []  4  r-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; []&#160; 5&#160; r-hamilhyp. 
+        []  5  r-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1 5 1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
 <h2 id="TOC-3">[<strong>Self-application</strong>]</h2>
-<p>One way to get by without recursive definitions is by using Curry's &quot;paradoxical&quot; Y combinator which can also be defined in Joy. Another way would use what is known as &quot;self-application&quot;, giving a function a parameter which is also a function - e.g. itself. In Joy there is an inbuilt combinator to this effect, but it might have been defined by</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x == dup i.</code></pre>
-<p>Using this combinator a non-recursive definition of the factorial function is this:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;x-fact == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ pop null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ pop pop 1] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup pred] dip x *] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;ifte ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x. </code></pre>
-<p>Here is a test, and keep in mind that because the definition of <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">x-fact</span> is not recursive, as a parameter to the <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">map</span> combinator instead of using the quotation <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">[x-fact]</span> it would have been possible to use quotation of the body of the definition.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 0 1 2 3 4 5 6 ]&#160; [x-fact]&#160; map. 
+<p>One way to get by without recursive definitions is by using Curry's
+"paradoxical" Y combinator which can also be defined in Joy. Another way
+would use what is known as "self-application", giving a function a
+parameter which is also a function – e.g. itself. In Joy there is an
+inbuilt combinator to this effect, but it might have been defined by</p>
+<pre><code>        DEFINE
+            x == dup i.</code></pre>
+<p>Using this combinator a non-recursive definition of the factorial
+function is this:</p>
+<pre><code>        DEFINE 
+            x-fact == 
+               [ [ pop null ] 
+                 [ pop pop 1] 
+                 [ [dup pred] dip x *] 
+                 ifte ] 
+               x. </code></pre>
+<p>Here is a test, and keep in mind that because the definition of
+<code>x-fact</code> is not recursive, as a parameter to the
+<code>map</code> combinator instead of using the quotation
+<code>[x-fact]</code> it would have been possible to use quotation of
+the body of the definition.</p>
+<pre><code>        [ 0 1 2 3 4 5 6 ]  [x-fact]  map. 
 [1 1 2 6 24 120 720]</code></pre>
-<p>In the recursive definition of the 91-function the recursive branch used a double recursion. For a non-recursive version it is necessary to have a double self-call with the x-combinator. Such a double call is useful elsewhere, so here we have a definition:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;twice-x == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; dup [x] dip x. </code></pre>
-<p>Below is a non-recursive definition of the 91-function and the same test set as before:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;x-mcc91 == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ pop 100 &gt; ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ pop 10 - ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [11 +] dip twice-x ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;ifte ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x. 
+<p>In the recursive definition of the 91-function the recursive branch
+used a double recursion. For a non-recursive version it is necessary to
+have a double self-call with the x-combinator. Such a double call is
+useful elsewhere, so here we have a definition:</p>
+<pre><code>        DEFINE 
+            twice-x == 
+               dup [x] dip x. </code></pre>
+<p>Below is a non-recursive definition of the 91-function and the same
+test set as before:</p>
+<pre><code>        DEFINE 
+            x-mcc91 == 
+               [ [ pop 100 &gt; ] 
+                 [ pop 10 - ] 
+                 [ [11 +] dip twice-x ] 
+                 ifte ] 
+               x. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ -7 42 99 100 101 102 345 ]&#160; [x-mcc91]&#160; map. 
+        [ -7 42 99 100 101 102 345 ]  [x-mcc91]  map. 
 [91 91 91 91 91 92 335]</code></pre>
-<p>Exactly the same technique can be used to give a non-recursive definition of the Ackermann function using the x-combinator. Only one row of the test matrix is used here:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;x-ack == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [ [pop pop null]&#160; pop popd succ ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[ [pop null]&#160; [pop pred 1] dip x ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[ [[dup pred swap] dip pred] dip twice-x ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; cond ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x. 
+<p>Exactly the same technique can be used to give a non-recursive
+definition of the Ackermann function using the x-combinator. Only one
+row of the test matrix is used here:</p>
+<pre><code>        DEFINE 
+            x-ack == 
+               [ [ [ [pop pop null]  pop popd succ ] 
+                   [ [pop null]  [pop pred 1] dip x ] 
+                   [ [[dup pred swap] dip pred] dip twice-x ] ] 
+               cond ] 
+               x. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]&#160;&#160; [i x-ack]&#160; map. 
+        [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]   [i x-ack]  map. 
 [5 13 29 61 125 253]</code></pre>
-<p>Whatever may be achieved with the x-combinator can also be achieved with the less efficient but more familiar y-combinator, which needs to be defined first:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; y ==
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [dup cons] swoncat dup cons i;
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; twice-i ==
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; dup [i] dip i.
+<p>Whatever may be achieved with the x-combinator can also be achieved
+with the less efficient but more familiar y-combinator, which needs to
+be defined first:</p>
+<pre><code>        DEFINE
+            y ==
+               [dup cons] swoncat dup cons i;
+            twice-i ==
+               dup [i] dip i.
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; y-ack ==
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [ [pop pop null]&#160; pop popd succ ]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; [ [pop null]&#160; [pop pred 1] dip i ]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160; [ [[dup pred swap] dip pred] dip twice-i ] ]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; cond ]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; y.
+        DEFINE
+            y-ack ==
+                [ [ [ [pop pop null]  pop popd succ ]
+                   [ [pop null]  [pop pred 1] dip i ]
+                   [ [[dup pred swap] dip pred] dip twice-i ] ]
+               cond ]
+               y.
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]&#160;&#160; [i y-ack]&#160; map.
+        [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]   [i y-ack]  map.
 [5 13 29 61 125 253]</code></pre>
-<p>Here is the non-recursive definition, using the x-combinator, of the function that generates the Hamiltonian path sequence on a hypercube, together with one of the tests:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;x-hamilhyp == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ pop null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ pop pop ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ dup [ [dup rollup pred] dip&#160; x ] dip 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[dupd cons] dip 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[swap pred] dip&#160; x ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;ifte ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x. 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; []&#160; 5&#160; x-hamilhyp. 
+<p>Here is the non-recursive definition, using the x-combinator, of the
+function that generates the Hamiltonian path sequence on a hypercube,
+together with one of the tests:</p>
+<pre><code>        DEFINE 
+            x-hamilhyp == 
+               [ [ pop null ] 
+                 [ pop pop ] 
+                 [ dup [ [dup rollup pred] dip  x ] dip 
+                   [dupd cons] dip 
+                   [swap pred] dip  x ] 
+                 ifte ] 
+               x. 
+         
+        []  5  x-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1 5 1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
 <h2 id="TOC-4"><strong>Partially explicit recursion</strong></h2>
-<p>Nick Forde suggested writing the Ackermann function by using the linrec combinator to achieve one recursion, and to use explicit recursion for the other. For reasons that do not concern us here, his version computes the <em>converse</em> of the text book definition. For that reason, in the tests below the call is to <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">swap ack</span>:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE ack == (* I:n I:m -&gt; I:a *) 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[ [ [0 =] [pop 1 +] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;[ [swap 0 =] [popd 1 - 1 swap] [] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;[ [dup rollup [1 -] dip] [swap 1 - ack] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;condlinrec. 
+<p>Nick Forde suggested writing the Ackermann function by using the
+condlinrec combinator to achieve one recursion, and to use explicit
+recursion for the other. For reasons that do not concern us here, his
+version computes the <em>converse</em> of the text book definition. For
+that reason, in the tests below the call is to [swap ack]:</p>
+<pre><code>        DEFINE ack == (* I:n I:m -&gt; I:a *) 
+            [ [ [0 =] [pop 1 +] ] 
+              [ [swap 0 =] [popd 1 - 1 swap] [] ] 
+              [ [dup rollup [1 -] dip] [swap 1 - ack] ] ] 
+            condlinrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [0 0] [0 1] [0 2] [0 3] [0 4] [0 5] ]&#160;&#160; [i swap ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [1 0] [1 1] [1 2] [1 3] [1 4] [1 5] ]&#160;&#160; [i swap ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [2 0] [2 1] [2 2] [2 3] [2 4] [2 5] ]&#160;&#160; [i swap ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]&#160;&#160; [i swap ack]&#160; map&#160; putln 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [4 0]&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ]&#160;&#160; [i swap ack]&#160; map. 
+        [ [0 0] [0 1] [0 2] [0 3] [0 4] [0 5] ]   [i swap ack]  map  putln 
+        [ [1 0] [1 1] [1 2] [1 3] [1 4] [1 5] ]   [i swap ack]  map  putln 
+        [ [2 0] [2 1] [2 2] [2 3] [2 4] [2 5] ]   [i swap ack]  map  putln 
+        [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]   [i swap ack]  map  putln 
+        [ [4 0]                               ]   [i swap ack]  map. 
 
 [1 2 3 4 5 6] 
 [2 3 4 5 6 7] 
 [3 5 7 9 11 13] 
 [5 13 29 61 125 253] 
 [13]</code></pre>
-<p>In the same style we may define the 91-function using only a partially recursive definition:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;l-mcc91 == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 100 &gt; ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 10 - ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 11 + ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ l-mcc91 ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;&#160; linrec. 
+<p>In the same style we may define the 91-function using only a
+partially recursive definition:</p>
+<pre><code>        DEFINE 
+            l-mcc91 == 
+               [ 100 &gt; ] 
+               [ 10 - ] 
+               [ 11 + ] 
+               [ l-mcc91 ] 
+                linrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ -7 42 99 100 101 102 345 ]&#160; [l-mcc91]&#160; map. 
+        [ -7 42 99 100 101 102 345 ]  [l-mcc91]  map. 
 [91 91 91 91 91 92 335]</code></pre>
-<p>The following partially recursive definition of the Ackermann function also uses just the explicitly recursive call in the quotation for the double recursion:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;clr-ack == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [pop null]&#160; [popd succ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [null]&#160; [pop pred 1]&#160; [] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [[dup pred swap] dip pred]&#160; [clr-ack] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condlinrec. 
+<p>The following partially recursive definition of the Ackermann
+function also uses just the explicitly recursive call in the quotation
+for the double recursion:</p>
+<pre><code>        DEFINE 
+            clr-ack == 
+               [ [ [pop null]  [popd succ] ] 
+                 [ [null]  [pop pred 1]  [] ] 
+                 [ [[dup pred swap] dip pred]  [clr-ack] ] ] 
+               condlinrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]&#160;&#160; [i clr-ack]&#160; map. 
+        [ [3 0] [3 1] [3 2] [3 3] [3 4] [3 5] ]   [i clr-ack]  map. 
 [5 13 29 61 125 253]</code></pre>
-<p>In the same style here is the partially recursive definition of the function for the Hamiltonian path on a hypercube. But since there is only a two way branching, the linrec combinator is used rather than the slightly more complex (and hence more flexible) condlinrec combinator. Remember that the implicit recursion occurs between the third and fourth quotation.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;lr-hamilhyp == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ pop ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dup rollup pred ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dupd cons swap pred lr-hamilhyp ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; linrec. 
+<p>In the same style here is the partially recursive definition of the
+function for the Hamiltonian path on a hypercube. But since there is
+only a two way branching, the linrec combinator is used rather than the
+slightly more complex (and hence more flexible) condlinrec combinator.
+Remember that the implicit recursion occurs between the third and fourth
+quotation.</p>
+<pre><code>        DEFINE
+            lr-hamilhyp == 
+               [ null ] 
+               [ pop ] 
+               [ dup rollup pred ] 
+               [ dupd cons swap pred lr-hamilhyp ] 
+               linrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; []&#160; 5&#160; lr-hamilhyp. 
+        []  5  lr-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1 5 1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
-<p>Using almost the same definition with only a small change we obtain a definition for something seemingly quite different. In the following only the commented line has been inserted. The definition generates Gray sequences of subsets of small numbers. Each subset is generated from its predecessor by having just one number added or removed. This step is here done by an operation called <em>toggle</em>, which takes a set of small numbers and another small number as parameters and returns a set. If the number was in the original set then it is removed, if the number was not in the original set then it is added. Here is the definition and some examples:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;toggle ==&#160;&#160; #&#160;&#160; {..} i&#160; -&gt;&#160; {..] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [has]&#160; [[not] dip swons not]&#160; [swons]&#160; ifte. 
+<p>Using almost the same definition with only a small change we obtain a
+definition for something seemingly quite different. In the following
+only the commented line has been inserted. The definition generates Gray
+sequences of subsets of small numbers. Each subset is generated from its
+predecessor by having just one number added or removed. This step is
+here done by an operation called <em>toggle</em>, which takes a set of
+small numbers and another small number as parameters and returns a set.
+If the number was in the original set then it is removed, if the number
+was not in the original set then it is added. Here is the definition and
+some examples:</p>
+<pre><code>        DEFINE 
+            toggle ==   #   {..} i  -&gt;  {..] 
+               [has]  [[not] dip swons not]  [swons]  ifte. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; {}&#160; 4&#160; toggle. 
+        {}  4  toggle. 
 {4}
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; {1 2 7}&#160; 2 toggle. 
+        {1 2 7}  2 toggle. 
 {1 7}</code></pre>
-<p>Here is the function which constructs Gray sequences, and three examples:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;lr-grayseq == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ null ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ pop ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dup rollup pred ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ dupd 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;dup [first swap toggle] dip&#160; # inserted line 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;cons swap pred lr-grayseq ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; linrec. 
+<p>Here is the function which constructs Gray sequences, and three
+examples:</p>
+<pre><code>        DEFINE 
+            lr-grayseq == 
+               [ null ] 
+               [ pop ] 
+               [ dup rollup pred ] 
+               [ dupd 
+                 dup [first swap toggle] dip  # inserted line 
+                 cons swap pred lr-grayseq ] 
+               linrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [{}]&#160; 3&#160; lr-grayseq. 
+        [{}]  3  lr-grayseq. 
 [{3} {1 3} {1 2 3} {2 3} {2} {1 2} {1} {}]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [{3}]&#160; 3&#160; lr-grayseq. 
+        [{3}]  3  lr-grayseq. 
 [{} {1} {1 2} {2} {2 3} {1 2 3} {1 3} {3}]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [{1 2 3}]&#160; 3 lr-grayseq. 
+        [{1 2 3}]  3 lr-grayseq. 
 [{1 2} {2} {} {1} {1 3} {3} {2 3} {1 2 3}]</code></pre>
 <h2 id="TOC-5"><strong>A nested recursion combinator</strong></h2>
-<p>Nested recursion occurs not only in contrived functions like the Ackermann function and the 91-function, but also in some others. Since one of the aims of Joy is to emphasise common patterns, a new recursion combinator called <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">condnestrec</span> was added to Joy. It resembles the <span style="font-size:10.0pt;font-family: &quot;Courier New&quot;">condlinrec</span> combinator in that it takes just one parameter which is a list of cases. Each case is a list, all but the last have a quoted test predicate as their first element. All other elements in a case list are again quotations. But whereas <span style="font-size:10.0pt; font-family:&quot;Courier New&quot;">condlinrec</span> allows at most two other quotations, <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">condnestrec</span> allows any number. For both combinators an implicit recursion occurs between any consecutive other quotations.</p>
-<p>Here is the example for the Hamiltonian path on a hypercube. Note that the parameter to the combinator is a list of just two cases. The first case consists of a test quotation and another quotation, so there is no recursion here. The second case is also the last, so it is the default, and it has no test quotation. There are three quotations, so the implicit recursion occurs between them, so it occurs twice.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-hamilhyp == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [null] [pop] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup rollup pred] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[dupd cons swap pred] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+<p>Nested recursion occurs not only in contrived functions like the
+Ackermann function and the 91-function, but also in some others. Since
+one of the aims of Joy is to emphasise common patterns, a new recursion
+combinator called <code>condnestrec</code> was added to Joy. It
+resembles the <code>condlinrec</code> combinator in that it takes just
+one parameter which is a list of cases. Each case is a list, all but the
+last have a quoted test predicate as their first element. All other
+elements in a case list are again quotations. But whereas
+<code>condlinrec</code> allows at most two other quotations,
+<code>condnestrec</code> allows any number. For both combinators an
+implicit recursion occurs between any consecutive other quotations.</p>
+<p>Here is the example for the Hamiltonian path on a hypercube. Note
+that the parameter to the combinator is a list of just two cases. The
+first case consists of a test quotation and another quotation, so there
+is no recursion here. The second case is also the last, so it is the
+default, and it has no test quotation. There are three quotations, so
+the implicit recursion occurs between them, so it occurs twice.</p>
+<pre><code>        DEFINE 
+            cnr-hamilhyp == 
+               [ [ [null] [pop] ] 
+                 [ [dup rollup pred] 
+                   [dupd cons swap pred] 
+                   [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [] 4 cnr-hamilhyp. 
+        [] 4 cnr-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
-<p>In the following definition of the Ackermann function implicit recursion occurs once in the second case, and twice in the third, default case. In each of the three places the quotation following the implicit recursion is actually empty.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-ack == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [pop null]&#160; [popd succ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [null]&#160; [pop pred 1]&#160; [] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [[dup pred swap] dip pred]&#160; []&#160; [] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+<p>In the following definition of the Ackermann function implicit
+recursion occurs once in the second case, and twice in the third,
+default case. In each of the three places the quotation following the
+implicit recursion is actually empty.</p>
+<pre><code>        DEFINE 
+            cnr-ack == 
+               [ [ [pop null]  [popd succ] ] 
+                 [ [null]  [pop pred 1]  [] ] 
+                 [ [[dup pred swap] dip pred]  []  [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; 3 4 cnr-ack. 
+        3 4 cnr-ack. 
 125</code></pre>
-<p>The program for Gray sequences is again obtained from the one for the Hamiltonian path on a hypercube by inserting one line as indicated:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-grayseq == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [null]&#160; [pop] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup rollup pred] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[dupd 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;dup [first swap toggle] dip # inserted 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;cons swap pred] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+<p>The program for Gray sequences is again obtained from the one for the
+Hamiltonian path on a hypercube by inserting one line as indicated:</p>
+<pre><code>        DEFINE 
+            cnr-grayseq == 
+               [ [ [null]  [pop] ] 
+                 [ [dup rollup pred] 
+                   [dupd 
+                    dup [first swap toggle] dip # inserted 
+                    cons swap pred] 
+                   [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [{}] 3 cnr-grayseq. 
+        [{}] 3 cnr-grayseq. 
 [{3} {1 3} {1 2 3} {2 3} {2} {1 2} {1} {}]</code></pre>
-<p>Since the Hamiltonian path sequence is also the sequence of the disk numbers in the Hanoi problem, it is perhaps not too surprising that the solution to the Hamoi problem is so similar. The solution of course has to specify the pegs: each move has to specify from which peg the top disk is to be removed and to which peg it is to be moved. However, the number of the disk is not normally mentioned. In the following program the number of the disk directs the recursion just as in the Hamiltonian problem, but the number of the disk does not appear in the output.</p>
-<p>In this particular version of the program the user specifies a list of the names of the three pegs, and the number of disks on the first peg. The disks on the first peg are to be moved to the peg whose name is the second on the list, and the peg whose name is the third item can be used as a temporary. The user chose to call the pegs &quot;source&quot; &quot;destination&quot; and &quot;temp&quot; in the first example, and &quot;S&quot; &quot;D&quot; and &quot;T&quot; in the second example.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-hanoi == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [[rolldown] infra] dip 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [null] [pop pop] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup2 [[rotate] infra] dip pred] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[ [dup rest put] dip 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;[[swap] infra] dip pred ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;[] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+<p>Since the Hamiltonian path sequence is also the sequence of the disk
+numbers in the Hanoi problem, it is perhaps not too surprising that the
+solution to the Hamoi problem is so similar. The solution of course has
+to specify the pegs: each move has to specify from which peg the top
+disk is to be removed and to which peg it is to be moved. However, the
+number of the disk is not normally mentioned. In the following program
+the number of the disk directs the recursion just as in the Hamiltonian
+problem, but the number of the disk does not appear in the output.</p>
+<p>In this particular version of the program the user specifies a list
+of the names of the three pegs, and the number of disks on the first
+peg. The disks on the first peg are to be moved to the peg whose name is
+the second on the list, and the peg whose name is the third item can be
+used as a temporary. The user chose to call the pegs "source"
+"destination" and "temp" in the first example, and "S" "D" and "T" in
+the second example.</p>
+<pre><code>        DEFINE 
+            cnr-hanoi == 
+               [[rolldown] infra] dip 
+               [ [ [null] [pop pop] ] 
+                 [ [dup2 [[rotate] infra] dip pred] 
+                   [ [dup rest put] dip 
+                     [[swap] infra] dip pred ] 
+                   [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [source destination temp]&#160; 2&#160; cnr-hanoi. 
+        [source destination temp]  2  cnr-hanoi. 
 [source temp] [source destination] [temp destination]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [S D T]&#160; 5&#160; cnr-hanoi. 
-[S D] [S T] [D T] [S D] [T S] [T D] [S D] [S T] [D T] [D S] [T S] [D T] [S D] [S T] [D T] [S D] [T S] [T D] [S D] [T S] [D T] [D S] [T S] [T D] [S D] [S T] [D T] [S D] [T S] [T D] [S D] &#160; &#160;&#160;&#160;</code></pre>
-<p>It is interesting to note that although the Gray sequence program and the Hanoi program are based on the same program, the Hamiltonian path program, the Gray sequence produced consists of <img style="vertical-align:middle" src="https://latex.codecogs.com/svg.latex?2%5En" alt="2^n" title="2^n" /> members and the Hanoi move sequence consists of <img style="vertical-align:middle" src="https://latex.codecogs.com/svg.latex?2%5En-1" alt="2^n-1" title="2^n-1" /> members.</p>
-<p>Since this note started with the recursive definitions of the factorial function and the 91-function, This section would not be complete without the corresponding definitions using the <em>condnestrec</em> combinator:</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-fact == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [null] [pop 1] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [dup pred] [*] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec; 
+        [S D T]  5  cnr-hanoi. 
+[S D] [S T] [D T] [S D] [T S] [T D] [S D] [S T] [D T] [D S] [T S] [D T] [S D] [S T] [D T] [S D] [T S] [T D] [S D] [T S] [D T] [D S] [T S] [T D] [S D] [S T] [D T] [S D] [T S] [T D] [S D]      </code></pre>
+<p>It is interesting to note that although the Gray sequence program and
+the Hanoi program are based on the same program, the Hamiltonian path
+program, the Gray sequence produced consists of <span
+class="math inline">2<sup>n</sup></span> members and the Hanoi move
+sequence consists of <span class="math inline">2<sup>N</sup> - 1</span>
+members.</p>
+<p>Since this note started with the recursive definitions of the
+factorial function and the 91-function, This section would not be
+complete without the corresponding definitions using the
+<em>condnestrec</em> combinator:</p>
+<pre><code>        DEFINE 
+            cnr-fact == 
+               [ [ [null] [pop 1] ] 
+                 [ [dup pred] [*] ] ] 
+               condnestrec; 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-mcc91 == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [100 &gt;] [10 -] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [11 +] [] [] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+            cnr-mcc91 == 
+               [ [ [100 &gt;] [10 -] ] 
+                 [ [11 +] [] [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ 0 1 2 3 4 5 6 ]&#160; [cnr-fact]&#160; map. 
+        [ 0 1 2 3 4 5 6 ]  [cnr-fact]  map. 
 [1 1 2 6 24 120 720]
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ -7 42 99 100 101 102 345 ]&#160; [cnr-mcc91]&#160; map. 
+        [ -7 42 99 100 101 102 345 ]  [cnr-mcc91]  map. 
 [91 91 91 91 91 92 335]</code></pre>
-<p>In fact, <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">condnestrec</span> is a veritable swiss army knife combinator. In the following definitions of the <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">even</span> predicate and the <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">abs</span> (absolute value) operator, <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">condlinrec</span> is used just for conditionals without making use of the possibility of recursion. For the <span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">abs</span> operator the default is actually empty.</p>
-<pre><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; DEFINE 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-even == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [2 rem null] [pop true] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [pop false] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec; 
+<p>In fact, <code>condnestrec</code> is a veritable swiss army knife
+combinator. In the following definitions of the <code>even</code>
+predicate and the <code>abs</code> (absolute value) operator,
+<code>condlinrec</code> is used just for conditionals without making use
+of the possibility of recursion. For the <code>abs</code> operator the
+default is actually empty.</p>
+<pre><code>        DEFINE 
+            cnr-even == 
+               [ [ [2 rem null] [pop true] ] 
+                 [ [pop false] ] ] 
+               condnestrec; 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;cnr-abs == 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; [ [ [0 &lt;] [0 swap -] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;[ [] ] ] 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; condnestrec. 
+            cnr-abs == 
+               [ [ [0 &lt;] [0 swap -] ] 
+                 [ [] ] ] 
+               condnestrec. 
 
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; 3 cnr-even. 
+        3 cnr-even. 
 false
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4 cnr-even. 
+        4 cnr-even. 
 true
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; -5 cnr-abs. 
+        -5 cnr-abs. 
 5
-&#160;&#160;&#160;&#160;&#160;&#160;&#160; 6 cnr-abs. 
+        6 cnr-abs. 
 6</code></pre>
-<p>The use of nested recursion in Joy has not yet been explored beyond these examples. All the examples took a numeric parameter to guide the recursion, and one obvious alternative to investigate is the use of lists.</p>
-<p>MYNOTE: Bauer and Woessner, functions ble and morris. Manna, Ackermann for strings.</p>
-</body>
-</html>
+<p>The use of nested recursion in Joy has not yet been explored beyond
+these examples. All the examples took a numeric parameter to guide the
+recursion, and one obvious alternative to investigate is the use of
+lists.</p>
+<p>MYNOTE: Bauer and Woessner, functions ble and morris. Manna,
+Ackermann for strings.</p>

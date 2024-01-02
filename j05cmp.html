@@ -114,7 +114,7 @@ particular this concerns the patterns of the recursive calls. In the
 body of <code>r-fac1</code> the direct recursive call has been replaced
 by its quotation and <del>app1</del><code>i</code>, which applies the
 quotation just once, to the single number. So here are two other
-versions, they have aligned to make comparisons easier.</p>
+versions, they have been aligned to make comparisons easier.</p>
 <pre><code>    r-fac2  ==  [ null] [succ] [     dup pred [r-fac2]      i *] ifte  (* app1 *)
     r-fib2  ==  [small] [    ] [pred dup pred [r-fib2] unary2 +] ifte  (* app2 *)</code></pre>
 <p>The task of eliminating the recursion in the RHS of the definitions
@@ -210,8 +210,8 @@ quoted programs as values:</p>
         [[P]  ?]  [P]                           (by first)</code></pre>
 <p>The second part of the definition is <code>i</code>, which
 effectively dequotes the topmost <code>[P]</code> and hence executes
-<code>P</code>. So the next reduction step depend on what <code>P</code>
-actually does.</p>
+<code>P</code>. So the next reduction step depends on what
+<code>P</code> actually does.</p>
 <p>An alternative recursive definition may be constructed:</p>
 <pre><code>        [P]  ?
     ==  [[P] ?]  P
@@ -463,7 +463,7 @@ combinator</em> (uppercase), see <a
 href="joybibl.html#40">{Curry58}</a>. This combinator is well known in
 the literature on the lambda calculus and on combinatory logic.</p>
 <p>The recursion theorem traces its ancestry to Epimenides, Russell and
-Grelling (for <code>[P]</code> put <code>[i not]</code>, and to Gödel.
+Grelling (for <code>[P]</code> put <code>[i not]</code>), and to Gödel.
 In its general form it is due to Kleene. Its proof is very cumbersome in
 just about all formalisms. As can be seen from the above, in Joy the
 proof is very simple.</p>
@@ -479,8 +479,8 @@ close to Joy’s <code>i</code> combinator and quotation.</p>
 <p>The recursion theorem leads in a few steps to Rice’s theorem, see <a
 href="joybibl.html#88">{Rogers67}</a>, which encapsulates all the bad
 news of computability theory: for example the <em>halting problem</em>,
-or the impossibility of writing programs which check other programs -
-implementation, student exercises - for correctness.</p>
+or the impossibility of writing programs which check other programs –
+implementation, student exercises – for correctness.</p>
 <h2 id="some-simple-cases">Some simple cases</h2>
 <p>The theorem, in both forms, speaks of <em>all</em> programs
 <code>P</code>. It is of some interest to see what happens when some

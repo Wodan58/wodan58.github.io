@@ -1,20 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
-  <title></title>
-  <style type="text/css">code{white-space: pre;}</style>
-</head>
-<body>
 <p>MiniJoy - a small Joy-in-Common-Lisp</p>
-<p>This is an antique version of Joy which I wrote many years ago. As will be apparent to any expert, this is a beginner's Lisp program. I have not had access to any Lisp for a very long time, so I cannot say much about it. I wrote it on a Data General machine, and the Lisp thereon had some quirks which I did not understand: in particular, for the compiler to work one had to compile (load ? I can't remember) the program twice (!). But it also worked when interpreted. From memory, the translation of (proper) Joy to this Lisp-version was</p>
+<p>This is an antique version of Joy which I wrote many years ago. As
+will be apparent to any expert, this is a beginner's Lisp program. I
+have not had access to any Lisp for a very long time, so I cannot say
+much about it. I wrote it on a Data General machine, and the Lisp
+thereon had some quirks which I did not understand: in particular, for
+the compiler to work one had to compile (load ? I can't remember) the
+program twice (!). But it also worked when interpreted. From memory, the
+translation of (proper) Joy to this Lisp-version was</p>
 <pre><code>      [1 2 3 4]  [dup *]  map.
     ( (1 2 3 4)  (dup *)  map )</code></pre>
 <p>and definitions were just</p>
 <pre><code>    ( ( square ==  dup * )  enter)</code></pre>
-<p>I leave it here in case some Lisp programmer wants to take it up. Note that some words (e.g. &quot;cnos&quot;) are not the same as in modern Joy (i.e. &quot;swons&quot;).</p>
+<p>I leave it here in case some Lisp programmer wants to take it up.
+Note that some words (e.g. "cnos") are not the same as in modern Joy
+(i.e. "swons").</p>
 <pre><code>;; JOY interpreter
 ;; A real programmer can write programs in any language, therefore
 ;; a real PASCAL programmer can write PASCAL programs in any language
@@ -195,5 +194,3 @@
 (joy)
 
 ;; EOF - JOY interpreter</code></pre>
-</body>
-</html>
