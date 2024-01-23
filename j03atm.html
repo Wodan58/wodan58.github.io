@@ -102,18 +102,18 @@ sets and quoted programs. Atomic programs which push a simple or
 aggregate value onto the stack will be called <em>literal</em>s. A
 different kind of atom can be applied only to a non-empty stack. Their
 effect is to re-organise the top few elements of the stack.</p>
-<p>Some, like dup, swap and pop, just edit the top few elements. Others
-expect the top few elements to be of certain types and their effect is
-to replace these elements by the result of applying a function to them
-as arguments. These include the arithmetic and relational operators for
-addition, multiplication and comparison, and the truthfunctional
-operators. They also include list operations like concatenation.
-Collectively all of them will be called <em>operator</em>s. A third kind
-of atoms expect quoted programs on the top of the stack. Like the
-operators, they pop the quoted programs off the stack. But they do not
-treat them as passive data structures in the way operators do. Instead
-they cause the quoted programs to be executed. These are called
-<em>combinator</em>s.</p>
+<p>Some, like <code>dup</code>, <code>swap</code> and <code>pop</code>,
+just edit the top few elements. Others expect the top few elements to be
+of certain types and their effect is to replace these elements by the
+result of applying a function to them as arguments. These include the
+arithmetic and relational operators for addition, multiplication and
+comparison, and the truthfunctional operators. They also include list
+operations like concatenation. Collectively all of them will be called
+<em>operator</em>s. A third kind of atoms expect quoted programs on the
+top of the stack. Like the operators, they pop the quoted programs off
+the stack. But they do not treat them as passive data structures in the
+way operators do. Instead they cause the quoted programs to be executed.
+These are called <em>combinator</em>s.</p>
 <p>After this rough exposition of the classification it is important to
 suppress any procedural reading and to revert to the official
 interpretation of Joy programs as denoting unary functions. So the three
@@ -130,13 +130,13 @@ which is like S1 except that its stack component has an additional item,
 the <em>number</em> 123 pushed onto it.</p>
 </blockquote>
 <p>The semantics for the <em>truth value type</em> is similar: The two
-symbols true and false denote functions which for any state as argument
-yields as value another state which is like the argument state except
-that the logical constant <code>true</code> or <code>false</code> has
-been pushed onto the stack. Literals of the <em>character type</em> can
-be treated just like small numbers. So, a quoted character such as
-<code>'A</code> denotes a function taking any state into another state
-with that character pushed onto the stack.</p>
+symbols <code>true</code> and <code>false</code> denote functions which
+for any state as argument yields as value another state which is like
+the argument state except that the logical constant <code>true</code> or
+<code>false</code> has been pushed onto the stack. Literals of the
+<em>character type</em> can be treated just like small numbers. So, a
+quoted character such as <code>'A</code> denotes a function taking any
+state into another state with that character pushed onto the stack.</p>
 <p>The three types of truth values, characters and integers constitute
 what will be called simple types. They are simple in that their values
 do not have parts. There are also aggregate types which do have parts.
@@ -176,17 +176,18 @@ the list on top of the stack become the stack. Finally, it should be
 possible to create a new, empty stack. There are three operators that do
 just that:</p>
 <pre><code>        stack    unstack    newstack</code></pre>
-<p>The stack operator pushes onto the stack a list containing all the
-elements of the stack. The unstack operator expects a list on top of the
-stack and makes that the stack. The <code>unstack</code> operator undoes
-what the <code>stack</code> operator does, but the reverse is true only
-in special cases. The newstack operator deletes the entire stack and
-replaces it with a new, empty one. Also, it should be noted that the
-stack is not always a sequence of values, it can also contain operators
-and combinators. So, strictly speaking the stack is always a quotation,
-and the <code>stack</code> operator pushes a quotation onto the stack,
-and the <code>unstack</code> operator expects a quotation on the stack
-and makes that the new stack.</p>
+<p>The <code>stack</code> operator pushes onto the stack a list
+containing all the elements of the stack. The <code>unstack</code>
+operator expects a list on top of the stack and makes that the stack.
+The <code>unstack</code> operator undoes what the <code>stack</code>
+operator does, but the reverse is true only in special cases. The
+<code>newstack</code> operator deletes the entire stack and replaces it
+with a new, empty one. Also, it should be noted that the stack is not
+always a sequence of values, it can also contain operators and
+combinators. So, strictly speaking the stack is always a quotation, and
+the <code>stack</code> operator pushes a quotation onto the stack, and
+the <code>unstack</code> operator expects a quotation on the stack and
+makes that the new stack.</p>
 <p>It is sometimes useful to treat several types together. The
 <em>numeric</em> types are integers and characters, the <em>Boolean</em>
 types are truth values and sets, and the <em>sequence</em> types are
@@ -217,246 +218,264 @@ operator</em>s.</p>
 containing at least one element:</p>
 <pre><code>        pop    dup</code></pre>
 <p>The top element does not have to satisfy any particular condition, it
-can be of any type. The pop operator removes the top element. The dup
-operator pushes a duplicate on top, so it replaces the one original by
-two copies.</p>
+can be of any type. The <code>pop</code> operator removes the top
+element. The <code>dup</code> operator pushes a duplicate on top, so it
+replaces the one original by two copies.</p>
 <p>The following binary operators are defined on all stacks containing
 at least two elements:</p>
 <pre><code>        swap    popd    pop2    dupd</code></pre>
-<p>The swap operator interchanges the top two elements. The popd
-operator removes the second element. The pop2 operator removes the first
-and the second element. The dupd operator duplicates the second
-element.</p>
+<p>The <code>swap</code> operator interchanges the top two elements. The
+<code>popd</code> operator removes the second element. The
+<code>pop2</code> operator removes the first and the second element. The
+<code>dupd</code> operator duplicates the second element.</p>
 <p>The following ternary operators are defined for all stacks containing
 at least three elements:</p>
 <pre><code>        swapd    rollup    rolldown</code></pre>
-<p>The swapd operator interchanges the second and third elements but
-leaves the first element in place. The rollup operator moves the third
-and second element into second and first position and moves the first
-element into third position. The rolldown operator moves the second and
-first element into third and second position and moves the third element
-into first position.</p>
+<p>The <code>swapd</code> operator interchanges the second and third
+elements but leaves the first element in place. The <code>rollup</code>
+operator moves the third and second element into second and first
+position and moves the first element into third position. The
+<code>rolldown</code> operator moves the second and first element into
+third and second position and moves the third element into first
+position.</p>
 <p>There is another <em>ternary operator</em>:</p>
 <pre><code>        choice</code></pre>
-<p>The choice operator expects three values on top of the stack, say
-<code>X</code>, <code>Y</code> and <code>Z</code>, with <code>Z</code>
-on top. The third value from the top, <code>X</code>, has to be a truth
-value. If it is <code>true</code>, then the <code>choice</code> operator
-just leaves <code>Y</code> on top of the stack, and <code>X</code> and
-<code>Z</code> disappear. On the other hand, if <code>X</code> is false,
-then the <code>choice</code> operator just leaves <code>Z</code> on top
-of the stack, and <code>X</code> and <code>Y</code> disappear. This
-operator is related to two combinators <code>ifte</code> and
-<code>branch</code> which are explained in the next sections.</p>
+<p>The <code>choice</code> operator expects three values on top of the
+stack, say <code>X</code>, <code>Y</code> and <code>Z</code>, with
+<code>Z</code> on top. The third value from the top, <code>X</code>, has
+to be a truth value. If it is <code>true</code>, then the
+<code>choice</code> operator just leaves <code>Y</code> on top of the
+stack, and <code>X</code> and <code>Z</code> disappear. On the other
+hand, if <code>X</code> is false, then the <code>choice</code> operator
+just leaves <code>Z</code> on top of the stack, and <code>X</code> and
+<code>Y</code> disappear. This operator is related to two combinators
+<code>ifte</code> and <code>branch</code> which are explained in the
+next sections.</p>
 <p>There is another operator for multi-choices. It expects a non-empty
 list of non-empty lists on top of the stack and below that one further
-item.</p>
+item:</p>
 <pre><code>        opcase</code></pre>
-<p>The opcase operator matches the type of the item with the
-<code>first</code> members of the lists. When a match is found, the
+<p>The <code>opcase</code> operator matches the type of the item with
+the <code>first</code> members of the lists. When a match is found, the
 <code>rest</code> of that list is pushed onto the stack. If no match is
 found, then the last list is used as the default.</p>
 <p>The following two operators handle input and output:</p>
 <pre><code>        put    get</code></pre>
-<p>The put operator expects one item on top of the stack, it removes it
-and writes it to the output file. The get operator expects one item in
-the input file, it reads it from there and pushes it on top of the
-stack.</p>
+<p>The <code>put</code> operator expects one item on top of the stack,
+it removes it and writes it to the output file. The <code>get</code>
+operator expects one item in the input file, it reads it from there and
+pushes it on top of the stack.</p>
 <h1 id="operators-for-simple-types">Operators for Simple Types</h1>
 <p>The following binary operators are defined for all numeric types.
 They have their usual meaning, and the result is given the type of the
-second parameter.</p>
+second parameter:</p>
 <pre><code>        +    -    *    /    rem    max    min</code></pre>
-<p>The following unary operators are defined for all numeric types.</p>
+<p>The following unary operators are defined for all numeric types:</p>
 <pre><code>        succ    pred    abs    sign</code></pre>
-<p>The succ and pred operators yield the <em>successor</em> and
-<em>predecessor</em>, respectively. The abs operator computes the
-<em>absolute value</em>, and the sign operator returns the
-<em>signum</em> value, an integer which is <code>-1</code>,
-<code>0</code> or <code>+1</code> depending on whether the parameter is
-negative, zero or positive.</p>
+<p>The <code>succ</code> and <code>pred</code> operators yield the
+<em>successor</em> and <em>predecessor</em>, respectively. The
+<code>abs</code> operator computes the <em>absolute value</em>, and the
+<code>sign</code> operator returns the <em>signum</em> value, an integer
+which is <code>-1</code>, <code>0</code> or <code>+1</code> depending on
+whether the parameter is negative, zero or positive.</p>
 <p>The following mathematical functions are provided:</p>
 <pre><code>        fact    exp    fib    nfib    gcd</code></pre>
-<p>The unary fact operator computes the <em>factorial</em> function. The
-binary exp operator computes the <em>exponentiation</em> function, the
-exponent is the top parameter. The binary fib operator computes the
-<em>Fibonacci</em> function. The binary nfib operator computes a similar
+<p>The unary <code>fact</code> operator computes the <em>factorial</em>
+function. The binary <code>exp</code> operator computes the
+<em>exponentiation</em> function, the exponent is the top parameter. The
+binary <code>fib</code> operator computes the <em>Fibonacci</em>
+function. The binary <code>nfib</code> operator computes a similar
 function, which is the number of calls which a recursive implementation
 of the Fibonacci function would need; if this function is implemented
-recursively, then the number of its calls is the same. The binary gcd
-operator computes the <em>greatest common divisor</em>.</p>
+recursively, then the number of its calls is the same. The binary
+<code>gcd</code> operator computes the <em>greatest common
+divisor</em>.</p>
 <p>The type of truth values is one of the Boolean types. The operators
-are</p>
+are:</p>
 <pre><code>        and    or    xor    not</code></pre>
-<p>The three binary operators and, or and xor compute the logical
-<em>conjunction</em>, <em>inclusive disjunction</em> and <em>exclusive
-disjunction</em>. The unary not operator computes the
-<em>negation</em>.</p>
+<p>The three binary operators <code>and</code>, <code>or</code> and
+<code>xor</code> compute the logical <em>conjunction</em>, <em>inclusive
+disjunction</em> and <em>exclusive disjunction</em>. The unary
+<code>not</code> operator computes the <em>negation</em>.</p>
 <h1 id="operators-for-aggregate-types">Operators for Aggregate
 Types</h1>
 <p>The following unary operators expect a non-empty aggregate on top of
 the stack:</p>
 <pre><code>        first    second    third    rest</code></pre>
-<p>The first operator extracts the first element of values of the
-sequence types string and list. For sets it extracts the first member
-using the underlying ordering. The second operator expects an aggregate
-of at least two elements, for sequences it extracts the second element,
-for sets it extracts the second element under the ordering. The third
-operator expects an aggregate of at least three members, it extracts the
-third element. The rest operator expects an aggregate with at least one
+<p>The <code>first</code> operator extracts the first element of values
+of the sequence types string and list. For sets it extracts the first
+member using the underlying ordering. The <code>second</code> operator
+expects an aggregate of at least two elements, for sequences it extracts
+the second element, for sets it extracts the second element under the
+ordering. The <code>third</code> operator expects an aggregate of at
+least three members, it extracts the third element. The
+<code>rest</code> operator expects an aggregate with at least one
 member, it returns an aggregate which is like the parameter aggregate
 but has its first element removed.</p>
 <p>The following binary operators require an aggregate and a potential
 member on top of the stack:</p>
 <pre><code>        cons    swons</code></pre>
-<p>The cons operator expects the aggregate on top of the stack and the
-potential member below. The effect is to add the potential member into
-the aggregate. In the case of strings and lists the potential member is
-added in front. In the case of sets the potential member is added only
-in case it is not already a member. The swons operator does essentially
-the same except that it expects the potential member on top and the
-aggregate below. Essentially <code>swons</code> is equivalent to the
-composition <code>swap cons</code>, and hence its name. The two
-operators are <em>converse</em>s of each other.</p>
+<p>The <code>cons</code> operator expects the aggregate on top of the
+stack and the potential member below. The effect is to add the potential
+member into the aggregate. In the case of strings and lists the
+potential member is added in front. In the case of sets the potential
+member is added only in case it is not already a member. The
+<code>swons</code> operator does essentially the same except that it
+expects the potential member on top and the aggregate below. Essentially
+<code>swons</code> is equivalent to the composition
+<code>swap cons</code>, and hence its name. The two operators are
+<em>converse</em>s of each other.</p>
 <p>The following unary operators also require a non-empty aggregate on
 top of the stack:</p>
 <pre><code>        uncons    unswons</code></pre>
-<p>The uncons operator replaces the aggregate element by two elements,
-the first and the rest, with the rest on top. The unswons operator does
-the same, but with the first on top. These two operators differ from
-other operators in that they leave <em>two</em> values on top of the
-stack. Such operators would not make much sense in other notations.
-Their names were chosen because their effect is to undo the effect of
-the two binary operators <code>cons</code> and <code>swons</code>.</p>
+<p>The <code>uncons</code> operator replaces the aggregate element by
+two elements, the first and the rest, with the rest on top. The
+<code>unswons</code> operator does the same, but with the first on top.
+These two operators differ from other operators in that they leave
+<em>two</em> values on top of the stack. Such operators would not make
+much sense in other notations. Their names were chosen because their
+effect is to undo the effect of the two binary operators
+<code>cons</code> and <code>swons</code>.</p>
 <p>There are four operators for <em>index</em>ing in various ways:</p>
 <pre><code>        at    of    drop    take</code></pre>
 <p>These four binary operators expect an aggregate and a number. That
-number is used for indexing into the aggregate. The at operator expects
-the aggregate <code>A</code> and above that a number <code>N</code>, it
-returns that member of the aggregate which is at the <code>N</code>-th
-position in the aggregate. The of operator expects a number
-<code>N</code> and above that an aggregate <code>A</code>, it returns
-the <code>N</code>-th member of <code>A</code>. So the two operators are
-<em>converse</em>s of each other. The drop and take operators both
-expect an aggregate <code>A</code> and above that a number
-<code>N</code>. The <code>drop</code> operator returns an aggragate like
-<code>A</code> except that the first <code>N</code> elements have been
-removed. The <code>take</code> operator returns an aggregate like
-<code>A</code> except that only the first <code>N</code> elements have
-been retained. For all four operators in the case of sequences the
-sequence ordering is used, and for sets the underlying ordering is
-used.</p>
+number is used for indexing into the aggregate. The <code>at</code>
+operator expects the aggregate <code>A</code> and above that a number
+<code>N</code>, it returns that member of the aggregate which is at the
+<code>N</code>-th position in the aggregate. The <code>of</code>
+operator expects a number <code>N</code> and above that an aggregate
+<code>A</code>, it returns the <code>N</code>-th member of
+<code>A</code>. So the two operators are <em>converse</em>s of each
+other. The <code>drop</code> and <code>take</code> operators both expect
+an aggregate <code>A</code> and above that a number <code>N</code>. The
+<code>drop</code> operator returns an aggregate like <code>A</code>
+except that the first <code>N</code> elements have been removed. The
+<code>take</code> operator returns an aggregate like <code>A</code>
+except that only the first <code>N</code> elements have been retained.
+For all four operators in the case of sequences the sequence ordering is
+used, and for sets the underlying ordering is used.</p>
 <p>The following are some general operators for aggregates:</p>
 <pre><code>        size    reverse    concat    swoncat
         zip     flatten    transpose</code></pre>
-<p>The unary size operator determines the number of elements of any
-aggregate, and for lists this means top level members. The unary reverse
-operator reverses strings and lists, it has no effect on sets. The
-binary concat operator concatenates two sequences of the same type, it
-appends the top parameter to the second parameter. The swoncat operator
+<p>The unary <code>size</code> operator determines the number of
+elements of any aggregate, and for lists this means top level members.
+The unary <code>reverse</code> operator reverses strings and lists, it
+has no effect on sets. The binary <code>concat</code> operator
+concatenates two sequences of the same type, it appends the top
+parameter to the second parameter. The <code>swoncat</code> operator
 does the same except that it executes a <code>swap</code> first. The
-binary zip operator expects two aggregates of the same type. It returns
-a list of lists of two elements, each pair taken from corresponding
-elements in the aggregates. The size of the result list is the same as
-the size of the smaller of the two parameter aggregates. The unary
-flatten operator expects a list of sequences and combines them by
-concatenation. The unary transpose operator is for matrix manipulation.
-It also expects a list of lists <code>L1, L2 ...</code> and returns a
-list of lists. The first sublist contains the first members of the
-<code>Li</code>, the second sublist contains the second members, and so
-on. The list returned has as many members as the shortest of the
-<code>Li</code>.</p>
+binary <code>zip</code> operator expects two aggregates of the same
+type. It returns a list of lists of two elements, each pair taken from
+corresponding elements in the aggregates. The size of the result list is
+the same as the size of the smaller of the two parameter aggregates. The
+unary <code>flatten</code> operator expects a list of sequences and
+combines them by concatenation. The unary <code>transpose</code>
+operator is for matrix manipulation. It also expects a list of lists
+<code>L1, L2 ...</code> and returns a list of lists. The first sublist
+contains the first members of the <code>Li</code>, the second sublist
+contains the second members, and so on. The list returned has as many
+members as the shortest of the <code>Li</code>.</p>
 <p>The type of sets is another of the Boolean types. The operators
-are</p>
+are:</p>
 <pre><code>        and    or    xor    not</code></pre>
-<p>The three binary operators and, or and xor compute the
-<em>intersection</em>, <em>union</em> and <em>symmetric difference</em>.
-The unary not operator computes the <em>complement</em>. For most
-implementations on current machines the complement will be with respect
-to the largest set, <code>{0..31}</code>.</p>
+<p>The three binary operators <code>and</code>, <code>or</code> and
+<code>xor</code> compute the <em>intersection</em>, <em>union</em> and
+<em>symmetric difference</em>. The unary <code>not</code> operator
+computes the <em>complement</em>. For most implementations on current
+machines the complement will be with respect to the largest set,
+<code>{0..31}</code>.</p>
 <p>The following operators on sequences deal with ordering of their
 elements:</p>
 <pre><code>        qsort    qsort1    merge</code></pre>
-<p>The unary qsort operator uses the <em>quicksort</em> algorithm to
-return a sorted version of the parameter. The qsort1 operator does the
-same, except that it expects a list of sequences which it sorts
-according to the first element of the sequences. The binary merge
-operator is like the <code>concat</code> operator in that it produces a
-single sequence. The difference is that it picks elements from the two
-sequences in accordance with their order. If the two sequences were
-sorted, then the result of merging them is also sorted.</p>
+<p>The unary <code>qsort</code> operator uses the <em>quicksort</em>
+algorithm to return a sorted version of the parameter. The
+<code>qsort1</code> operator does the same, except that it expects a
+list of sequences which it sorts according to the first element of the
+sequences. The binary <code>merge</code> operator is like the
+<code>concat</code> operator in that it produces a single sequence. The
+difference is that it picks elements from the two sequences in
+accordance with their order. If the two sequences were sorted, then the
+result of merging them is also sorted.</p>
 <p>The following are arithmetic operations for lists of numbers:</p>
 <pre><code>        sum    product    scalarproduct</code></pre>
-<p>The first two expect a list of numbers, the sum operator adds them
-up, the product operator multiplies them, and for empty lists the
-results are 0 and 1 respectively. The scalarproduct operator expects a
-list of two lists of numbers. It multiplies corresponding elements of
-the two lists and returns the sum of these products.</p>
+<p>The first two expect a list of numbers, the <code>sum</code> operator
+adds them up, the <code>product</code> operator multiplies them, and for
+empty lists the results are 0 and 1 respectively. The
+<code>scalarproduct</code> operator expects a list of two lists of
+numbers. It multiplies corresponding elements of the two lists and
+returns the sum of these products.</p>
 <p>The following unary operators expect an aggregate on top of the stack
 and leave a list of various subaggregates on top of the stack:</p>
 <pre><code>        frontlist    restlist    powerlist    subseqlist    permlist</code></pre>
 <p>Let the size of the aggregate be (N). The frontlist and restlist
-operators return a list of <code>N+1</code> subaggregates. The
+operators return a list of <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20N%2B1"
+alt="N+1" title="N+1" class="math inline" /> subaggregates. The
 <code>frontlist</code> operator returns a list, beginning with the empty
 aggregate, obtained by successively adding the last, second last … first
 member of the original aggregate. The <code>restlist</code> operator
 returns a list, beginning with the original aggregate, by successively
 removing the first, second … last member of the original aggregate. The
-powerlist operator returns a list of all 2<sup>N</sup> subaggregates
-such that for each member of the original aggregate there will be one
-subaggregate in the list containing it and one not containing it. The
-subseqlist operator is similar, but it returns a shorter list of
-<img src="https://latex.codecogs.com/svg.latex?\frac%7BN%20*%20(N%20-%201)%7D%7B2%7D%20+%201" title="\frac{N * (N - 1)}{2} + 1" alt="\frac{N * (N - 1)}{2} + 1" />
-subaggregates containing only consecutive members of the original
-aggregate. The permlist only applies to sequence aggregates, it returns
-a list of all the <code>N!</code> (<code>N</code> factorial)
-permutations of the sequence.</p>
-<p>A related binary operator is</p>
+<code>powerlist</code> operator returns a list of all 2<sup>N</sup>
+subaggregates such that for each member of the original aggregate there
+will be one subaggregate in the list containing it and one not
+containing it. The <code>subseqlist</code> operator is similar, but it
+returns a shorter list of <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%20N%20%2A%20%28N%20-%201%29%20%2F%202%20%2B%201"
+alt="N * (N - 1) / 2 + 1" title="N * (N - 1) / 2 + 1"
+class="math inline" /> subaggregates containing only consecutive members
+of the original aggregate. The <code>permlist</code> only applies to
+sequence aggregates, it returns a list of all the <code>N!</code>
+(<code>N</code> factorial) permutations of the sequence.</p>
+<p>A related binary operator is:</p>
 <pre><code>        insertlist</code></pre>
-<p>The insertlist operator expects a sequence and above that another
-potential member. It returns the list of all sequences obtained by
-inserting the potential member in all possible positions in the
-sequence.</p>
+<p>The <code>insertlist</code> operator expects a sequence and above
+that another potential member. It returns the list of all sequences
+obtained by inserting the potential member in all possible positions in
+the sequence.</p>
 <p>A related binary operator for finding the <em>cartesian product</em>
-is</p>
+is:</p>
 <pre><code>        cartproduct</code></pre>
 <p>which expects two aggregates that do not have to be of the same type.
-The cartproduct operator returns a list of all pairs (as two element
-lists) of elements taken from the two aggregates. If the aggregates have
-<code>M</code> and <code>N</code> members, there will be
+The <code>cartproduct</code> operator returns a list of all pairs (as
+two element lists) of elements taken from the two aggregates. If the
+aggregates have <code>M</code> and <code>N</code> members, there will be
 <code>M × N</code> pairs in the result list.</p>
 <p>The following unary operators expect a tree:</p>
 <pre><code>        treeflatten    treestrip    treereverse    treesize</code></pre>
-<p>The treeflatten operator turns a tree into a flat list containing the
-leaves of the tree. The treestrip operator returns a tree with the same
-structure but with all leaves removed. The treereverse operator returns
-a tree in which (recursively) all internal lists have been reversed. The
-treesize operator returns an integer which is the number of leaves.</p>
+<p>The <code>treeflatten</code> operator turns a tree into a flat list
+containing the leaves of the tree. The <code>treestrip</code> operator
+returns a tree with the same structure but with all leaves removed. The
+<code>treereverse</code> operator returns a tree in which (recursively)
+all internal lists have been reversed. The <code>treesize</code>
+operator returns an integer which is the number of leaves.</p>
 <h1 id="predicates">Predicates</h1>
 <p>A <em>predicate</em> is a function which leaves a truth value on the
 stack. The following unary predicates are defined for all numeric
 types:</p>
 <pre><code>        odd    even    positive    negative</code></pre>
-<p>The odd and the even predicate return <code>true</code> or
-<code>false</code> just in case the parameter is odd or even. The
-positive and the negative predicate return <code>true</code> or
-<code>false</code> just in case the parameter is positive or negative –
-note that truth values and characters are never negative.</p>
+<p>The <code>odd</code> and the <code>even</code> predicate return
+<code>true</code> or <code>false</code> just in case the parameter is
+odd or even. The <code>positive</code> and the <code>negative</code>
+predicate return <code>true</code> or <code>false</code> just in case
+the parameter is positive or negative – note that truth values and
+characters are never negative.</p>
 <p>The following binary predicates are defined for all numeric types,
 they have their usual meaning:</p>
 <pre><code>        =    !=    &lt;    &lt;=    &gt;    &gt;=</code></pre>
 <p>The following are two unary predicates defined for all types:</p>
 <pre><code>        null    small</code></pre>
-<p>The null predicate is true if its simple parameter is numerically
-zero or its aggregate parameter is empty. The small predicate is true if
-its simple parameter is numerically zero or 1, or its aggregate
-parameter contains at most one element.</p>
+<p>The <code>null</code> predicate is true if its simple parameter is
+numerically zero or its aggregate parameter is empty. The
+<code>small</code> predicate is true if its simple parameter is
+numerically zero or 1, or its aggregate parameter contains at most one
+element.</p>
 <p>The following binary predicates test aggregates for members:</p>
 <pre><code>        in    has</code></pre>
-<p>The in-predicate is true if the second parameter is in the top
-aggregate parameter. The has-predicate is true if the aggregate second
-parameter has the top parameter as a member. The two predicates are
-<em>converse</em>s of each other.</p>
+<p>The <code>in</code>-predicate is true if the second parameter is in
+the top aggregate parameter. The <code>has</code>-predicate is true if
+the aggregate second parameter has the top parameter as a member. The
+two predicates are <em>converse</em>s of each other.</p>
 <p>The following binary predicate is defined for two aggregates of the
 same kind:</p>
 <pre><code>        equal</code></pre>
@@ -466,18 +485,20 @@ same positions. For lists this means recursive equality.</p>
 <p>Sometimes it is necessary to test a parameter for its type. This is
 done by the following unary predicates:</p>
 <pre><code>        logical    char    integer    set    string    list    leaf</code></pre>
-<p>The predicates logical, char, integer, set, string and list are true
-if the parameter is a truth value, character, integer, set, string or
-list, respectively. The predicate leaf is true if the parameter is not a
-list.</p>
+<p>The predicates <code>logical</code>, <code>char</code>,
+<code>integer</code>, <code>set</code>, <code>string</code> and
+<code>list</code> are true if the parameter is a truth value, character,
+integer, set, string or list, respectively. The predicate
+<code>leaf</code> is true if the parameter is not a list.</p>
 <p>Sometimes it is useful to operate on quoted predicates to obtain
 another quoted predicate. There are three such operators:</p>
 <pre><code>        conjoin    disjoin    negate</code></pre>
-<p>The two operators conjoin and disjoin expect two quoted predicates
-and return one quoted predicate. If that is ever called it will compute
-the conjunction or disjunction of the two parameters. The other operator
-is negate which expects one quoted predicate and returns a quoted
-predicate which computes the negation.</p>
+<p>The two operators <code>conjoin</code> and <code>disjoin</code>
+expect two quoted predicates and return one quoted predicate. If that is
+ever called it will compute the conjunction or disjunction of the two
+parameters. The other operator is <code>negate</code> which expects one
+quoted predicate and returns a quoted predicate which computes the
+negation.</p>
 <h1 id="general-combinators">General Combinators</h1>
 <p>Most functional languages are based on the lambda calculus. As one of
 their fundamental operations they use the <em>application</em> of a
@@ -501,38 +522,40 @@ on. To fix the terminology, combinators will be called <em>unary</em>,
 or three quotations, and so on. But note that many combinators expect
 further parameters below the quotations which they will execute. The
 following are some simple <em>unary combinator</em>s which require the
-top of the stack to be <em>one</em> quotation.</p>
+top of the stack to be <em>one</em> quotation:</p>
 <pre><code>        i    x    y</code></pre>
-<p>The i combinator pops the quotation off the stack and executes it,
-effectively by <em>dequoting</em>. The x combinator leaves the quotation
-on the stack and executes it. Consequently the <code>x</code> combinator
-will be executing on a stack which has as its top element the very same
-quotation which it is currently executing. The y combinator first
-converts the quotation <code>[P]</code> into a different quotation
-<code>[Q]</code> with the following strange property: if
-<code>[Q]</code> is ever called by some combinator, then it builds a
-copy of itself on top of the stack and then executes the
-<code>[P]</code>-part of itself. After this conversion, the
-<code>y</code> combinator calls the <code>[Q]</code> it has constructed.
-In this way the <code>y</code> combinator builds some of the behaviour
-of the <code>x</code> combinator into the <code>[Q]</code>.</p>
-<p>Another unary combinator is</p>
+<p>The <code>i</code> combinator pops the quotation off the stack and
+executes it, effectively by <em>dequoting</em>. The <code>x</code>
+combinator leaves the quotation on the stack and executes it.
+Consequently the <code>x</code> combinator will be executing on a stack
+which has as its top element the very same quotation which it is
+currently executing. The <code>y</code> combinator first converts the
+quotation <code>[P]</code> into a different quotation <code>[Q]</code>
+with the following strange property: if <code>[Q]</code> is ever called
+by some combinator, then it builds a copy of itself on top of the stack
+and then executes the <code>[P]</code>-part of itself. After this
+conversion, the <code>y</code> combinator calls the <code>[Q]</code> it
+has constructed. In this way the <code>y</code> combinator builds some
+of the behaviour of the <code>x</code> combinator into the
+<code>[Q]</code>.</p>
+<p>Another unary combinator is:</p>
 <pre><code>        nullary</code></pre>
 <p>No matter how many parameters the quotation consumes from the stack
-when nullary executes it, they are all restored and the final value
-calculated by the execution of the quotation is pushed on top of
-that.</p>
+when <code>nullary</code> executes it, they are all restored and the
+final value calculated by the execution of the quotation is pushed on
+top of that.</p>
 <p>The next unary combinators allow manipulation of the stack below the
 top few elements:</p>
 <pre><code>        dip    dipd    dipdd</code></pre>
-<p>The dip combinator requires a further element <code>X</code> to be
-below the quotation. It removes the quotation and <code>X</code>, saves
-<code>X</code> somewhere, executes the quotation on the remainder of the
-stack, and finally restores <code>X</code>. The dipd and the dipdd
-combinator are similar. They expect two or three elements, (X) and (Y),
-or (X), (Y) and (Z) below the quotation. The two or three elements are
-saved and restored after the execution of the quotation.</p>
-<p>Three further unary combinators are</p>
+<p>The <code>dip</code> combinator requires a further element
+<code>X</code> to be below the quotation. It removes the quotation and
+<code>X</code>, saves <code>X</code> somewhere, executes the quotation
+on the remainder of the stack, and finally restores <code>X</code>. The
+<code>dipd</code>and the <code>dipdd</code> combinator are similar. They
+expect two or three elements, (X) and (Y), or (X), (Y) and (Z) below the
+quotation. The two or three elements are saved and restored after the
+execution of the quotation.</p>
+<p>Three further unary combinators are:</p>
 <pre><code>        i    unary2    unary3</code></pre>
 <p>Apart from the quotation which they expect on top of the stack, they
 require one or two or three further elements on the stack. So the
@@ -554,53 +577,53 @@ causes three executions of the quotation, and it replaces
 <code>X</code>, <code>Y</code> and <code>Z</code> by <code>X'</code>,
 <code>Y'</code> and <code>Z'</code>, maintaining the order.</p>
 <p>The <em>binary combinator</em>s expect two quotations on top of the
-stack.</p>
+stack:</p>
 <pre><code>        b    cleave</code></pre>
-<p>The b combinator expects two quotations <code>[P]</code> and
-<code>[Q]</code>, with <code>[Q]</code> on top. It removes the two
+<p>The <code>b</code> combinator expects two quotations <code>[P]</code>
+and <code>[Q]</code>, with <code>[Q]</code> on top. It removes the two
 quotations and executes first <code>[P]</code> and then
-<code>[Q]</code>. The cleave combinator also expects two quotations, and
-below that an item <code>X</code>. It also first executes
-<code>[P]</code>, with <code>X</code> on top, and then saves the top
-result element, say <code>P(X)</code>. Then it executes
+<code>[Q]</code>. The <code>cleave</code> combinator also expects two
+quotations, and below that an item <code>X</code>. It also first
+executes <code>[P]</code>, with <code>X</code> on top, and then saves
+the top result element, say <code>P(X)</code>. Then it executes
 <code>[Q]</code>, again with <code>X</code>, and saves the top result as
 <code>Q(X)</code>. Finally it restores the stack to what it was below
 <code>X</code> and pushes the two results <code>P(X)</code> and
 <code>Q(X)</code>.</p>
 <p>The <em>ternary combinator</em>s expect three quotations on top of
-the stack. One of the most important is</p>
+the stack. One of the most important is:</p>
 <pre><code>        ifte</code></pre>
-<p>The ifte (“if-then-else”) combinator performs branching. Its third
-parameter is the if-part, its second parameter is the then-part, its
-first parameter, on top, is the else-part. It executes the if-part,
-which must yield a truth value. It saves that value and restores the
-stack to what it was before the if-part was executed. If the saved value
-was <code>true</code> the then-part is executed, otherwise the else-part
-is executed.</p>
+<p>The <code>ifte</code> (“if-then-else”) combinator performs branching.
+Its third parameter is the if-part, its second parameter is the
+then-part, its first parameter, on top, is the else-part. It executes
+the if-part, which must yield a truth value. It saves that value and
+restores the stack to what it was before the if-part was executed. If
+the saved value was <code>true</code> the then-part is executed,
+otherwise the else-part is executed.</p>
 <p>There are two combinators for doing simple looping:</p>
-<pre><code>        while~~do~~    tailrec</code></pre>
-<p>The binary while<del>do</del> combinator is similar to the
-<code>ifte</code> combinator in that it has a test, the while-part,
+<pre><code>        while    tailrec</code></pre>
+<p>The binary <code>while</code><del>do</del> combinator is similar to
+the <code>ifte</code> combinator in that it has a test, the while-part,
 which is second on the stack. The combinator repeatedly executes the
 while-part and while that yields <code>true</code> it executes the other
-part, the do-part. The ternary tailrec (“tail-recursion”) combinator
-also has a test, the third parameter. If that yields true, the second
-parameter is executed and the combinator exits, otherwise the top
-parameter is executed and after that the process is repeated.</p>
+part, the do-part. The ternary <code>tailrec</code> (“tail-recursion”)
+combinator also has a test, the third parameter. If that yields true,
+the second parameter is executed and the combinator exits, otherwise the
+top parameter is executed and after that the process is repeated.</p>
 <p>The <em>quaternary combinator</em>s expect four quotations on top of
-the stack.</p>
+the stack:</p>
 <pre><code>        linrec    binrec    genrec</code></pre>
-<p>The linrec combinator for <em>linear recursion</em> expects an
-if-part, a then-part, an else1-part and on top an else2-part. Like the
-<code>ifte</code> combinator it executes the if-part, and if that yields
-true it executes the else-part. Otherwise it executes the else1-part,
-then it recurses with all four parts, and finally it executes the
-else2-part. The binrec combinator for <em>binary recursion</em> is
-similar, except that the else1-part has to produce two values. The
-recursion with all four parts is executed an the two values separately.
-The else2-part then has available the two results from these two
-executions. The genrec combinator for <em>general recursion</em> also
-has an if-part, a then-part and two else-parts.</p>
+<p>The <code>linrec</code> combinator for <em>linear recursion</em>
+expects an if-part, a then-part, an else1-part and on top an else2-part.
+Like the <code>ifte</code> combinator it executes the if-part, and if
+that yields <code>true</code> it executes the else-part. Otherwise it
+executes the else1-part, then it recurses with all four parts, and
+finally it executes the else2-part. The binrec combinator for <em>binary
+recursion</em> is similar, except that the else1-part has to produce two
+values. The recursion with all four parts is executed on the two values
+separately. The else2-part then has available the two results from these
+two executions. The genrec combinator for <em>general recursion</em>
+also has an if-part, a then-part and two else-parts.</p>
 <p>It differs from the other two combinators in that after the execution
 of the else1-part nothing in particular is executed, but a program
 consisting of the four parts and the combinator is pushed onto the
@@ -608,7 +631,7 @@ stack. The else2-part thus has it available as a parameter.</p>
 <p>For linear recursion the if-part often is <code>[null]</code> and the
 else1-part often is either <code>[pred]</code> for numeric types or
 <code>[uncons]</code> for aggregate types. The two parts are built
-into</p>
+into:</p>
 <pre><code>        primrec</code></pre>
 <p>for <em>primitive recursion</em>. The binary primrec combinator
 expects two quotations, a start-part (similar to the else-part of the
@@ -617,21 +640,22 @@ the earlier combinators. Below that it expects a value of any type. The
 combinator essentially supplies the other two parts.</p>
 <p>There are several combinators which do not have a fixed number of
 quotation parameters. Instead they use a list of quotations. They
-are</p>
+are:</p>
 <pre><code>        cond    condlinrec</code></pre>
-<p>The cond combinator is like the one in Lisp, it is a generalisation
-of the <code>ifte</code> combinator. It expects a non-empty list of
-programs, each consisting of a quoted if-part followed by a then-part.
-The various if-parts are executed until one is found that returns
-<code>true</code>, and then its corresponding then-part is executed.</p>
+<p>The <code>cond</code> combinator is like the one in Lisp, it is a
+generalisation of the <code>ifte</code> combinator. It expects a
+non-empty list of programs, each consisting of a quoted if-part followed
+by a then-part. The various if-parts are executed until one is found
+that returns <code>true</code>, and then its corresponding then-part is
+executed.</p>
 <p>The last program in the list is the default which is executed if none
-of the if-parts yield <code>true</code>. The condlinrec combinator is
-similar, it expects a list of pairs or triples of quoted programs. Pairs
-consist of an if-part and a then1-part, and triples have an additional
-then2-part. Again the first if-part that yields <code>true</code>
-selects its corresponding then1-part for execution. If there is a
-then2-part, the combinator first recurses and then executes the
-then2-part. The last program is the default, it does not have an
+of the if-parts yield <code>true</code>. The <code>condlinrec</code>
+combinator is similar, it expects a list of pairs or triples of quoted
+programs. Pairs consist of an if-part and a then1-part, and triples have
+an additional then2-part. Again the first if-part that yields
+<code>true</code> selects its corresponding then1-part for execution. If
+there is a then2-part, the combinator first recurses and then executes
+the then2-part. The last program is the default, it does not have an
 if-part.</p>
 <p>The <code>cleave</code> combinator also has a generalisation:</p>
 <pre><code>        construct</code></pre>
@@ -646,18 +670,18 @@ simple types.</p>
 <p>The following binary combinator expects a truth value below its two
 quotation parameters:</p>
 <pre><code>        branch</code></pre>
-<p>The branch combinator resembles the <code>choice</code> operator and
-the <code>ifte</code> combinator. The truth value below the two
-quotations determines which of the two quotations will be executed. If
-the truth value is <code>true</code>, then the if-part, the second
+<p>The <code>branch</code> combinator resembles the <code>choice</code>
+operator and the <code>ifte</code> combinator. The truth value below the
+two quotations determines which of the two quotations will be executed.
+If the truth value is <code>true</code>, then the if-part, the second
 parameter, is executed, otherwise the then-part, the top parameter, is
 executed.</p>
 <p>The following unary combinator expects a numeric value below its
 quotation parameter:</p>
 <pre><code>        times</code></pre>
-<p>The times combinator executes its quotation parameter as many times
-as indicated by the numeric value; if the value is zero or less, then
-the quotation is not executed at all.</p>
+<p>The <code>times</code> combinator executes its quotation parameter as
+many times as indicated by the numeric value; if the value is zero or
+less, then the quotation is not executed at all.</p>
 <h1 id="combinators-for-aggregate-types">Combinators for Aggregate
 Types</h1>
 <p>The combinators in this section expect aggregates below their
@@ -666,51 +690,52 @@ quotation parameters.</p>
 including a list which happens to be on top of the stack. The following
 unary combinator expects a list below its quotation parameter:</p>
 <pre><code>        infra</code></pre>
-<p>The infra combinator temporarily discards the remainder of the stack
-and takes the list to be the stack. It then executes the quotation which
-yields a result stack. This result is then pushed as a list onto the
-original stack replacing the original list. Hence any quotation can
-serve as a complex unary operation on lists.</p>
+<p>The <code>infra</code> combinator temporarily discards the remainder
+of the stack and takes the list to be the stack. It then executes the
+quotation which yields a result stack. This result is then pushed as a
+list onto the original stack replacing the original list. Hence any
+quotation can serve as a complex unary operation on lists.</p>
 <p>The following unary combinator expects an aggregate below its
 quotation parameter:</p>
 <pre><code>        step</code></pre>
-<p>The step combinator removes the aggregate and the quotation, and then
-repeatedly puts the members of the aggregate on top of the remaining
-stack and executes the quotation. For sequential aggregates such as
-strings, lists or more generally, quotations, the members are selected
-in the order of their occurrance in the aggregate. For sets the members
-are selected on the basis of their underlying order. So the quotation is
-executed as many times as the aggregate has members. What happens to the
-members depends entirely on the quotation. In the simplest though
-unlikely case where the quotation does nothing, the members are left on
-the stack in the order in which they occurred in the aggregate with the
-last member on top.</p>
+<p>The <code>step</code> combinator removes the aggregate and the
+quotation, and then repeatedly puts the members of the aggregate on top
+of the remaining stack and executes the quotation. For sequential
+aggregates such as strings, lists or more generally, quotations, the
+members are selected in the order of their occurrance in the aggregate.
+For sets the members are selected on the basis of their underlying
+order. So the quotation is executed as many times as the aggregate has
+members. What happens to the members depends entirely on the quotation.
+In the simplest though unlikely case where the quotation does nothing,
+the members are left on the stack in the order in which they occurred in
+the aggregate with the last member on top.</p>
 <p>There is a related combinator for stepping through two
 aggregates:</p>
 <pre><code>        step2</code></pre>
-<p>The step2 expects two aggregates which do not have to be of the same
-type. Above that it expects a quotation. It steps through the lower
-aggregate and for each member it steps through the higher aggregate. The
-pairs of members are then made available to the quoted program. If the
-aggregates have <code>M</code> and <code>N</code> members, there will be
-<code>M × N</code> pairs.</p>
+<p>The <code>step2</code> expects two aggregates which do not have to be
+of the same type. Above that it expects a quotation. It steps through
+the lower aggregate and for each member it steps through the higher
+aggregate. The pairs of members are then made available to the quoted
+program. If the aggregates have <code>M</code> and <code>N</code>
+members, there will be <code>M × N</code> pairs.</p>
 <p>The following combinators for aggregates are mostly familiar from
 list processing languages:</p>
 <pre><code>        map    fold    filter    split</code></pre>
 <p>All four step through the members of the aggregate in the same manner
-as the <code>step</code> combinator. The map combinator combines the
-results of applying the quotation to create a new aggregate of the same
-type as the original. The fold combinator expects a quotation which
-computes a binary function, below that a value, the <em>initial</em>
-value, and below that an aggregate. It uses the binary function to
-combine the members of the aggregate into one single value, and if the
-aggregate happens to be empty it returns the initial value.</p>
-<p>The filter combinator needs a quotation which computes a truth value,
-so it is a test. It applies the test to each member of the aggregate and
-creates a new aggregate containing those members of the original which
-pass the test. The resulting aggregate is of the same types as the
-parameter. The split combinator only makes sense in a language in which
-a function can return two values.</p>
+as the <code>step</code> combinator. The <code>map</code> combinator
+combines the results of applying the quotation to create a new aggregate
+of the same type as the original. The <code>fold</code> combinator
+expects a quotation which computes a binary function, below that a
+value, the <em>initial</em> value, and below that an aggregate. It uses
+the binary function to combine the members of the aggregate into one
+single value, and if the aggregate happens to be empty it returns the
+initial value.</p>
+<p>The <code>filter</code> combinator needs a quotation which computes a
+truth value, so it is a test. It applies the test to each member of the
+aggregate and creates a new aggregate containing those members of the
+original which pass the test. The resulting aggregate is of the same
+types as the parameter. The <code>split</code> combinator only makes
+sense in a language in which a function can return two values.</p>
 <p>It is like the <code>filter</code> combinator except that it returns
 two aggregates – one containing the members of the original which did
 not pass the test, and above that another containing those which did
@@ -720,32 +745,33 @@ aggregate is preserved in case they are strings or lists.</p>
 <p>The following unary combinators expect an aggregate below their
 quotation parameter which must compute a truth value:</p>
 <pre><code>        some    all</code></pre>
-<p>The some combinator returns <code>true</code> if some members of the
-aggregate pass the test of the quotation, otherwise it returns
-<code>false</code>. The all combinator returns <code>true</code> if all
+<p>The <code>some</code> combinator returns <code>true</code> if some
 members of the aggregate pass the test of the quotation, otherwise it
-returns <code>false</code>. For empty aggregates <code>some</code>
-returns <code>false</code> and <code>all</code> returns
-<code>true</code>.</p>
+returns <code>false</code>. The <code>all</code> combinator returns
+<code>true</code> if all members of the aggregate pass the test of the
+quotation, otherwise it returns <code>false</code>. For empty aggregates
+<code>some</code> returns <code>false</code> and <code>all</code>
+returns <code>true</code>.</p>
 <p>The following unary combinator expects two aggregates and above that
 a program suitable for combining their respective elements:</p>
 <pre><code>        zipwith</code></pre>
-<p>The zipwith combinator produces a list which is as long as the
-smaller of the two aggregate parameters. The elements of the resultlist
-are obtained by using the program parameter to combine corresponding
-members of the two aggregates.</p>
+<p>The <code>zipwith</code> combinator produces a list which is as long
+as the smaller of the two aggregate parameters. The elements of the
+resultlist are obtained by using the program parameter to combine
+corresponding members of the two aggregates.</p>
 <p>The following unary combinators expect a program and below that a
 tree:</p>
 <pre><code>        treestep    treemap    treefilter    treefold</code></pre>
 <p>They all resemble corresponding combinators for aggregates. The
-treestep combinator uses the program to process the leaf nodes in the
-same way as <code>step</code> handles members of an aggregate. The
-treemap combinator uses the program to compute replacement leaves for a
-tree which has the same structure. The treefilter combinator needs a
-program that yields a truth value, it produces a tree of only those
-leaves which pass the test. The treefold combinator expects an
-<em>initial</em> value above the tree and above that the quotation which
-is used to combine the leaves with the initial value.</p>
+<code>treestep</code> combinator uses the program to process the leaf
+nodes in the same way as <code>step</code> handles members of an
+aggregate. The <code>treemap</code> combinator uses the program to
+compute replacement leaves for a tree which has the same structure. The
+<code>treefilter</code> combinator needs a program that yields a truth
+value, it produces a tree of only those leaves which pass the test. The
+<code>treefold</code> combinator expects an <em>initial</em> value above
+the tree and above that the quotation which is used to combine the
+leaves with the initial value.</p>
 <p>There are two tree combinators which are similar to the
 <code>genrec</code> combinator:</p>
 <pre><code>        treerec    treegenrec</code></pre>
@@ -754,10 +780,9 @@ If the tree is a leaf, then <code>[O]</code> is executed, typically an
 operation on a leaf. If the tree is not a leaf, then the combinator
 <code>[C]</code> is executed, and it will find on top of the stack the
 program <code>[[[O] C] treerec]</code>. The slightly more general
-treegenrec combinator also expects a tree but above that three
-quotations: <code>[O1]</code>, <code>[O2]</code> and <code>[C]</code>.
-If the tree is a leaf, then <code>[O1]</code> is executed. If it is not
-a leaf, then first <code>[O2]</code> is executed, and then the
-combinator <code>[C]</code> is executed which will find
+<code>treegenrec</code> combinator also expects a tree but above that
+three quotations: <code>[O1]</code>, <code>[O2]</code> and
+<code>[C]</code>. If the tree is a leaf, then <code>[O1]</code> is
+executed. If it is not a leaf, then first <code>[O2]</code> is executed,
+and then the combinator <code>[C]</code> is executed which will find
 <code>[[[O1] [O2] C] treegenrec]</code> on top of the stack.</p>
-<hr />

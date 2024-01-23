@@ -10,6 +10,7 @@ languages Lisp, ML and Miranda. Another comprises combinatory logic and
 the language FP by Backus. A third comprises Cartesian closed
 categories. The paper concludes that Joy is significantly different from
 any of these formalisms and programming languages.</p>
+<hr />
 <h1 id="introduction">Introduction</h1>
 <p>This paper outlines the principal similarities and differences
 between Joy and other high-level and low-level functional languages.</p>
@@ -39,10 +40,10 @@ have attractive algebraic properties, and hence there is no theoretical
 reason for preferring one concrete notation over another.</p>
 <p>The languages of <em>category</em> theory comprises another group of
 functional languages. Whereas the other functional languages use
-function application, these use function composition. No high level
+function application, these use function composition. No high-level
 programming language has been based on this formalism, but it has been
 used as a low level machine language as a target for compilation from a
-(typed) lambda calculus source. Joy is a high level programming language
+(typed) lambda calculus source. Joy is a high-level programming language
 which resembles the categorical languages more than it resembles any of
 the other functional languages.</p>
 <p>The remainder of this paper is organised as follows: The next section
@@ -57,7 +58,7 @@ programming in the large; most structuring devices could be adapted to
 Joy in the future.</p>
 <h1 id="the-lambda-calculus-and-its-descendants">The lambda calculus and
 its descendants</h1>
-<p>For the present purposes is is sufficient to consider only the
+<p>For the present purposes it is sufficient to consider only the
 <em>abstract syntax</em> of the lambda calculus. A <em>lambda
 expression</em> is built from variables and constants by two
 constructions, abstraction and application. Constants are values such as
@@ -80,7 +81,7 @@ than the original. This device of replacing standard functions by their
 <em>curried</em> form allows the theory to concentrate exclusively on
 functions of one argument.</p>
 <p>Incidentally, a similar effect is achieved in Joy not by application
-but by <em>composition</em>. The program</p>
+but by <em>composition</em>. The program:</p>
 <pre><code>        3  +</code></pre>
 <p>denotes the composition of two functions from stacks to stacks. The
 first pushes the number 3, the second adds two numbers on top of the
@@ -144,7 +145,7 @@ values.</p>
 <p>All languages mentioned in this section were based on application and
 abstraction. By contrast, Joy uses neither of these, instead it is based
 on composition and quotation. <a href="joybibl.html#31">Brus et al (1987
-p 364)</a> write "if one wants to have a computational model for
+p 364)</a> write: "if one wants to have a computational model for
 functional languages which is also close to their implementations, pure
 lambda calculus is not the obvious choice anymore". They present the
 language <em>Clean</em> in which programs consist of rewrite rules (for
@@ -176,7 +177,7 @@ an operation in the <em>metalanguage</em>. This new operation is called
 an object language expression as arguments and it yields a new object
 language expression as value. The new expression will contain some
 function symbols specific to combinatory logic. If all object language
-lambda abstraction are removed from a lambda expression by this process
+lambda abstractions are removed from a lambda expression by this process
 of metalanguage bracket abstraction, then the final result will be
 equivalent to the original expression. So this process should be seen as
 a compilation. Since all lambda calculus expressions can be compiled in
@@ -198,12 +199,12 @@ variable <code>y</code>, then the abstraction should give a constant
 function which ignores its argument <code>x</code> and just returns
 <code>y</code>. A single binary <em>K combinator</em> is introduced and
 given the argument <code>y</code>. The translation will receive its
-second argument only when the abstracted expressions is applied, and
-then it will ignore that argument. 3) If the expression is an
-application of a function <code>f</code> to an argument <code>g</code>,
-then both the function and the argument first have to be abstracted with
-respect to <code>x</code>, The final bracket abstraction will be applied
-to an argument and then it has to make this argument available to both
+second argument only when the abstracted expression is applied, and then
+it will ignore that argument. 3) If the expression is an application of
+a function <code>f</code> to an argument <code>g</code>, then both the
+function and the argument first have to be abstracted with respect to
+<code>x</code>, The final bracket abstraction will be applied to an
+argument and then it has to make this argument available to both
 subabstracts. A ternary <em>S combinator</em> is introduced which does
 just that. It is given as arguments the two subabstracts from
 <code>f</code> and <code>g</code>. The translation will receive its
@@ -244,7 +245,7 @@ combinator notation. With these optimisations the size of the
 combinatory code was kept within an acceptable limit. The interpreter
 for the combinatory code used <em>normal graph reduction</em>, one form
 of <em>lazy implementation</em> in which actual parameters are evaluated
-only once. Turner's implementation method using combinators has been
+only once. Turner’s implementation method using combinators has been
 used to build a hardware reduction machine, the <em>CURRY chip</em>, see
 <a href="joybibl.html#82">Ramsdell (1986)</a>.</p>
 <p><a href="joybibl.html#76">Peyton Jones (1987 Chapter 16)</a> contains
@@ -288,9 +289,9 @@ uses these principles.</p>
 <h1 id="combinatory-logic-and-joy">Combinatory logic and Joy</h1>
 <p>The difference between combinatory logic and Joy is best explained by
 a simple example. To multiply two numbers, say <code>2</code> and
-<code>3</code>, in Joy one writes</p>
+<code>3</code>, in Joy one writes:</p>
 <pre><code>        2  3  *</code></pre>
-<p>In combinatory logic one writes</p>
+<p>In combinatory logic one writes:</p>
 <pre><code>        *  2  3</code></pre>
 <p>and there seems to be no significant difference between the two
 notations apart from the order of operators and operands. But this is
@@ -299,42 +300,42 @@ multiplication is understood to be <em>curried</em>. The binary
 <code>*</code> function is first applied to <code>2</code>, yielding a
 function which doubles its argument. That function is then applied to
 <code>3</code> yielding the result <code>6</code>. Fully parenthesised
-the expression is</p>
+the expression is:</p>
 <pre><code>        (* 2)  3</code></pre>
 <p>However, the convention is that application associates to the left,
 so the parentheses are not needed.</p>
 <p>To compute the square of a number, say <code>3</code>, it has to be
 multiplied by itself. In combinatory logic and in Joy one can write,
-respectively,</p>
+respectively:</p>
 <pre><code>        *  3  3                                  3  3  *</code></pre>
 <p>But in both notations it is possible to modify the binary
 multiplication function to turn it into the unary squaring function. In
 combinatory logic the <em>W combinator</em> can be applied to a function
 which then duplicates the (first) argument of the function. It is
-defined by</p>
+defined by:</p>
 <pre><code>        (W f) x   =   (f x) x</code></pre>
 <p>Again the parentheses are not needed. So the square of <code>3</code>
-is given by</p>
+is given by:</p>
 <pre><code>        (W *) 3</code></pre>
 <p>In Joy the simplest way to compute the square of <code>3</code> is
-by</p>
+by:</p>
 <pre><code>        3  dup  *</code></pre>
 <p>To facilitate the comparison between the two languages it is also
 possible to define a w == [dup] dip</p>
-<p>Then the square of <code>3</code> is also computed in Joy by</p>
+<p>Then the square of <code>3</code> is also computed in Joy by:</p>
 <pre><code>        3  [*]  w</code></pre>
 <p>In both languages one can introduce a mapping combinator to apply a
 function to a list. In the examples to follow the list will be just
 <code>[1 2 3 4]</code>. In combinatory logic one might define a <em>Map
-combinator</em> by</p>
+combinator</em> by:</p>
 <pre><code>        Map  f  []   =   []
         Map  f  [X | Xs]   =   [f X | Map f Xs]</code></pre>
 <p>where the bar <code>|</code> separates the first element of the list
 from the rest. Then the list of squares of the given list is computed
-by</p>
+by:</p>
 <pre><code>        Map  (W *)  [1 2 3 4]</code></pre>
 <p>Note that the parentheses around <code>(W *)</code> are necessary.
-The same computation is expressed in Joy by</p>
+The same computation is expressed in Joy by:</p>
 <pre><code>        [1 2 3 4]  [[*] w]  map</code></pre>
 <p>Superficially one version is just the reverse of the other.
 Combinatory logic uses prefix notation, and Joy uses what looks like
@@ -344,11 +345,11 @@ write both versions with the hidden operators made explicit. In
 combinatory logic the hidden binary operator is <em>application</em> of
 a function to an argument, which might be written explicitly as infix
 <code>"@"</code>. Fully parenthesised the combinatory version thus
-is</p>
+is:</p>
 <pre><code>        (Map  @  (W  @ *))  @  [1 2 3 4]</code></pre>
 <p>In Joy the hidden binary operator is <em>composition</em> of
 functions, which might be written explicitly as infix <code>"."</code>.
-The Joy version thus is</p>
+The Joy version thus is:</p>
 <pre><code>        [1 2 3 4]  .  [[*]  .  w]  .  map</code></pre>
 <p>There are as many compositions in the Joy version as there are
 applications in the combinatory logic version. Since composition is
@@ -356,7 +357,7 @@ associative, it does not matter how the expression is parenthesised.</p>
 <p>Because of associativity the following is also meaningful in Joy:</p>
 <pre><code>        [1 2 3 4]  .  [[*]  .  w]</code></pre>
 <p>It denotes a function which pushes two items, a list and a quotation,
-onto the stack. By contrast its combinatory counterpart</p>
+onto the stack. By contrast its combinatory counterpart:</p>
 <pre><code>        (W  @  *)  @  [1 2 3 4]</code></pre>
 <p>is not meaningful. This is because the squaring function on the left,
 <code>(W @ *)</code>, expects to be applied to a <em>number</em> on the
@@ -376,14 +377,14 @@ combinatory logic, even if the application operator is left
 implicit.</p>
 <p><a href="joybibl.html#109">Wald</a> develops a theory of 'unary
 pairfunctions' with primitives <code>L</code>, <code>S</code>,
-<code>D</code> and <code>B</code> satisfying</p>
+<code>D</code> and <code>B</code> satisfying:</p>
 <pre><code>    L(&lt;a,b&gt;) = a                    S(&lt;a,b&gt;) = &lt;b,a&gt;
     D(a) = &lt;a,a&gt;                    B(&lt;a,&lt;b,c&gt;&gt;) = &lt;&lt;a,b&gt;,c&gt;</code></pre>
 <p>He gives a finite presentation (69 axioms) of a <em>semigroup</em> of
 such functions under composition. The theory is not intended as the
 basis of an implementation, but it would appear that there are some
 connections with Joy that are worth exploring.</p>
-<h1 id="backus-fp-systems">Backus' FP systems</h1>
+<h1 id="backus-fp-systems">Backus’ FP systems</h1>
 <p>In his Turing award lecture Backus (1978) introduced his <em>FP
 system</em>, short for "Functional Programming system". The system is
 not about programming using functions, as Lisp and its descendents are,
@@ -490,7 +491,7 @@ list and the argument.</p>
 can be used to define arbitrary new functional forms, including of
 course the fixed forms from FP. The rule also makes it possible to
 compute recursive functions without a recursive definition. This is
-because in the application the functions is applied to a pair which
+because in the application the function is applied to a pair which
 includes the original list operand which in turn contains as its first
 element the expression denoting the very same function. The method is
 considerably simpler than the use of the <em>Y combinator</em>. <a
@@ -503,8 +504,8 @@ higher order functions, and both obey the principle that <em>program =
 data</em>. Both permit construction of first order and higher order
 recursive and non-recursive functions without ever using named formal
 parameters. An effect similar to metacomposition is achieved in Joy with
-the combinatori x, which expects a quoted program on top of the stack
-and executes it without popping it off.</p>
+the combinator <code>x</code>, which expects a quoted program on top of
+the stack and executes it without popping it off.</p>
 <p>One important difference is that FFP still uses <em>application</em>
 as an essential operation, whereas Joy uses <em>composition</em>. It
 appears that this makes the algebra of Joy considerably simpler.</p>
@@ -661,9 +662,10 @@ functional language does not have any assignable variables. The second
 mechanism could still allow related functions to be kept together in one
 file. The current implementation of Joy does not use a single input file
 but a stack of such files. A new file can be opened and become the
-current input file by an directive. But no information hiding occurs
+current input file by a directive. But no information hiding occurs
 through this mechanism, there is only one global namespace. Hiding only
-occurs in explicit</p>
+occurs in explicit<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a></p>
 <p>Independent compilation units in files are not without problems. One
 criticism is that in order to achieve independence, programs have to be
 spread over too many files. Another concerns security, since a simple
@@ -737,3 +739,11 @@ large. They could be used not just for functional languages but equally
 well for procedural, logical or actor languages. A mathematically very
 mature treatment of modules in terms of category theory is given in <a
 href="joybibl.html#42">Ehrig and Mahr (1990)</a>.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>This sentence ends in the middle.<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>

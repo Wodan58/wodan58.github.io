@@ -106,7 +106,7 @@ and a binary operation, written, say, as infix period <code>"."</code>.
 The special element has to be a left and right <em>unit element</em> for
 the binary operation, and the binary operation has to be
 <em>associative</em>. In symbols, for all <code>x</code>, <code>y</code>
-and <code>z</code> from the set,</p>
+and <code>z</code> from the set:</p>
 <pre><code>        m . x   =   x   =   x . m
         (x . y) . z   =   x . (y . z)</code></pre>
 <p>For example, these are monoids: the integers with <code>0</code> as
@@ -151,7 +151,7 @@ homomorphism is the size (or length) function on lists which maps the
 list monoid onto the additive monoid: the size of the empty list is
 zero, and the size of the concatenation of two lists is the sum of the
 sizes of the two lists:</p>
-<pre><code>        log(1)  =  0                    log(x * y)  =  log(x) + log(y)
+<pre><code>        log(1)    =  0                  log(x * y)    =  log(x) + log(y)
         size([])  =  0                  size(x ++ y)  =  size(x) + size(y)</code></pre>
 <p>(In the last two equations, the symbols <code>[]</code> and
 <code>++</code> are used for the empty list and for concatenation.)
@@ -228,7 +228,7 @@ composition and the identity function</h1>
 same function, then the <em>functions</em> <code>P</code> and
 <code>Q</code> are <em>identical</em>. Two functions are identical if
 for all values in the intersection of their domains they yield the same
-value. This will be written</p>
+value. This will be written:</p>
 <pre><code>        P   ==   Q</code></pre>
 <p>The symbol <code>==</code> will be used to denote the identity of Joy
 functions. The symbol does not belong to the language Joy but to its
@@ -239,13 +239,13 @@ compositions. Hence <em>substitution</em> of identicals can be used as a
 rule of inference:</p>
 <pre><code>        IF             Q1      ==      Q2
         THEN        P  Q1  R   ==   P  Q2  R</code></pre>
-<p>The symbol id will be used to denote the <em>identity function</em>.
-The fact that function composition is associative and that the identity
-function is a left and right unit is expressed by</p>
+<p>The symbol <code>id</code> will be used to denote the <em>identity
+function</em>. The fact that function composition is associative and
+that the identity function is a left and right unit is expressed by:</p>
 <pre><code>        (P  Q)  R   ==   P  (Q  R)
         id  P   ==   P   ==   P  id</code></pre>
 <p>The notation can be used to express what <em>looks</em> like
-identities of numbers; for example</p>
+identities of numbers; for example:</p>
 <pre><code>        2  3  +   ==   5</code></pre>
 <p>expresses that the composition of the three <em>functions</em> on the
 left is identical with the one <em>function</em> on the right. On the
@@ -271,7 +271,7 @@ numbers replaced by their sum. It follows that the above equation does
 <em>functions</em>.</p>
 <p>The associativity of composition has as a consequence about
 <em>currying</em>: that there is no difference between standard and
-curried operators. Consider the example</p>
+curried operators. Consider the example:</p>
 <pre><code>        (2  3)  +   ==   2  (3  +)</code></pre>
 <p>On the left the <code>+</code> takes two parameters supplied by
 <code>(2 3)</code>. On the right <code>+</code> is given one parameter,
@@ -308,7 +308,7 @@ twice has no net effect, and that duplicating the top element and then
 popping off the duplicate has no net effect.</p>
 <p>There are many more laws: double negation has no net effect,
 reversing a sequence twice just leaves the original, and taking the
-successor and the predeccessor of a number – in either order – produces
+successor and the predecessor of a number – in either order – produces
 no net effect. In the <em>algebra of Joy</em> these are expressed by the
 following:</p>
 <pre><code>        0  +        ==  id            1  *              ==  id
@@ -326,12 +326,12 @@ element</em>. Two such elements <code>l</code> and <code>r</code>
 satisfy the following for all programs <code>P</code>:</p>
 <pre><code>        l  P   ==   l                   P  r   ==   r</code></pre>
 <p>Since function composition is not commutative, the two zero elements
-are not identical. In Joy the left zero <code>l</code> is the abort
-operator, it ignores any program following it. The right zero
-<code>r</code> is the clearstack operator, it empties the stack and
-hence ignores any calculations that might have been done before. The two
-operators have some theoretical interest, and they are occasionally
-useful.</p>
+are not identical. In Joy the left zero <code>l</code> is the
+<code>abort</code> operator, it ignores any program following it. The
+right zero <code>r</code> is the <code>clearstack</code> operator, it
+empties the stack and hence ignores any calculations that might have
+been done before. The two operators have some theoretical interest, and
+they are occasionally useful.</p>
 <h1 id="quotation-dequotation-and-combinators">Quotation, dequotation
 and combinators</h1>
 <p>Any program enclosed in square brackets is called a <em>quoted
@@ -350,15 +350,15 @@ quotations. These are contexts where the content of the quote is not
 treated as a passive datum but as an active program. In Joy such
 treatment is due to <em>combinator</em>s which in effect dequote one or
 more of their parameters.</p>
-<p>The i combinator expects a quoted program on top of the stack. It
-pops that program and executes it. So, if the quoted program
+<p>The <code>i</code> combinator expects a quoted program on top of the
+stack. It pops that program and executes it. So, if the quoted program
 <code>[P]</code> has just been pushed onto the stack, then the
 <code>i</code> combinator will execute <code>P</code>:</p>
 <pre><code>        [P]  i   ==   P</code></pre>
 <p>For example, each of the following four programs compute the same
 function – the one which takes any stack as argument and returns as
 value another stack which is like the argument stack but has the number
-<code>5</code> pushed on top.</p>
+<code>5</code> pushed on top:</p>
 <pre><code>         2  3  +                         5
         [2  3  +] i                     [5] i</code></pre>
 <p>If the program <code>P</code> computes the identity function, then
@@ -383,20 +383,20 @@ cons operator to insert <code>[P]</code> into <code>[i]</code> to give
 <code>i</code> combinator? The internal <code>[P]</code> quote is
 pushed, and then the internal <code>i</code> combinator is executed. So
 the net effect is that of executing <code>P</code>.</p>
-<p>Hence</p>
+<p>Hence:</p>
 <pre><code>        [i]  cons  i   ==   i</code></pre>
 <p>Note that it has been possible to state this law without reference to
 the quoted program <code>[P]</code>. But it may help to spell out a
 consequence:</p>
 <pre><code>        [P]  [i]  cons  i   ==   [[P] i]  i   ==   [P]  i   ==   P</code></pre>
-<p>The <code>i</code> combinator is only one of many. Another is the b
-combinator which expects two quoted programs on top of the stack. It
-pops them both and then executes the program that was second on the
-stack and continues by executing the program that was on top of the
-stack. So, in the special case where two programs <code>[P]</code> and
-<code>[Q]</code> have just been pushed onto the stack, the
-<code>b</code> combinator will execute them in the order in which they
-have been pushed:</p>
+<p>The <code>i</code> combinator is only one of many. Another is the
+<code>b</code> combinator which expects two quoted programs on top of
+the stack. It pops them both and then executes the program that was
+second on the stack and continues by executing the program that was on
+top of the stack. So, in the special case where two programs
+<code>[P]</code> and <code>[Q]</code> have just been pushed onto the
+stack, the <code>b</code> combinator will execute them in the order in
+which they have been pushed:</p>
 <pre><code>        [P]  [Q]  b   ==   P  Q</code></pre>
 <p>It follows that the <code>b</code> combinator actually dequotes both
 of its parameters, and hence either or both can be replaced by an
@@ -441,12 +441,13 @@ parameters, but the parameters merely have to be in an agreed place,
 they do not need to be on a stack. There are several combinators which
 only make sense if the data are located on a stack.</p>
 <p>Sometimes it is necessary to manipulate the stack not at the top but
-just below the top. That is what the dip combinator is for. It behaves
-like the <code>i</code> combinator by executing one quotation on top of
-the stack, except that it leaves the item just below the quotation
-unchanged. In detail, it expects a program <code>[P]</code> and below
-that another item <code>X</code>. It pops both, saves <code>X</code>,
-executes <code>P</code> and then restores <code>X</code>.</p>
+just below the top. That is what the <code>dip</code> combinator is for.
+It behaves like the <code>i</code> combinator by executing one quotation
+on top of the stack, except that it leaves the item just below the
+quotation unchanged. In detail, it expects a program <code>[P]</code>
+and below that another item <code>X</code>. It pops both, saves
+<code>X</code>, executes <code>P</code> and then restores
+<code>X</code>.</p>
 <p>For example, in the following the saved and restored item is
 <code>4</code>:</p>
 <pre><code>        2  3  4  [+]  dip  ==   5  4</code></pre>
@@ -473,7 +474,7 @@ now has <code>[P]</code> on the top. That amounts to executing
 and that is easily done with the <code>i</code> combinator. The net
 effect of all this is the same as executing first <code>[P]</code> and
 then <code>[Q]</code>, which could have been done with the
-<code>b</code> combinator. Hence</p>
+<code>b</code> combinator. Hence:</p>
 <pre><code>        b   ==   [i]  dip  i</code></pre>
 <p>The last two equations show that the <code>dip</code> combinator
 could be used to <em>define</em> both the <code>i</code> combinator and
@@ -482,7 +483,7 @@ the <code>b</code> combinator. The reverse is not possible.</p>
 manipulation of Joy programs. In the last equation the <code>i</code>
 combinator occurs twice, once quoted and once unquoted. Both occurrences
 can be replaced in accordance with the previous equation, and this
-yields</p>
+yields:</p>
 <pre><code>        b   ==   [dup dip pop]  dip  dup  dip  pop</code></pre>
 <p>The substitution of the unquoted occurrence is unproblematic. But the
 other substitution requires comment. Quoted occurrences can be
@@ -500,7 +501,7 @@ swapping <code>[P]</code> and <code>[Q]</code> around, so that
 <code>[P]</code> is on top, and then executing the <code>b</code>
 combinator. This is expressed in the left law below. The right law says
 the same thing, and it shows another way in which the <code>b</code>
-combinator could have been defined.</p>
+combinator could have been defined:</p>
 <pre><code>        dip  i   ==   swap  b           b   ==   swap  dip  i
                                         b   ==   swap  dip  dup  dip  pop</code></pre>
 <p>Function composition is associative, and hence the following
@@ -528,10 +529,10 @@ function composition:</p>
 but it is not possible to cancel the prefinal <code>dip</code> on both
 sides. This unlikely law also expresses the associativity of function
 composition. But the most elegant way of expressing the associativity is
-by using a variant of the <code>dip</code> combinator, called dipd,
-which might be defined by</p>
+by using a variant of the <code>dip</code> combinator, called
+<code>dipd</code>, which might be defined by:</p>
 <pre><code>        dipd   ==   [dip]  cons  dip</code></pre>
-<p>Then the associativity can be expressed by</p>
+<p>Then the associativity can be expressed by:</p>
 <pre><code>        [b]  dip  i   ==   [i]  dipd  b</code></pre>
 <p>(<a href="joybibl.html#54">{Henson87}</a> criticises presentations of
 FP-systems, originally due to <a href="joybibl.html#17">{Backus78}</a>
@@ -557,7 +558,7 @@ following illustrate some simple choices of <code>[Q]</code> that are
 sometimes useful. The names of these combinators have been chosen
 because of their similarity to the <em>K combinator</em>, <em>W
 combinator</em> and the <em>C combinator</em> in <em>combinatory
-logic</em>.</p>
+logic</em>:</p>
 <pre><code>        k   ==   [pop]  dip  i
         w   ==   [dup]  dip  i
         c   ==   [swap] dip  i</code></pre>
@@ -572,7 +573,7 @@ the earlier <code>[P]</code> into the later quotation, and this produces
 is pushed, thus partly undoing the <code>cons</code> operation. But then
 <code>C</code> will be executed. The net effect is the same as the
 earlier alternative. So we have: For all operators or combinators
-<code>C</code></p>
+<code>C</code>:</p>
 <pre><code>        [C]  cons  i   ==   C</code></pre>
 <p>It should be remarked that this theorem also holds for operators, say
 <code>O</code>, instead of combinators <code>C</code>.</p>
@@ -585,9 +586,10 @@ one could do this: push the quotation <code>[i]</code>,
 inner <code>[P]</code> is pushed partly undoing the <code>cons</code>.
 Then the <code>i</code> combinator actually executes this. The net
 effect is that of just executing <code>C</code>. Hence for all
-combinators <code>C</code></p>
+combinators <code>C</code>:</p>
 <pre><code>        [i]  cons  C   ==   C</code></pre>
-<p>The two laws above may be combined: for all combinators C</p>
+<p>The two laws above may be combined: for all combinators
+<code>C</code>:</p>
 <pre><code>        [i]  cons  C   ==   [C]  cons  i</code></pre>
 <p>So far we have only encountered one combinator which takes two quoted
 parameters – the <code>b</code> combinator. But Joy has a large number
@@ -635,8 +637,8 @@ or three quotation parameters:</p>
 as <code>[P]</code> by <code>[[P] i]</code> if the quotations are being
 used as parameters for a combinator. But the replacements are invaluable
 in a Joy interpreter written in Joy. This interpreter is essentially a
-complex combinator, appropriately called joy, and it has to behave just
-like the <code>i</code> combinator. In the definition of the
+complex combinator, appropriately called <code>joy</code>, and it has to
+behave just like the <code>i</code> combinator. In the definition of the
 <code>joy</code> combinator, the implementation of all combinators uses
 the above mapping combinators but with <code>[[joy] cons]</code> instead
 of <code>[[i] cons]</code>.</p>
@@ -655,7 +657,7 @@ is minimised in the first place. Mostly the problem arises from
 declarations of named functions and procedures and their named formal
 parameters.</p>
 <p>There are several reasons why one might want to declare a function,
-because</p>
+because:</p>
 <ol type="1">
 <li>it requires recursion, or</li>
 <li>it is needed in several seemingly unrelated places in a program,
@@ -772,7 +774,7 @@ necessary. Also, the repeated duplication of the quoted body is not
 necessary, and consequently the three parts do not have to work around
 the quoted body when it is in the way on the top. In fact, the essence
 of the if-part and most of the else-part are built into the primrec
-combinator for primitive recursion. The entire program then is</p>
+combinator for primitive recursion. The entire program then is:</p>
 <pre><code>        5  [1]  [*]  primrec</code></pre>
 <p>As mentioned before, even the use of recursion can be eliminated in
 favour of a more efficient loop combinator which uses an accumulating
@@ -805,4 +807,3 @@ and to the “Combinatory Abstract Machine” <em>CAM</em>, see for example
 <p>The paper <a href="j00ovr.html">j00ovr</a> contains an overview of
 Joy and references to other papers dealing with specific aspects of
 Joy.</p>
-<hr />

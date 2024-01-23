@@ -46,30 +46,31 @@ line.</p>
 <p>Consider the following equations in infix notation: The first says
 that multiplying a number <code>x</code> by 2 gives the same result as
 adding it to itself. The second says that the size of a reversed list is
-the same as the <code>size</code> of the original list.</p>
+the same as the <code>size</code> of the original list:</p>
 <pre><code>        2 * x  =  x + x                 size(reverse(x))  =  size(x)</code></pre>
 <p>In Joy the same equations would be written, <em>without
 variables</em>, like this:</p>
 <pre><code>        2  *   ==   dup  +              reverse  size   ==   size</code></pre>
 <p>Other equivalences express algebraic properties of various
-operations. For example, the predecessor pred of the successor succ of a
-number is just the number itself. The conjunction and of a truth value
-with itself gives just the truth value. The less than relation
-<code>&lt;</code> is the converse of the greater than relation
-<code>&gt;</code>. Inserting a number with cons into a list of numbers
-and then taking the sum of that gives the same result as first taking
-the sum of the list and then adding the other number.</p>
-<p>In conventional notation these are expressed by</p>
+operations. For example, the predecessor <code>pred</code> of the
+successor <code>succ</code> of a number is just the number itself. The
+conjunction <code>and</code> of a truth value with itself gives just the
+truth value. The less than relation <code>&lt;</code> is the converse of
+the greater than relation <code>&gt;</code>. Inserting a number with
+<code>cons</code> into a list of numbers and then taking the sum of that
+gives the same result as first taking the sum of the list and then
+adding the other number.</p>
+<p>In conventional notation these are expressed by:</p>
 <pre><code>        pred(succ(x))  =  x             x and x  =  x
         x &lt; y  =  y &gt; x                 sum(cons(x,y))  =  x + sum(y)</code></pre>
-<p>In Joy these are expressed <em>without variables</em></p>
+<p>In Joy these are expressed <em>without variables</em>:</p>
 <pre><code>        succ  pred   ==   id            dup  and   ==   id
         &lt;  ==   swap &gt;                 cons  sum   ==   sum  +</code></pre>
 <p>Some properties of operations have to be expressed by combinators.
-One of these is the dip combinator which expects a program on top of the
-stack and below that another value. It saves the value, executes the
-program on the remainder of the stack and then restores the saved
-value.</p>
+One of these is the <code>dip</code> combinator which expects a program
+on top of the stack and below that another value. It saves the value,
+executes the program on the remainder of the stack and then restores the
+saved value.</p>
 <p>In the first example below, the <code>dip</code> combinator is used
 to express the associativity of addition. Another combinator is the
 <del>app2</del><code>unary2</code> combinator which expects a program on
@@ -81,7 +82,7 @@ Morgan laws. In the third example it expresses that the
 combinators to express that multiplication distributes (from the right)
 over addition. (Note that the program parameter for
 <del>app2</del><code>unary2</code> is first constructed from the
-multiplicand and <code>*</code>.)</p>
+multiplicand and <code>*</code>.):</p>
 <pre><code>        [+]  dip  +   ==   +  +
         and  not      ==   [not]  unary2  or    (* app2 *)
         concat  size  ==   [size]  unary2  +    (* app2 *)
@@ -97,32 +98,33 @@ theory, but no previous knowledge is assumed.</p>
 and unit elements</h2>
 <p>A unary function <code>f(x)</code> is said to be <em>idempotent</em>
 if applying it once is “as good as” applying it twice. In conventional
-notation this means that for all <code>x</code></p>
+notation this means that for all <code>x</code>:</p>
 <pre><code>        f(f(x))  =  f(x)</code></pre>
-<p>For example, the function abs which returns the absolute value of a
-number is idempotent. Another one is the function defined on lists or
-strings which returns a sorted version - sorting an already sorted
-sequence makes no difference.</p>
+<p>For example, the function <code>abs</code> which returns the absolute
+value of a number is idempotent. Another one is the function defined on
+lists or strings which returns a sorted version – sorting an already
+sorted sequence makes no difference:</p>
 <pre><code>        abs(abs(n))  =  abs(n)          sort(sort(s))  =  sort(s)</code></pre>
 <p>Composition can be used to express that stack operations are
-<em>idempotent</em>. The following express the idempotency of abs and
-sort:</p>
+<em>idempotent</em>. The following express the idempotency of
+<code>abs</code> and <code>sort</code>:</p>
 <pre><code>        abs abs  ==  abs                sort sort  ==  sort</code></pre>
 <p>Another idempotent Joy function, one which has no counterpart in
-conventional notation, is the newstack function, it throws away anything
-that is on the stack. Doing it twice in succession gives the same result
-as doing it once:</p>
+conventional notation, is the <code>newstack</code> function, it throws
+away anything that is on the stack. Doing it twice in succession gives
+the same result as doing it once:</p>
 <pre><code>        newstack  newstack   ==   newstack</code></pre>
 <p>The remainder of this section illustrates the use of the <em>identity
-function</em> in Joy algebra. This function is denoted by the symbol id.
-It has the property that for all programs <code>P</code>,</p>
+function</em> in Joy algebra. This function is denoted by the symbol
+<code>id</code>. It has the property that for all programs
+<code>P</code>:</p>
 <pre><code>        id  P   ==   P   ==   P  id</code></pre>
 <p>Let <code>f(x)</code> be a unary function. Another unary function
 <code>g(x)</code> is said to be its <em>inverse</em> if for all
-<code>x</code></p>
+<code>x</code>:</p>
 <pre><code>        g(f(x))  =  x</code></pre>
 <p>For example, the predecessor function on integers is the inverse of
-the successor function on integers: for all integers <code>x</code></p>
+the successor function on integers: for all integers <code>x</code>:</p>
 <pre><code>        pred(succ(x))  =  x</code></pre>
 <p>It may or may not be that if one function is the inverse of a second
 then the second is the inverse of the first. This is true of the
@@ -130,53 +132,56 @@ predecessor and successor functions when defined on integers, but not
 when defined on natural numbers. The identity function can be used to
 express that one function is the inverse of another and that certain
 values are unit elements.</p>
-<p>The atomic program succ denotes a function which takes a stack as
-argument and yields a stack as value. The argument stack has to have an
-integer (or a character) on top. The value stack is like the argument
-stack except that the integer (or character) has been incremented by 1.
-The semantics for pred is analogous, it decrements the integer (or
-character). The following express that the functions denoted by the
-symbols <code>succ</code> and <code>pred</code> are <em>inverse</em>s of
-each other:</p>
+<p>The atomic program <code>succ</code> denotes a function which takes a
+stack as argument and yields a stack as value. The argument stack has to
+have an integer (or a character) on top. The value stack is like the
+argument stack except that the integer (or character) has been
+incremented by 1. The semantics for <code>pred</code> is analogous, it
+decrements the integer (or character). The following express that the
+functions denoted by the symbols <code>succ</code> and <code>pred</code>
+are <em>inverse</em>s of each other:</p>
 <pre><code>        pred succ  ==  id               succ pred  ==  id</code></pre>
-<p>The cons function expects a list on top of the argument stack. Below
-that it expects another value. The value that is returned is another
-stack which is like the argument stack except that the two top elements
-of the argument stack have been replaced by a new list which has the
-value inserted into it at the front. The uncons function undoes this. It
-expects a non-empty list and leaves the first and the rest of the list.
-The two functions are inverses of each other:</p>
+<p>The <code>cons</code> function expects a list on top of the argument
+stack. Below that it expects another value. The value that is returned
+is another stack which is like the argument stack except that the two
+top elements of the argument stack have been replaced by a new list
+which has the value inserted into it at the front. The
+<code>uncons</code> function undoes this. It expects a non-empty list
+and leaves the first and the rest of the list. The two functions are
+inverses of each other:</p>
 <pre><code>        cons uncons  ==  id             uncons cons  ==  id</code></pre>
 <p>It is worth pointing out this cannot be expressed in conventional
 notation because there the <code>uncons</code> operation makes no sense.
 Actually, both functions are polymorphic in that instead of lists they
 can operate on strings or on sets. The two equations still hold applied
 to strings. Only the right equation holds for sets.</p>
-<p>The symbols pairlist, pairstring and pairset denote functions which
-expect two potential members of lists, strings or sets on top of the
-stack. They return a new stack with the two members replaced by a single
-list, string or set. The polymorphic unpair function is their inverse,
-but not vice versa. Since <code>unpair</code> leaves two results, the
-following have no counterpart in conventional notation.</p>
-<pre><code>        pairlist unpair  ==  id
+<p>The symbols <code>pairlist</code>, <code>pairstring</code> and
+<code>pairset</code> denote functions which expect two potential members
+of lists, strings or sets on top of the stack. They return a new stack
+with the two members replaced by a single list, string or set. The
+polymorphic <code>unpair</code> function is their inverse, but not vice
+versa. Since <code>unpair</code> leaves two results, the following have
+no counterpart in conventional notation:</p>
+<pre><code>        pairlist unpair    ==  id
         pairstring unpair  ==  id
-        pairset unpair  ==  id</code></pre>
+        pairset unpair     ==  id</code></pre>
 <p>Some functions are inverses of themselves. Examples of
 <em>self-inverse</em> functions are the Boolean negation function and
 the list reversal function: for all Boolean values <code>b</code> and
-for all lists <code>l</code></p>
+for all lists <code>l</code>:</p>
 <pre><code>        not(not(b))  =  b               reverse(reverse(l))  =  l</code></pre>
-<p>In Joy the two unary operators not and reverse are polymorphic. The
-<code>not</code> operator expects a truth value or a set on top of the
-stack and returns a stack which has the complementary truth value or set
-on top of the stack. The <code>reverse</code> operator expects a list or
-a string on top of the stack and returns a stack which has the reversal
-the list or string on top of the stack. The two functions are
-self-inverses, and this is expressed by</p>
+<p>In Joy the two unary operators <code>not</code> and
+<code>reverse</code> are polymorphic. The <code>not</code> operator
+expects a truth value or a set on top of the stack and returns a stack
+which has the complementary truth value or set on top of the stack. The
+<code>reverse</code> operator expects a list or a string on top of the
+stack and returns a stack which has the reversal the list or string on
+top of the stack. The two functions are self-inverses, and this is
+expressed by:</p>
 <pre><code>        not not  ==  id                 reverse reverse  ==  id</code></pre>
 <p>Let <code>f(x,y)</code> be a binary function. A constant
 <code>c</code> is called a left or right <em>unit element</em> if the
-first or the second equation holds for all <code>x</code></p>
+first or the second equation holds for all <code>x</code>:</p>
 <pre><code>        f(c,x)  =  x                    f(x,c)  =  x</code></pre>
 <p>Left and right unit elements often coincide, and then they are just
 called unit elements. In particular, this is true for the unit elements
@@ -190,16 +195,16 @@ addition, 1 for multiplication, the <em>empty string</em>
 <code>""</code> or the <em>empty list</em> <code>[]</code> for
 concatenation, the truth value false and the <em>empty set</em>
 <code>{}</code> for logical disjunction and set union, and the truth
-value true for logical conjunction.</p>
-<pre><code>        0 +  ==  id                     1 *  ==  id
+value true for logical conjunction:</p>
+<pre><code>        0 +        ==  id               1 *        ==  id
         &quot;&quot; concat  ==  id               [] concat  ==  id
-        false or  ==  id                {} or  ==  id
-        true and  ==  id</code></pre>
+        false or   ==  id               {} or      ==  id
+        true and   ==  id</code></pre>
 <h2 id="idempotency-zero-elements-and-arities">Idempotency, zero
 elements and arities</h2>
 <p>This section illustrates the <code>dup</code> and <code>pop</code>
 operators in Joy algebra. The Joy operator dup expects one value on top
-of the stack and pushes a duplicate on top. For example,</p>
+of the stack and pushes a duplicate on top. For example:</p>
 <pre><code>        42 dup  ==  42 42</code></pre>
 <p>Both sides of the equation denote compositions of two functions. On
 the left the first function pushes a number and the second makes a
@@ -209,19 +214,19 @@ left is identical to the one on the right. Both functions are defined
 for all stacks, and both return a stack which is like the argument stack
 except that two copies of the number 42 have been pushed.</p>
 <p>A binary function <code>f(x,y)</code> is called <em>idempotent</em>
-if for all <code>x</code></p>
+if for all <code>x</code>:</p>
 <pre><code>        f(x,x)  =  x</code></pre>
 <p>Two examples are the Boolean conjunction and disjunction operations:
-for all <code>b</code></p>
+for all <code>b</code>:</p>
 <pre><code>        b and b  =  b                   b or b  =  b</code></pre>
 <p>In Joy the <code>dup</code> operator can express idempotency of the
 Boolean operations and and or which are defined for truth values and for
-sets. It can also express the idempotency of the numeric binary min and
-max operators:</p>
-<pre><code>        dup and  ==  id                 dup or  ==  id
+sets. It can also express the idempotency of the numeric binary
+<code>min</code> and <code>max</code> operators:</p>
+<pre><code>        dup and  ==  id                 dup or   ==  id
         dup min  ==  id                 dip max  ==  id</code></pre>
-<p>The Joy operator pop expects one value on top of the stack and
-removes it. For example</p>
+<p>The Joy operator <code>pop</code> expects one value on top of the
+stack and removes it. For example:</p>
 <pre><code>        17 42 pop  ==  17</code></pre>
 <p>On the left the composition of three functions first pushes two
 numbers and then pops the second. On the right the function just pushes
@@ -240,12 +245,12 @@ this:</p>
 particular values are zero elements for binary operations: 0 for
 multiplication, <code>false</code> and the empty set <code>{}</code> for
 logical conjunction and set intersection, and <code>true</code> for
-logical disjunction.</p>
-<pre><code>        0 *  ==  pop 0
+logical disjunction:</p>
+<pre><code>        0 *        ==  pop 0
         false and  ==  pop false         {} and  ==  pop {}
-        true or  ==  pop true</code></pre>
+        true or    ==  pop true</code></pre>
 <p>The two operators <code>dup</code> and <code>pop</code> are related
-by the identity</p>
+by the identity:</p>
 <pre><code>        dup pop  ==  id</code></pre>
 <p>The <code>pop</code> operator can also be used to express the
 <em>arity</em> of a function, the number of parameters which it expects.
@@ -259,13 +264,13 @@ stack:</p>
 <h2 id="converses-commutativity-and-symmetry">Converses, commutativity
 and symmetry</h2>
 <p>This section illustrates the use of the <code>swap</code> operator in
-Joy algebra. The Joy operator swap expects two values of any type on top
-of the stack; its effect is to interchange them. The operator is its own
-inverse:</p>
+Joy algebra. The Joy operator <code>swap</code> expects two values of
+any type on top of the stack; its effect is to interchange them. The
+operator is its own inverse:</p>
 <pre><code>        swap swap  ==  id</code></pre>
 <p>Let <code>f(x,y)</code> be a binary function. Another binary function
 <code>g(x,y)</code> is its <em>converse</em> if for all <code>x</code>
-and <code>y</code></p>
+and <code>y</code>:</p>
 <pre><code>        f(x,y)  =  g(y,x)</code></pre>
 <p>For example, the numeric comparison relation <code>&lt;</code> has as
 its converse the relation <code>&gt;</code>:</p>
@@ -273,7 +278,7 @@ its converse the relation <code>&gt;</code>:</p>
 <p>In Joy notation the <code>swap</code> operator can express that
 comparison predicates <code>&lt;</code> and <code>&lt;=</code> have as
 their converses the predicates <code>&gt;</code> and <code>&gt;=</code>
-by the laws</p>
+by the laws:</p>
 <pre><code>        swap &gt;   ==   &lt;                swap &gt;=    ==    &lt;=</code></pre>
 <p>The operator swons is similar to <code>cons</code>, it expects an
 aggregate and a new value on top of the stack. It leaves a new aggregate
@@ -281,42 +286,42 @@ with the value inserted. But whereas <code>cons</code> expects the
 aggregate on top and the value below, <code>swons</code> expects them in
 the opposite order, the value on top and the aggregate below. It follows
 that <code>swons</code> is the converse of <code>cons</code>. In the
-same way, a binary string or list operation swoncat is defined to be the
-converse of <code>concat</code>.</p>
+same way, a binary string or list operation <code>swoncat</code> is
+defined to be the converse of <code>concat</code>:</p>
 <pre><code>        swap cons  ==  swons            swap concat  ==  swoncat</code></pre>
 <p>One function is the converse of a second function if and only if the
 second is the converse of the first. This says that converseness is a
 symmetric relation. In Joy it is expressed by the following: for all
-programs <code>P</code> and <code>Q</code></p>
+programs <code>P</code> and <code>Q</code>:</p>
 <pre><code>        swap P  ==  Q    if and only if    swap Q  ==  P</code></pre>
-<p>From this rule and the previous equalities it follows that</p>
-<pre><code>        swap &lt;  ==   &gt;                  swap &lt;=  ==  &gt;=
+<p>From this rule and the previous equalities it follows that:</p>
+<pre><code>        swap &lt;      ==   &gt;              swap &lt;=       ==  &gt;=
         swap swons  ==  cons            swap swoncat  ==  concat</code></pre>
 <p>A binary function <code>f(x,y)</code> is <em>commutative</em> if it
-is its own converse - if for all <code>x</code> and <code>y</code></p>
+is its own converse – if for all <code>x</code> and <code>y</code>:</p>
 <pre><code>        f(x,y)  =  f(y,x)</code></pre>
 <p>For example, addition of numbers is commutative, for all integers
-<code>x</code> and <code>y</code></p>
+<code>x</code> and <code>y</code>:</p>
 <pre><code>        i + j  =  j + i</code></pre>
 <p>In Joy the <code>swap</code> operator can express that a function is
-commutative.</p>
-<pre><code>        swap +  ==  +                   swap *  ==  *
-        swap and  ==  and               swap or  ==  or
-        swap max  ==  max               swap min  ==  min</code></pre>
-<p>Two sorted sequences can be combined with the merge operator to form
-one new sorted sequence. Unlike concatenation, merging is
 commutative:</p>
+<pre><code>        swap +    ==  +                 swap *    ==  *
+        swap and  ==  and               swap or   ==  or
+        swap max  ==  max               swap min  ==  min</code></pre>
+<p>Two sorted sequences can be combined with the <code>merge</code>
+operator to form one new sorted sequence. Unlike concatenation, merging
+is commutative:</p>
 <pre><code>        swap merge  ==  merge</code></pre>
 <p>A function which yields a truth value is often called a
 <em>predicate</em>. Commutative predicates are often called
 <em>symmetric</em>. For example, the <em>identity relation</em>
 <code>=</code>, a binary predicate, is commutative or symmetric. Another
-is the equal predicate which tests lists for identity, including
-sublists and their sublists. In conventional notation, for all integers
-or lists <code>x</code> and <code>y</code></p>
+is the <code>equal</code> predicate which tests lists for identity,
+including sublists and their sublists. In conventional notation, for all
+integers or lists <code>x</code> and <code>y</code>:</p>
 <pre><code>        (i = j)  =  (j = i)        equal(x,y)  =  equal(y,x)</code></pre>
 <p>Turning these concepts on themselves, the converse relation is
-symmetric: for all functions <code>f</code> and <code>g</code></p>
+symmetric: for all functions <code>f</code> and <code>g</code>:</p>
 <pre><code>        (g is the converse of f)  =  (f is the converse of g)</code></pre>
 <p>The same is not true for the inverse relation. The <code>swap</code>
 operator can express that a binary predicate is <em>symmetric</em>. The
@@ -329,12 +334,12 @@ as addition and the Boolean operations this already follows from their
 commutativity. On the other hand, concatenation of strings or lists is
 not commutative, but the empty string and the empty list are both right
 and left unit elements for concatenation. They are also both right unit
-elements for merge.</p>
-<pre><code>        0 swap +  ==  id                1 swap *  ==  id
-        false swap or  == id            {} swap or  ==  id
-        true swap and  ==  id
+elements for merge:</p>
+<pre><code>        0 swap +        ==  id          1 swap *    ==  id
+        false swap or   ==  id          {} swap or  ==  id
+        true swap and   ==  id
         &quot;&quot; swap concat  ==  id          [] swap concat  ==  id
-        &quot;&quot; swap merge  ==  id           [] swap merge  ==  id</code></pre>
+        &quot;&quot; swap merge   ==  id          [] swap merge   ==  id</code></pre>
 <p>Some operators leave two elements on top of the stack, and two such
 operators may be related in the sense that they just leave the elements
 in a different order. This can also be expressed by
@@ -343,17 +348,17 @@ in a different order. This can also be expressed by
 <p>There is even one operator which is related to itself in this way,
 and that is <code>dup</code>:</p>
 <pre><code>        dup swap  ==  dup</code></pre>
-<p>Two operators related to <code>swap</code> are rollup and rolldown.
-The <code>rollup</code> operator moves the third and second element on
-the stack into second and first position, and it moves the original
-first element into third position. The <code>rolldown</code> operator
-moves the second and first element on the stack into third and second
-position, and it moves the original third element into first position.
-They can express laws such as</p>
-<pre><code>        rolldown  concat  concat   ==   concat swoncat
-        rollup  swoncat  concat   ==   swoncat  swoncat
-        rollup  merge  merge   ==   merge merge</code></pre>
-<p>Their arities are expressed by</p>
+<p>Two operators related to <code>swap</code> are <code>rollup</code>
+and <code>rolldown</code>. The <code>rollup</code> operator moves the
+third and second element on the stack into second and first position,
+and it moves the original first element into third position. The
+<code>rolldown</code> operator moves the second and first element on the
+stack into third and second position, and it moves the original third
+element into first position. They can express laws such as:</p>
+<pre><code>        rolldown  concat  concat   ==   concat  swoncat
+        rollup  swoncat  concat    ==   swoncat  swoncat
+        rollup  merge  merge       ==   merge  merge</code></pre>
+<p>Their arities are expressed by:</p>
 <pre><code>        swap  pop  pop   ==   pop  pop
         rollup  pop  pop  pop   ==   pop  pop  pop
         rolldown  pop  pop  pop   ==   pop  pop  pop</code></pre>
@@ -368,14 +373,14 @@ functions from stacks to stacks. They differ from what are called the
 operators in that they expect on top of the stack not just a passive
 datum, but a quoted program which they execute. In accordance with an
 older terminology they are here called <em>combinator</em>s.</p>
-<p>One of these is the dip combinator. It expects a quoted program on
-the top of the stack, and below at least one value of any type. During
-execution it removes the program and the value from the stack and saves
-them. Then it executes the program on the remainder of the stack.
-Finally it restores the saved value to the top of the stack. In most
-applications the program will be pushed just before the combinator is to
-be applied. The combinator is useful for doing something to the stack
-without disturbing the top value.</p>
+<p>One of these is the <code>dip</code> combinator. It expects a quoted
+program on the top of the stack, and below at least one value of any
+type. During execution it removes the program and the value from the
+stack and saves them. Then it executes the program on the remainder of
+the stack. Finally it restores the saved value to the top of the stack.
+In most applications the program will be pushed just before the
+combinator is to be applied. The combinator is useful for doing
+something to the stack without disturbing the top value.</p>
 <p>Here is an example:</p>
 <pre><code>        1 2 3 4 + * 5  ==  1 14 5
         1 2 3 4 5 [+ *] dip  ==  1 14 5</code></pre>
@@ -431,7 +436,7 @@ function which maps integers with addition into even integers with
 addition, and the squaring function which maps naturals with
 multiplication into square naturals with multiplication and the size (or
 length) of string function which maps the size of concatenations onto
-sums of sizes. The <em>De Morgan</em> laws are another example.</p>
+sums of sizes. The <em>De Morgan</em> laws are another example:</p>
 <pre><code>        log(x * y)  =  log(x) + log(y)
         double(x + y)  =  double(x) + double(y)
         square(x * y)  =  square(x) * square(y)
@@ -441,7 +446,7 @@ sums of sizes. The <em>De Morgan</em> laws are another example.</p>
 <p>In Joy the <del>app2</del><code>unary2</code> combinator can be used
 to express <em>homomorphism</em> laws, and these all take the form:</p>
 <pre><code>        f  h   ==   [h]  unary2  g  (* app2 *)</code></pre>
-<p>Some such laws are</p>
+<p>Some such laws are:</p>
 <pre><code>        +  double         ==   [double]  unary2  +
         *  square         ==   [square]  unary2  *
         max  succ         ==   [succ]  unary2  max
@@ -449,11 +454,12 @@ to express <em>homomorphism</em> laws, and these all take the form:</p>
         concat  sum       ==   [sum]  unary2  +
         concat  product   ==   [product]  unary2  *
         concat  charset   ==   [charset]  unary2  or</code></pre>
-<p>In the above, charset transforms a string of characters into a set of
-characters, and the <code>or</code> operator computes set union in this
-case. Another homomorphism is the sort operator which maps unordered
-lists under concatenation onto ordered lists under a binary merge
-operator which preseves ordering:</p>
+<p>In the above, <code>charset</code> transforms a string of characters
+into a set of characters, and the <code>or</code> operator computes set
+union in this case. Another homomorphism is the <code>sort</code>
+operator which maps unordered lists under concatenation onto ordered
+lists under a binary <code>merge</code> operator which preseves
+ordering:</p>
 <pre><code>        concat  sort      ==   [sort]  unary2  merge        (* app2 *)</code></pre>
 <p>The <del>app2</del><code>unary2</code> combinator can also be used to
 express the familiar De Morgan laws for Boolean algebra and a (perhaps
@@ -486,7 +492,7 @@ The other way is to use the first parameter and the distributing
 function to make a <em>constructed program</em> that computes a unary
 function, use <del>app2</del><code>unary2</code> to compute its values
 for the second and third data parameters and to combine the two values
-with the other function.</p>
+with the other function:</p>
 <pre><code>        [+] dip *     ==  [*] cons unary2 +         (* app2 *)
         [and] dip or  ==  [or] cons unary2 and      (* app2 *)
         [or] dip and  ==  [and] cons unary2 or      (* app2 *)</code></pre>
@@ -501,7 +507,7 @@ to a quoted program which does not compute a unary function, but
 accesses data elements further down in the stack. In the examples below,
 these elements have to be explicitly deleted later on, by
 <code>[pop] dip</code>. It can be used to express <em>left
-distribution</em> laws.</p>
+distribution</em> laws:</p>
 <pre><code>        + *     ==  [*] unary2 + [pop] dip          (* app2 *)
         or and  ==  [and] unary2 or [pop] dip       (* app2 *)
         and or  ==  [or] unary2 and [pop] dip       (* app2 *)</code></pre>
@@ -509,12 +515,12 @@ distribution</em> laws.</p>
 combinators <del>app1</del><code>i</code> and
 <del>app3</del><code>unary3</code>. Each expects a program
 <code>[P]</code> on top of the stack and below that 1, 2 or 3 further
-parameters and produces 1, 2 or 3 values. Some pertinent laws are</p>
+parameters and produces 1, 2 or 3 values. Some pertinent laws are:</p>
 <pre><code>        [succ]  i  ==  succ            [not]  i  ==  not
         [pop]  dip  i         ==   unary2  pop
         [swap]  dip  unary2   ==   unary2  swap
         [dup]  dip  unary2    ==   i  dup</code></pre>
-<p>The arities of these combinators are expressed by</p>
+<p>The arities of these combinators are expressed by:</p>
 <pre><code>        i  pop   ==   pop  pop
         unary2  pop  pop   ==   pop  pop  pop
         unary3  pop  pop  pop   ==   pop  pop  pop  pop</code></pre>
@@ -523,7 +529,7 @@ parts: a sign and an absolute value. When the two parts are multiplied,
 the result is the same as the original. In the same way, a non-empty
 list has two parts, its first and its rest. When the first is consed
 into the rest, the result is the same as the original list. In
-conventional notation this might be expressed as</p>
+conventional notation this might be expressed as:</p>
 <pre><code>        sign(x) * abs(x)  =  x
         cons(first(x),rest(x))  =  x</code></pre>
 <p>The same may be expressed in Joy notation using the <code>dip</code>
@@ -531,18 +537,19 @@ combinator:</p>
 <pre><code>        dup [sign] dip abs *  ==  id
         dup [first] dip rest cons  ==  id</code></pre>
 <p>The laws look somewhat cleaner when expressed in terms of another
-combinator. The cleave combinator expects two programs and below that
-another item. It applies both programs to produce two results, for
-example</p>
+combinator. The <code>cleave</code> combinator expects two programs and
+below that another item. It applies both programs to produce two
+results, for example:</p>
 <pre><code>        5  [pred]  [dup *]  cleave   ==   4  25</code></pre>
 <p>The earlier laws about parts and wholes can then be expressed like
 this:</p>
 <pre><code>        [sign]  [abs]  cleave  *   ==   id
         [first]  [rest]  cleave  cons   ==  id</code></pre>
-<p>The combinator split applied to a list and a test predicate produces
-two lists, those members of the original list which pass the test and
-those with fail. For any predicate, a list will have two parts which can
-be merged to reconstitute the original list. In Joy notation:</p>
+<p>The combinator <code>split</code> applied to a list and a test
+predicate produces two lists, those members of the original list which
+pass the test and those which fail. For any predicate, a list will have
+two parts which can be merged to reconstitute the original list. In Joy
+notation:</p>
 <pre><code>        [sort] dip split merge   ==   pop  sort</code></pre>
 <p>The law cannot be expressed in conventional notation because
 <code>split</code> produces two results.</p>
@@ -560,7 +567,7 @@ href="joybibl.html#78">{Pierce91}</a>.</p>
 for any two objects a collection of <em>morphism</em>s, each having the
 one object as their <em>source</em> and the other object as their
 <em>target</em>. In many categories the objects are just sets, or they
-are sets with structure - algebras. Then the morphisms are unary
+are sets with structure – algebras. Then the morphisms are unary
 functions from sets to sets, or they are homomorphisms from algebras to
 algebras. For any object the morphisms must include an <em>identity
 morphism</em> with that object as source and target. Often there will be
@@ -579,7 +586,7 @@ interest), but many morphisms, the elements of the monoid. There are
 many other kinds of categories which are different again.</p>
 <p>Categories deal with two sorts of things, objects and morphisms. So
 they are two-sorted algebras. Between categories there are morphisms
-called <em>functor</em>s. These take objects and morphims of one
+called <em>functor</em>s. These take objects and morphisms of one
 category into objects and morphisms of another category. In computer
 science the most familiar functors are the <em>type constructor</em>s.
 They take integers, characters, truth values and so on into
@@ -592,9 +599,9 @@ take integer functions such as squaring into corresponding functions on
 theory the same symbol is used for objects and morphisms, so the
 examples are written <code>LIST(integer)</code> and
 <code>LIST(square)</code>. In Joy there is no explicit type notation at
-all, and map is just one of many combinators. Programs to compute the
-list of squares of a given list can be written in either of these two
-ways:</p>
+all, and <code>map</code> is just one of many combinators. Programs to
+compute the list of squares of a given list can be written in either of
+these two ways:</p>
 <pre><code>        [square]  map                   [dup *]  map</code></pre>
 <p>Between any two functors <code>F</code> and <code>G</code> there can
 be functions called <em>natural transformation</em>s. These take as
@@ -607,12 +614,12 @@ following holds for all <code>x</code>:</p>
 <code>F</code> and <code>G</code> are the same functor
 <code>LIST</code>. Then an example of a natural transformation from
 lists to lists is the reverse function: for all functions <code>f</code>
-and lists <code>L</code></p>
+and lists <code>L</code>:</p>
 <pre><code>        reverse(LIST(f)(L)  =  LIST(f)(reverse(L))</code></pre>
-<p>or in conventional notation</p>
+<p>or in conventional notation:</p>
 <pre><code>        reverse(map(f,L))  =  map(f,reverse(L))</code></pre>
 <p>In Joy algebra the naturality of <code>reverse</code> is expressed
-by</p>
+by:</p>
 <pre><code>        [reverse]  dip  map   ==   map  reverse</code></pre>
 <p>In computer science natural transformations are often called
 <em>polymorphic</em> functions, in the case of lists they are
@@ -624,7 +631,7 @@ naturality laws, expressed in conventional notation:</p>
         map(f,cons(x,[]))  =  cons(f(x),[])
         map(f,unitlist(x))  =  unitlist(f(x))</code></pre>
 <p>The last two laws of course say the same thing. In Joy these would be
-expressed by</p>
+expressed by:</p>
 <pre><code>        [rest]  dip  map     ==   map  rest
         [first]  dip  i      ==   map  first
         [concat]  dip  map   ==   [map]  cons  unary2  concat  (* app2 *)
@@ -634,10 +641,10 @@ expressed by</p>
 <del>app2</del><code>unary2</code> combinator has to use a
 <em>constructed program</em>. The last two laws again say the same
 thing.</p>
-<p>Somewhat more difficult is the naturality of cons. In conventional
-notation this is expressed by</p>
+<p>Somewhat more difficult is the naturality of <code>cons</code>. In
+conventional notation this is expressed by:</p>
 <pre><code>        map(f,cons(x,L))  =  cons(f(x),map(f,L))</code></pre>
-<p>and in Joy notation by</p>
+<p>and in Joy notation by:</p>
 <pre><code>        [cons]  dip  map   ==   dup  [dip]  dip  map  cons</code></pre>
 <p>This is so complex that a step-by-step verification is called for.
 Let <code>L</code> and <code>x</code> be the list and the additional
@@ -670,29 +677,29 @@ definition:</p>
                    [ [uncons]  dip  dup  [dip]  dip  map  cons ]
                    ifte</code></pre>
 <p>The fact that <code>map</code> does not change the number of elements
-in a list is expressed in conventional notation by</p>
+in a list is expressed in conventional notation by:</p>
 <pre><code>        size(map(f,L))  =  size(L)</code></pre>
-<p>and in Joy notation by</p>
+<p>and in Joy notation by:</p>
 <pre><code>        map  size   ==   pop  size</code></pre>
-<p>An important combinator for any aggregate is filter, which expects an
-aggregate und below that a quotation which implememnts a predicate. It
-returns an aggregate of the same type as the parameter containing only
-those members for which the predicate yielded <code>true</code>. Given
-two aggregates, it does not matter whether they are first combined and
-then filtered, or first filtered separately and then combined. For
-sequences the law is this:</p>
+<p>An important combinator for any aggregate is <code>filter</code>,
+which expects an aggregate und below that a quotation which implements a
+predicate. It returns an aggregate of the same type as the parameter
+containing only those members for which the predicate yielded
+<code>true</code>. Given two aggregates, it does not matter whether they
+are first combined and then filtered, or first filtered separately and
+then combined. For sequences the law is this:</p>
 <pre><code>        [concat] dip filter  ==  [filter] cons unary2 concat  (* app2 *)</code></pre>
 <p>For sets the combining operator has to be <code>or</code> instead of
 <code>concat</code>.</p>
 <p>Another law concerns passing an aggregate first through one filter
 and then passing the result through another filter. Passing the
 aggregate through the conjunction of these filters produces the same
-result. The conjoin operator takes two quoted predicates and returns one
-quoted predicate which is their conjunction.</p>
+result. The <code>conjoin</code> operator takes two quoted predicates
+and returns one quoted predicate which is their conjunction:</p>
 <pre><code>        [filter] dip filter  ==  conjoin filter</code></pre>
 <p>The following laws concern the <code>sum</code>s and
 <code>product</code>s of lists of integers:</p>
-<pre><code>        cons  sum   ==   sum  +         sum   ==   uncons  sum  +
+<pre><code>        cons sum      ==  sum +         sum      ==  uncons sum +
         cons product  ==  product *     product  ==  uncons product *</code></pre>
 <p>(Only the equations on the left could be expressed in conventional
 notation.)</p>
@@ -713,7 +720,7 @@ curly braces, as in <code>{1 3 5}</code>. Values of this type can be
 manipulated by the combinator <code>map</code> and the operators
 <code>first</code>, <code>rest</code> and <code>cons</code>. Instead of
 the operator <code>concat</code> the set union operator or applies. The
-naturality of these operators is expressed by</p>
+naturality of these operators is expressed by:</p>
 <pre><code>        [rest]  dip  map      ==   map  rest
         [first]  dip  map     ==   map  first
         [or]  dip  map        ==   [map]  cons  unary2  or  (* app2 *)
@@ -722,20 +729,20 @@ naturality of these operators is expressed by</p>
 <p>Now we have two functors, <code>LIST</code> and <code>SET</code>.
 Lists have order and may have repetitions, sets have neither. A useful
 function from lists to sets is the function elements which removes order
-and repetitions. For example, in Joy notation</p>
+and repetitions. For example, in Joy notation:</p>
 <pre><code>        [ 3 1 5 1 ]  elements   ==   { 1 3 5 }</code></pre>
 <p>It makes no difference whether the set of elements of a list is taken
 first and then the set is mapped through a function, or whether the list
 is first mapped through the same function and then the set of elements
 is taken. This is the naturality of the <code>elements</code> function,
-expressed by</p>
+expressed by:</p>
 <pre><code>        [elements]  dip  map   ==   map  elements</code></pre>
 <p>For example:</p>
 <pre><code>        [ 3 1 5 1 ]  [dup *]  [elements]  dip  map
     ==  [ 3 1 5 1 ]  elements  [dup *]  map
     ==  { 1 3 5 }  [dup *]  map
     ==  { 1 9 25 }</code></pre>
-<p>and</p>
+<p>and:</p>
 <pre><code>        [ 3 1 5 1 ]  [dup *]  map  elements
     ==  [ 9 1 25 1 ]  elements
     ==  { 1 9 25 }</code></pre>
@@ -748,13 +755,13 @@ bags to sets. Currently Joy does not have an implementation of bags.</p>
 integers. Formally these are of type <code>LIST(LIST(integer))</code>.
 This uses the <code>LIST</code> functor composed with itself:
 <code>LIST</code> ° <code>LIST</code>. Such a list can be mapped through
-a function by mapping each sublist, for example</p>
+a function by mapping each sublist, for example:</p>
 <pre><code>        [[1 2 3][4 5]]  [[dup *] map]  map   ==   [[1 4 9][16 25]]</code></pre>
 <p>Here the second <code>map</code> is applied to the whole list, the
 first or inner <code>map</code> is applied to the sublists.
-Alternatively a combinator mmap can be defined by</p>
+Alternatively a combinator <code>mmap</code> can be defined by:</p>
 <pre><code>        mmap   ==   [map]  cons  map</code></pre>
-<p>and then one can write</p>
+<p>and then one can write:</p>
 <pre><code>        [[1 2 3][4 5]]  [dup *]  mmap  ==  [[1 4 9][16 25]]</code></pre>
 <p>Whereas a list is one-dimensional, a <em>matrix</em> is
 two-dimensional. Matrices can be implemented as lists of lists, and the
@@ -765,20 +772,20 @@ The transpose operator does just that:</p>
 <p>Transposition is another polymorphic function or natural
 transformation for matrices. It does not matter whether a matrix is
 first transposed and then mapped elementwise through a function, or
-whether it is first mapped and then transposed.</p>
+whether it is first mapped and then transposed:</p>
 <pre><code>        [transpose]  dip  mmap   ==   mmap  transpose</code></pre>
-<p>The operator zip will transform two lists of the same length into a
-list of pairs, for example</p>
+<p>The operator <code>zip</code> will transform two lists of the same
+length into a list of pairs, for example:</p>
 <pre><code>        [1 2 3]  [4 5 6]  zip   ==   [[1 4][2 5][3 6]]</code></pre>
-<p>The <code>zip</code> operator can be defined by</p>
+<p>The <code>zip</code> operator can be defined by:</p>
 <pre><code>        zip   ==   []  cons  cons  transpose</code></pre>
 <p>The <code>zip</code> function is natural, <code>zip</code>ping the
 two lists and then <code>mmap</code>ing has the same effect as
 <code>map</code>ping and then <code>zip</code>ping:</p>
 <pre><code>        [zip]  dip  mmap   ==   [map]  unary2  zip  (* app2 *)</code></pre>
-<p>A similar naturality law holds for the cartproduct operator which
-produces the <em>cartesian product</em> of two aggregates which do not
-have to be of the same type:</p>
+<p>A similar naturality law holds for the <code>cartproduct</code>
+operator which produces the <em>cartesian product</em> of two aggregates
+which do not have to be of the same type:</p>
 <pre><code>        [cartproduct] dip  mmap   ==   [map] unary2  cartproduct  (* app2 *)</code></pre>
 <p>Another useful datatype is that of <em>tree</em>s, also called
 <em>recursive list</em>s. A tree of integers is either an integer or a
@@ -786,21 +793,22 @@ list of trees of integer. A <em>proper tree</em> is a list of trees. The
 type gives rise to a functor <code>TREE</code>, with the data type
 <code>TREE(integer)</code> and mapping functions such as
 <code>TREE(square)</code>. In Joy the combinator for tree mapping is
-treemap. Most of the operations on lists also apply to proper trees.
-Reversal can be done by <code>reverse</code> just at the top level, or
-by treereverse all the way down into all sublists. Some naturality laws
-are:</p>
+<code>treemap</code>. Most of the operations on lists also apply to
+proper trees. Reversal can be done by <code>reverse</code> just at the
+top level, or by treereverse all the way down into all sublists. Some
+naturality laws are:</p>
 <pre><code>        [reverse]  dip  treemap   ==   treemap  reverse
         [treereverse]  dip  treemap   ==   treemap  treereverse
         [rest]  dip  treemap   ==   treemap  rest
         [first]  dip  i   ==   treemap  first
         [[] cons]  dip  treemap   ==   treemap  []  cons</code></pre>
-<p>Proper trees can be treeflattened to form a one-level list. For
-example</p>
+<p>Proper trees can be <code>treeflatten</code>ed to form a one-level
+list. For example:</p>
 <pre><code>        [ [1 [2 3] [] 4] [5] ]  treeflatten   ==   [ 1 2 3 4 5 ]</code></pre>
 <p>The <code>treeflatten</code>ing function is a natural transformation
 between the <code>TREE</code> and <code>LIST</code> functors, the order
-of treeflattening and mapping does not matter:</p>
+of <code>treeflatten</code>ing and <code>map</code>ping does not
+matter:</p>
 <pre><code>        [treeflatten]  dip  map   ==   treemap  treeflatten</code></pre>
 <p>The following also holds:</p>
 <pre><code>        treereverse  treeflatten   ==   treeflatten  reverse</code></pre>
@@ -809,13 +817,14 @@ is a list of bare trees. Formally there is a functor
 <code>BARETREE</code>, and for (degenerate) functions which can only
 take <code>[]</code> as parameters <code>BARETREE(f)</code> maps bare
 trees with contained <code>[]</code> into trees. Proper trees can also
-be stripped of their leaves to form a bare tree:</p>
+be <code>strip</code>ped of their leaves to form a bare tree:</p>
 <pre><code>        [ [1 [2 3] [] 4] [5] ]  strip   ==   [ [ [] [] ] [] ]</code></pre>
 <p>The <code>strip</code> function commutes with <code>reverse</code>
 and <code>treereverse</code>:</p>
 <pre><code>        reverse  strip   ==   strip  reverse
         treereverse  strip   ==   strip  treereverse</code></pre>
-<p>Once stripped, there is nothing for <code>treemap</code> to do:</p>
+<p>Once <code>strip</code>ped, there is nothing for <code>treemap</code>
+to do:</p>
 <pre><code>        [strip]  dip  treemap   ==   treemap  strip   ==   pop strip</code></pre>
 <h2 id="the-list-monad">The LIST monad</h2>
 <p>This section gives a superficial sketch of monads, another useful
@@ -843,11 +852,11 @@ value an object in the target of the functor. The first defining law for
 monads is that these two compositions must be identical.</p>
 <p>Similarly, from the second transformation one can define a variant by
 applying the functor to it. This variant is again a natural
-transformation, it takes as argument and value objects in the target of
-the functor. The second transformation or its variant may be composed
-with the first transformation. The two compositions take as argument an
-value objects in the target of the functor. The second defining law for
-monads is that these two compositions must both be equal to the identity
+transformation, it takes as argument a value object in the target of the
+functor. The second transformation or its variant may be composed with
+the first transformation. The two compositions take as argument a value
+object in the target of the functor. The second defining law for monads
+is that these two compositions must both be equal to the identity
 function.</p>
 <p>The above will now be illustrated with the <em>LIST monad</em>. Its
 functor is the <code>LIST</code> functor. Its first natural
@@ -855,12 +864,12 @@ transformation is usually called flatten, which concatenates a two-level
 list to produce a single-level list. Its second natural transformation
 is the unary unitlist operation which takes any argument to produce its
 singleton list. Here are two examples:</p>
-<pre><code>        [[1 2 3] [peter paul]] flatten  ==  [1 2 3 peter paul]
+<pre><code>        [[1 2 3] [peter paul]] flatten   ==  [1 2 3 peter paul]
         [[1 2 3] [peter paul]] unitlist  ==  [[[1 2 3] [peter paul]]]</code></pre>
 <p>The two required variants are obtained by applying the
 <code>LIST</code> functor, as <code>map</code>.</p>
 <p>The variant of the <code>flatten</code> operator is the polymorphic
-operator</p>
+operator:</p>
 <pre><code>        [flatten]  map</code></pre>
 <p>which takes a list of (lists of lists) as argument and concatenates
 the (list of lists) but leaves the outer level list structure intact.
@@ -870,12 +879,12 @@ This is an example:</p>
 there are two equivalent ways of flattening a list of lists of lists to
 produce a list:</p>
 <pre><code>        [flatten]  map  flatten   ==   flatten  flatten</code></pre>
-<p>The variant of <code>unitlist</code> is the polymorphic operator</p>
+<p>The variant of <code>unitlist</code> is the polymorphic operator:</p>
 <pre><code>        [unitlist] map</code></pre>
 <p>which takes a list of elements and produces the list of their
-unitlists. An example is</p>
+unitlists. An example is:</p>
 <pre><code>        [1 2 [3 4]]  [unitlist] map   ==   [[1] [2] [[3 4]]]</code></pre>
-<p>The second monad law can now be written in Joy as</p>
+<p>The second monad law can now be written in Joy as:</p>
 <pre><code>        [unitlist] map  flatten   ==   id   ==   unitlist  flatten</code></pre>
 <p>As natural transformations both <code>flatten</code> and
 <code>unitlist</code> interact with the <code>LIST</code> functor
@@ -888,13 +897,13 @@ another list of lists. That can then be <code>flatten</code>ed to
 produce a single level list. The same original list of lists can first
 be <code>flatten</code>ed to produce a single level list which can then
 be mapped at the top level using <code>map</code>. The two results are
-the same, and in Joy this is expressed as</p>
+the same, and in Joy this is expressed as:</p>
 <pre><code>        mmap  flatten   ==   [flatten] dip  map</code></pre>
 <p>A function may be applied to an argument of any type, and then the
 <code>unitlist</code> can be taken. Alternatively the
 <code>unitlist</code> can be taken first and then the result can be
-<code>map</code>ped through the function. That the results are the same
-can be written in Joy as</p>
+mapped through the function. That the results are the same can be
+written in Joy as:</p>
 <pre><code>        i  unitlist   ==   [unitlist] dip  map</code></pre>
 <p><a href="joybibl.html#108">{Wadler92}</a> shows that in any monad it
 is possible to define another natural transformation, <em>monadic
@@ -902,7 +911,7 @@ composition</em> which simultaneously resembles function application and
 function composition. For the <code>LIST</code> monad it takes as one of
 its arguments a list and as the other argument a function which yields a
 list as value. The result is again a list. In Joy it might be defined
-by</p>
+by:</p>
 <pre><code>        bind   ==   map  flatten</code></pre>
 <p>It satisfies the following laws:</p>
 <pre><code>        [unitlist] dip  bind   ==   i
@@ -911,7 +920,7 @@ by</p>
 <p>The first two laws say that <code>unitlist</code> is a left and right
 identity for <code>bind</code>, the third says that <code>bind</code> is
 associative. The third law is here expressed with program variables
-<code>K</code> and <code>H</code>. Alternatively it is expressed by</p>
+<code>K</code> and <code>H</code>. Alternatively it is expressed by:</p>
 <pre><code>        [bind] cons  concat  bind   ==   [bind] dip  bind</code></pre>
 <p>Wadler makes extensive use of many <code>bind</code>-like functions
 for monads other than the <code>LIST</code> monad.</p>
@@ -928,4 +937,3 @@ and algebraic techniques to solve sophisticated optimisation problems in
 functional programming. It appears that most, and perhaps even all, of
 the contributions in the above papers can be translated into Joy
 notation.</p>
-<hr />

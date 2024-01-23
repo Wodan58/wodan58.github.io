@@ -21,6 +21,7 @@ quotation ?"</a></li>
 <li><a href="#TOC-12">"So, what is Joy ?"</a></li>
 <li><a href="#TOC-13">"Where can I find out more about Joy ?"</a></li>
 </ol>
+<hr />
 <h2 id="TOC-1">"What is a functional language ?"</h2>
 <p>The programs of functional languages are expressions, and computation
 proceeds by evaluating expressions. Functional languages differ from
@@ -41,7 +42,7 @@ imperative languages it is not always possible to execute assignment
 statements in arbitrary order.</p>
 <p>Expressions need not be numerical, subexpressions can be of different
 types, and the operations can be unary. In the following the only
-operand is a list of numbers, here writen inside square brackets.</p>
+operand is a list of numbers, here writen inside square brackets:</p>
 <pre><code>(1)            square(  size(  rest( [11 22 33] ) ) )
                square(  size(  [22 33]            ) )
                square(  2                           )
@@ -121,7 +122,7 @@ they have assignment statements.</p>
 application function, it is possible to define other higher order
 functions. One example is the composition function, a binary operation
 on unary functions. Notationally it is often written in infix, using a
-small circle, or "o", or ".", as here. The definition is</p>
+small circle, or "∘", or ".", as here. The definition is:</p>
 <pre><code>               (f . g)  @  x   ==   f  @  (g  @  x)</code></pre>
 <p>Since the "f" and the "g" appear in the same order on the left side
 as in the applicative expression on the right, this is sometimes called
@@ -132,7 +133,7 @@ written in two ways:</p>
                ((square  .  size)  .  rest)   @   [11 22 33]</code></pre>
 <p>Function composition is in fact associative, and hence the two have
 the same value. So the running example might as well be written without
-the inner parentheses as</p>
+the inner parentheses as:</p>
 <pre><code>(3)            (square  .  size  .  rest)   @   [11 22 33]</code></pre>
 <p>The change to function composition has eliminated the first two
 occurrences of "@" in (2) of the previous section.</p>
@@ -145,9 +146,9 @@ functional languages need application.</p>
 ?"</h2>
 <p>Suppose the expression "[11 22 33]" could denote a unary function,
 just as "square", "size" and "rest" do. Then the running example would
-be written</p>
+be written:</p>
 <pre><code>(4)            square  .  size  .  rest  .  [11 22 33]</code></pre>
-<p>The entire composition would have to be applied to a suitable
+<p>The entire composition would have to be applied to a suitably
 suppressed argument.</p>
 <p>One suitable argument is a stack which is initially empty. Then "[11
 22 33]" denotes not a list but a stack function which pushes a list.
@@ -164,12 +165,12 @@ It is sometimes defined using an infix operator, say ";", instead of the
 previous ".":</p>
 <pre><code>               (f ; g)  @  x   ==   g  @  (f  @  x)</code></pre>
 <p>This is is known as "diagrammatic order" notation for composition.
-Then the running example would be written</p>
+Then the running example would be written:</p>
 <pre><code>(5)            [11 22 33]  ;  rest  ;  size  ;  square</code></pre>
 <p>One advantage of this notation is that the order in the notation
 reflects the order of the execution.</p>
-<p>Any functional language which completely replaces application, by
-explicit or implicit "@", by composition, with explicit or implicit "."
+<p>Any functional language which completely replaces application with
+explicit or implicit "@" by composition, with explicit or implicit "."
 or ";", might be called a <strong>compositional</strong> functional
 language.</p>
 <h2 id="TOC-6">"What is a concatenative functional language ?"</h2>
@@ -179,7 +180,7 @@ the higher order function of composition. Either kind of language might
 have other kinds of higher order functions.</p>
 <p>Here is an example: the squaring function can be
 <strong>map</strong>ped over the elements of a list [1 2 3] to yield the
-result [1 4 9]. In a compositional language one might write</p>
+result [1 4 9]. In a compositional language one might write:</p>
 <pre><code>               [1 2 3]  map  square</code></pre>
 <p>where "map" is an infix operator just like ";". Now "[1 2 3]" and
 "square" denote unary stack functions, and the two are transformed by
@@ -196,7 +197,7 @@ one denoted by "[4 9]".</p>
 especially a conditional, or "if-then-else" of some kind. However, if a
 compositional language has no other function operator, then there is no
 point in ever writing the ";". The running example would now be written
-as</p>
+as:</p>
 <pre><code>(6)            [11 22 33]   rest   size   square</code></pre>
 <p>Now the concatenation of any consecutive two or three or all four of
 the parts of (6) denote the composition of the stack functions that the
@@ -204,7 +205,7 @@ parts denote. This is a desirable consequence. But it must not come at
 the price of not being able to express other higher order functions such
 as the mapping function or the conditional or the many others that a
 mature language needs. The topic is resumed in section 10.</p>
-<p>A language in which the concatenation of programs denote the
+<p>A language in which the concatenation of programs denotes the
 composition of functions has been called a
 <strong>concatenative</strong> language. I first heard this terminology
 from Billy Tanksley.</p>
@@ -212,7 +213,7 @@ from Billy Tanksley.</p>
 notation ?"</h2>
 <p>The running example (6) looks just like postfix notation: the operand
 is [11 22 33] and there are three unary operators. Similarly the first
-example in section 1 could be written in postfix as</p>
+example in section 1 could be written in postfix as:</p>
 <pre><code>               2   3   +   4   7   -   *</code></pre>
 <p>with four number operands and three binary operators. Just as in the
 evaluation of the original infix expression, the addition and the
@@ -222,7 +223,7 @@ subexpressions, the four single digit numerals – all of them denote
 numbers.</p>
 <p>The expression is also correct concatenative notation (though not in
 compositional languages that use ";"). So what is the difference?
-Consider some consecutive parts such as</p>
+Consider some consecutive parts such as:</p>
 <pre><code>        +       3  +        +  4        3  +  4        7  -  *</code></pre>
 <p>These do not denote numbers, they are not postfix expressions.
 However, they are perfectly correct concatenative expressions, each
@@ -231,7 +232,8 @@ denoting, as always, unary functions from stacks to stacks.</p>
 becomes even more obvious in the following. The square of a number is
 just the number multiplied with a <strong>dup</strong>licate of itself.
 Let "dup" denote a stack function which <strong>dup</strong>licates the
-top element of the stack. So the running example might be written as</p>
+top element of the stack. So the running example might be written
+as:</p>
 <pre><code>(7)            [11 22 33]   rest   size   dup   *</code></pre>
 <p>The duplication operator only makes sense in compositional languages
 that use a stack (or perhaps something similar), and hence also in
@@ -242,7 +244,7 @@ two elements.</p>
 notation is used in Forth, Postscript and Joy. The unix utility
 <strong>dc</strong> (which similates a <strong>d</strong>esk
 <strong>c</strong>alculator) is often described as using postfix, but
-the presence of a duplication operator d actually makes it
+the presence of a duplication operator <code>d</code> actually makes it
 concatenative. The two other stack manipulators are easily defined in
 <strong>dc</strong>.</p>
 <h2 id="TOC-8">"What is an environment ?"</h2>
@@ -250,14 +252,14 @@ concatenative. The two other stack manipulators are easily defined in
 language. In infix notation the external definition might look similar
 to this:</p>
 <pre><code>               square(x)   ==   x  *  x</code></pre>
-<p>Internally, and possibly externally too, the definition would be</p>
+<p>Internally, and possibly externally too, the definition would be:</p>
 <pre><code>               square   ==   Lx :  x * x</code></pre>
 <p>where "Lx" is sometimes written "\x" or "lambda x" or "fun x". The
 expression on the right side of the definition then is to be read as
 "the function of one argument x which yields the value x * x". An
 expression like that is known as a <strong>lambda
 abstraction</strong>.</p>
-<p>Such a definition would be used as in the evaluation</p>
+<p>Such a definition would be used as in the evaluation:</p>
 <pre><code>                     square  @  2
                (Lx : x * x)  @  2
                      2 * 2
@@ -275,14 +277,15 @@ complementary. They form the heart of the lambda calculus which
 underlies all the mainstream functional languages.</p>
 <h2 id="TOC-9">"Is an environment needed ?"</h2>
 <p>The previous definitions of the squaring function as a lambda
-abstraction might be written in postfix or concatenative notation as</p>
+abstraction might be written in postfix or concatenative notation
+as:</p>
 <pre><code>               square   ==   Lx :  x  x  *
                square   ==   Ls :  x  dup  *</code></pre>
 <p>For a compositional (and hence for concatenative) language the right
 hand side has to be read as "the stack function for stacks in which
 there is a top element x and which for stacks without that top element
 yields the same result as x dup *". But one might also write without the
-explicit lambda abstraction as</p>
+explicit lambda abstraction as:</p>
 <pre><code>               x  square   ==   x  x  *
                x  square   ==   x  dup  *</code></pre>
 <p>In the last of these both sides start with the formal parameter x,
@@ -336,18 +339,18 @@ program and it leaves behind a new list. The program is protected from
 execution by being enclosed in square brackets, and in this form it is
 called a quotation.</p>
 <p>Because the mapping function is only first order, it is possible to
-write</p>
+write:</p>
 <pre><code>        [1 2 3]    [ [dup *] [dup dup * *] ]    [map]    map</code></pre>
 <p>which leaves [ [1 4 9] [1 8 27] ] on top of the stack, and below that
 the original [1 2 3].</p>
 <p>Another common word for higher order function is "combinator", but in
-Joy it is used for what are really first order functions. Apart from
+Joy it is used for what really are first order functions. Apart from
 "map", Joy has a large number of combinators, and in programming they
 are used more often than in other languages.</p>
 <h2 id="TOC-11">"What is the difference between a list and a quotation
 ?"</h2>
 <p>Lists and quotations use square brackets to enclose something – or
-possibly nothing. Isn't that confusing? Would it not be better to use a
+possibly nothing. Isn’t that confusing? Would it not be better to use a
 different notation for the two?</p>
 <p>Lists are passive data structures that can be manipulated for example
 by the rest operation. There are quite a few other well known list
@@ -360,7 +363,7 @@ known counterparts in other languages. But many of them are unique to
 Joy and do not make much sense elsewhere.</p>
 <p>So, why use the same notation for lists and quotations? The reason is
 that fundamentally they really are the same.</p>
-<p>On the one hand consider the program</p>
+<p>On the one hand consider the program:</p>
 <pre><code>               [1 2 3]   [4 5]   map</code></pre>
 <p>The first list is used as the passive data structure, and at the very
 least its size, 3, determines the size of the result list of the
@@ -370,10 +373,10 @@ and in each case simply push 4 and 5 on top. Whatever is on top will be
 the element of the result list, and that is the same on all three
 occasions. So the result list is [5 5 5].</p>
 <p>On the other hand, and more usefully, any list processing operation
-can be used on quotations. Consider</p>
+can be used on quotations. Consider:</p>
 <pre><code>               [1 2 3]   [dup * dup *]   map</code></pre>
 <p>which will compute the fourth powers of the elements of the list.
-Removing the first two parts of the quotation first,</p>
+Removing the first two parts of the quotation first:</p>
 <pre><code>               [1 2 3]   [dup * dup *]   rest  rest  map</code></pre>
 <p>will compute the second powers of the elements of the list.</p>
 <p>Instead of taking a quotation apart, with the rest operation, a more
@@ -383,7 +386,7 @@ that.</p>
 <p>The following two programs compute the same function:</p>
 <pre><code>        [dup *]  map                   [square]  map</code></pre>
 <p>because the quotations compute the same function. At the same time,
-of course,</p>
+of course:</p>
 <pre><code>        [dup *]  size                  [square]  size</code></pre>
 <p>give different results, 2 and 1, because as lists they are
 different.</p>
@@ -471,7 +474,17 @@ Thun</a><br />
 <li>Or contact <a href="http://fogus.me/important/von-thun">me</a> at
 home,
 <ul>
-<li>25 Pymm Avenue, Eltham 3095 VIC, Australia</li>
+<li>25 Pymm Avenue, Eltham 3095 VIC, Australia<a href="#fn1"
+class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a></li>
 <li>[Australia] (03) 9439 7340</li>
 </ul></li>
 </ul>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Manfred has left the building.<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>

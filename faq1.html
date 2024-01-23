@@ -1,14 +1,14 @@
 <p>Contents:</p>
 <ol type="1">
 <li><a href="#TOC-1">"Why is == an infix operator ?"</a></li>
-<li><a href="#TOC-2">"But why can't definitions be entered at run-time
+<li><a href="#TOC-2">"But why can’t definitions be entered at run-time
 ?"</a></li>
 <li><a href="#TOC-3">"What happens if one takes the first of [dup *]
 ?"</a></li>
 <li><a href="#TOC-4">"Why does Joy have all those recursion combinators
 ?<br />
 Why not just use plain explicit recursion ?"</a></li>
-<li><a href="#TOC-5">"So why don't other languages have recursion
+<li><a href="#TOC-5">"So why don’t other languages have recursion
 combinators ?"</a></li>
 </ol>
 <hr />
@@ -67,7 +67,7 @@ used now when the translated bodies are executed by the interpreter.</p>
 <p>Numerous variations are possible, but the difference between the two
 stages is always present. So there is no reason to use the same syntax
 for definitions and bodies. The same applies to Joy.</p>
-<p>The syntax for definitions in Joy is</p>
+<p>The syntax for definitions in Joy is:</p>
 <pre><code>        name   ==   body</code></pre>
 <p>where the body is a concatenative expression. The symbol "==" could
 even be left out altogether. A definition sequence consists of one or
@@ -79,18 +79,18 @@ semicolon could not be left out. Definition sequences are headed by
 local definitions.</p>
 <p>So, "==" is not a postfix operator because it is not a run-time
 operator any more that the other symbols used in definitions.</p>
-<h2 id="TOC-2">2. "But why can't definitions be entered at run-time
+<h2 id="TOC-2">2. "But why can’t definitions be entered at run-time
 ?"</h2>
 <p>This question is very different from the preceding one. Whatever the
 syntax of definitions, it would be possible to allow definitions to be
 entered at run-time. But it may well be a bad idea.</p>
 <p>For the sake of having a concrete example, consider the ordinary
-definition</p>
+definition:</p>
 <pre><code>        cube   ==   dup  dup  *  *</code></pre>
 <p>that is normally processed at compile-time. If such a definition is
 to be entered into the symbol table at run-time, then the two parts must
 be available: 1) the name "cube", and 2) the body "dup dup * *". Clearly
-none of the following will do</p>
+none of the following will do:</p>
 <pre><code>        cube   ==   dup  dup  *  *
         cube  dup  dup  *  *   ==
         cube  [dup dup * *]   DEF</code></pre>
@@ -101,9 +101,9 @@ and instead produces an entry into the symbol table. Furthermore, the
 two occurrences of "dup" and of "*" in the first two candidates also
 have to be prevented from producing a call, as indeed they are in the
 third candidate.</p>
-<p>This suggest the other notation</p>
+<p>This suggest the other notation:</p>
 <pre><code>        &quot;cube&quot;  [dup dup * *]  DEF</code></pre>
-<p>In other words, "DEF" would expect a string and a quotation on top ot
+<p>In other words, "DEF" would expect a string and a quotation on top of
 the stack, it would pop these off and enter the definition. In that case
 the following would produce the same result:</p>
 <pre><code>        &quot;uc&quot;  reverse  &quot;xbe&quot;  rest  concat  [dup dup * *]  DEF</code></pre>
@@ -117,20 +117,20 @@ so it is not being executed. In the first case the symbol even ends up
 on the Joy stack just on its own, but again it is not executed. The two
 styles are essentially equivalent, although DEF1 and DEF2 have different
 expectations as to what has to be on top of the stack. Their equivalence
-can be seen by the mutual definitions – ordinary definitions, that is
-–</p>
+can be seen by the mutual definitions – ordinary definitions, that is –
+:</p>
 <pre><code>        DEF1   ==     cons  DEF2
         DEF2   ==   uncons  DEF1</code></pre>
 <p>Both styles lend themselves to program manipulation before the
-definitions are entered, for example</p>
+definitions are entered, for example:</p>
 <pre><code>        [cube]  first  [* * dup dup]  reverse  DEF1
         [* *]  [dup dup]  concat  [cube]  swoncat  DEF2</code></pre>
 <p>Note that this is quite different from the construction of quotations
 that is often used in Joy before the quotations are processed by a
 combinator. For example, it is now possible to initialise a definition,
-say of "current-item", by</p>
+say of "current-item", by:</p>
 <pre><code>        [current-item  1]   DEF2</code></pre>
-<p>and to update it with, say an increment of 3, by</p>
+<p>and to update it with, say an increment of 3, by:</p>
 <pre><code>        current-item  3  +  []  cons  [current-item]  swoncat  DEF2</code></pre>
 <p>This means that the name "current-item" is actually the name of a
 variable which can be updated in all manners of ways. Hence the language
@@ -165,24 +165,24 @@ if the <em>setautoput</em> flag is set to 1 or 2, automatically after
 the execution of the current program. Of course it can also be read
 back. What is written or read is of course the sequence of 3 characters,
 d-u-p, in the first case. More interestingly, the unadorned operator can
-be made part of another quotation, as in</p>
+be made part of another quotation, as in:</p>
 <pre><code>        [dup *]  first  []  cons   ==&gt;   [dup]</code></pre>
 <p>The resulting quotation [dup] can become a parameter for a
 combinator, for example the i-combinator which will just execute what is
-inside the quotation. So we have</p>
+inside the quotation. So we have:</p>
 <pre><code>        [dup *]  first  []  cons  i    ==    dup</code></pre>
 <p>If the operator or combinator is not a primitive, but defined by the
 user, then one can get the body of its definitions as a quotation. For
 example, in the current implementation <em>first</em> is a primitive,
 but <em>second</em> is defined in the initial library <a
-href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a></p>
+href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>:</p>
 <pre><code>        second   ==   rest  first</code></pre>
-<p>The body of that definition is accessible by</p>
+<p>The body of that definition is accessible by:</p>
 <pre><code>        [second]  first  body</code></pre>
 <p>which will leave the quotation [rest first] on top of the stack.</p>
 <h2 id="TOC-4">4. "Why does Joy have all those recursion combinators?
 Why not just use plain explicit recursion?"</h2>
-<p>A: In the 70's it was recognised that programs using structured IFs
+<p>A: In the 70’s it was recognised that programs using structured IFs
 and WHILEs are easier to get right and easier to read than programs
 which use GOTOs and in which the pattern of the flow of control has to
 be inferred by laborious analysis.</p>
@@ -204,8 +204,8 @@ lists there are several combinators. For nested recursion (as in the
 Ackermann function) there will soon be two combinators nestrec and
 condnestrec. So far there are no combinators for mutual recursion. All
 these combinators are more intuitive and descriptive than the well-known
-"paradoxical" all-purpose recursion combinators (Curry's) Y and
-(Turing's) T which are frequently defined but never used because they
+"paradoxical" all-purpose recursion combinators (Curry’s) Y and
+(Turing’s) T which are frequently defined but never used because they
 are all-purpose and hence not descriptive.</p>
 <p>Of course the execution of programs without explicit GOTOs typically
 involves its use internally. Similarly, the execution of programs with
@@ -217,17 +217,17 @@ all, not just list, recursions has to be inferred. So, if you like,
 <p>As a bonus, at least for the current implementation, programs using
 recursion combinators are more efficient than programs using explicit
 recursion.</p>
-<h2 id="TOC-5">5. "So why don't other languages have recursion
+<h2 id="TOC-5">5. "So why don’t other languages have recursion
 combinators ?"</h2>
 <p>A: For several, mostly independent reasons:</p>
 <p>1. Joy combinators take quotations as arguments. Other languages
 would have to use lambda abstractions instead. But many have no way of
 capturing the current environments.</p>
 <p>2. Apart from this, many languages could not even define a lambda
-counterpart of Joy's simple i combinator – the "dequotation combinator".
-This rules out most mainstream languages. Some counterpart might be
-definable in the Lisps, ML, Haskell and Prolog.</p>
-<p>3. Again independently, there will be a problem about Joy's simple
+counterpart of Joy’s simple <code>i</code> combinator – the "dequotation
+combinator". This rules out most mainstream languages. Some counterpart
+might be definable in the Lisps, ML, Haskell and Prolog.</p>
+<p>3. Again independently, there will be a problem about Joy’s simple
 branching combinator ifte. With "eager" evaluation it is not possible to
 define an ordinary function for branching, as Eva Lou Ator will tell
 you, in SICP p 23. Branching has to be done with "special forms" cond or
@@ -245,7 +245,7 @@ there. (c) Rewrite all functions including combinators as taking a stack
 polymorphic way. Finite unions can then solve the problem that
 combinators are supposed to take as parameters functions of all sorts of
 base types but also lists of these and lists of lists of base types and
-so on. But I don't know whether this can handle lists of mixtures of
+so on. But I don’t know whether this can handle lists of mixtures of
 lists of mixtures when the entire mix is unknowable at compile time.</p>
 <p>There are languages in which the Y or T combinators can be defined,
 or at least collections of variants for different number of parameters

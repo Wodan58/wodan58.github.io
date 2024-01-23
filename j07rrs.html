@@ -9,7 +9,8 @@ expressions. Any programming language can be given a rewriting system,
 but for Joy it is particularly simple. The basic binary rewriting
 relation will be written in infix notation as <code>=&gt;</code>,
 pronounced “can be rewritten as”. The following are some sample rules
-for the + operator, the &lt; predicate and the dip combinator.</p>
+for the <code>+</code> operator, the <code>&lt;</code> predicate and the
+<code>dip</code> combinator:</p>
 <pre><code>        2  3  +   =&gt;   5
         2  3  &lt;   =&gt;   true
         a  [P]  dip   =&gt;   P  a</code></pre>
@@ -40,13 +41,13 @@ and <code>+</code>. The difference would be explained away as a
 syntactic coincidence due to the choice of notation. Apart from
 <code>+</code> there would be very many term constructors.</p>
 <p>However, Joy has operators for manipulating the top few elements of
-the stack, such as swap, dup and pop. These are also found in the
-language <em>Forth</em>, see for example <a
-href="joybibl.html#91">{Salman <em>et al</em> 1984}</a> and <a
-href="joybibl.html#60">{Kelly <em>et al</em> 1986}</a>. These operators
-take a stack as argument and yield a stack as value, and their presence
-forces all other operators to be of the same type. For example, the
-following is a rewrite rule for swap:</p>
+the stack, such as <code>swap</code>, <code>dup</code> and
+<code>pop</code>. These are also found in the language <em>Forth</em>,
+see for example <a href="joybibl.html#91">{Salman <em>et al</em>
+1984}</a> and <a href="joybibl.html#60">{Kelly <em>et al</em> 1986}</a>.
+These operators take a stack as argument and yield a stack as value, and
+their presence forces all other operators to be of the same type. For
+example, the following is a rewrite rule for swap:</p>
 <pre><code>        a  b  swap   =&gt;   b  a</code></pre>
 <p>Unlike Forth, Joy also has quotations and combinators. These features
 also force the conclusion that the appropriate rewriting system is a
@@ -85,12 +86,13 @@ they are graphs of various kinds.</p>
 <p>A <em>string rewriting system</em> is based on an <em>alphabet</em>
 which is just a set of symbols. Strings over a given alphabet are
 arbitrary sequences of symbols, each taken from the alphabet. The empty
-sequence or null string is included. A rewriting rule is of the form</p>
+sequence or null string is included. A rewriting rule is of the
+form:</p>
 <pre><code>        x   =&gt;   y</code></pre>
 <p>where both x and y are strings. A string rewriting system consists of
 an alphabet and a relation =&gt;, a set of such pairs or rules. A wider
 relation ==&gt; is defined as follows: For strings <code>w</code>,
-<code>x</code>, <code>y</code> and <code>z</code>,</p>
+<code>x</code>, <code>y</code> and <code>z</code>:</p>
 <pre><code>        w x z   ==&gt;   w y z</code></pre>
 <p>if and only if <code>x =&gt; y</code>. This relation allows
 replacement of <code>x</code> by <code>y</code> in arbitrary contexts
@@ -103,7 +105,7 @@ or operators. A <em>term</em> over such an alphabet is either an operand
 or it is an operator of arity <code>n</code> together with
 <code>n</code> further terms. Terms are really abstract syntax trees,
 and various notations can be used for their concrete linear
-representation. A rewriting rule is again a pair of the form</p>
+representation. A rewriting rule is again a pair of the form:</p>
 <pre><code>        x   =&gt;   y</code></pre>
 <p>where <code>x</code> and <code>y</code> now have to be terms. A term
 rewriting system consists of an alphabet of symbols, each with their own
@@ -115,7 +117,7 @@ except that <code>y</code> contains a subterm <code>u</code> where
 <code>z</code> contains a subterm <code>w</code> such that
 <code>u =&gt; w</code>.</p>
 <p>In any rewriting system it is useful to define ==&gt;&gt; as the
-reflexive transitive closure of <code>==&gt;</code>.</p>
+reflexive transitive closure of <code>==&gt;</code>:</p>
 <pre><code>        x   ==&gt;&gt;   z</code></pre>
 <p>if and only if <code>x = z</code> or for some <code>y</code>,
 <code>x ==&gt; y</code> and <code>y ==&gt;&gt; z</code>.</p>
@@ -158,67 +160,68 @@ for Joy using a notation similar to Prolog.</p>
 for rewriting Joy programs. Such a system must be based on the two
 principal program constructors, <em>program concatenation</em> and
 <em>program quotation</em>. The system to be presented here uses
-(unconditional) axioms of the form</p>
+(unconditional) axioms of the form:</p>
 <pre><code>        P   =&gt;   Q</code></pre>
 <p>where <code>P</code> and <code>Q</code> are programs. There are also
 conditional rules of the following forms, where <code>R</code>,
 <code>S</code>, <code>T</code> and <code>U</code> are further
-programs.</p>
+programs:</p>
 <pre><code>        P  =&gt;  Q   :-   R  =&gt;  S.
         P  =&gt;  Q   :-   R  =&gt;  S,  T  =&gt; U.</code></pre>
 <p>The rules are written in a <em>Prolog</em>-like syntax. The turnstyle
 :- is pronounced “if”. On its left is the conclusion or
 <em>consequent</em>. On the right is a premise or <em>antecedent</em>.
 The antecedent can be a conjunction, as in the second form above, and
-the comma , is pronounced “and”. So the second of the above rules can be
-read as: “<code>P</code> can be replaced by <code>Q</code> if
-<code>R</code> can be replaced by <code>S</code> and <code>T</code> can
-be replaced by <code>U</code>”. Details of these rules are given in the
-next two sections.</p>
+the comma <code>,</code> is pronounced “and”. So the second of the above
+rules can be read as: “<code>P</code> can be replaced by <code>Q</code>
+if <code>R</code> can be replaced by <code>S</code> and <code>T</code>
+can be replaced by <code>U</code>”. Details of these rules are given in
+the next two sections.</p>
 <p>Using the same notation, the relation ==&gt; is defined by the three
-rules</p>
+rules:</p>
 <pre><code>          P  ==&gt;  Q     :-   P  =&gt;  Q.
         P Q  ==&gt;  P R   :-   Q  ==&gt;  R.
         P R  ==&gt;  Q R   :-   P  ==&gt;  Q.</code></pre>
 <p>The last two clauses allow rewriting in a context – <code>P</code> on
 the left or <code>R</code> on the right.</p>
 <p>The next rules for <code>==&gt;</code> concern combinators. In the
-following, <code>C</code>i is any combinator expecting at least i
-quotation parameters.</p>
+following, <code>C</code>i is any combinator expecting at least
+<code>i</code> quotation parameters:</p>
 <pre><code>        [P] C1  ==&gt;  [Q] C1   :-   P ==&gt; Q.
         [P] [R] C2  ==&gt;  [Q] [R] C2   :-   P  ==&gt; Q.
         [P] [S] [R] C3  ==&gt;  [Q] [S] [R] C3   :-   P  ==&gt; Q.
         [P] [T] [S] [R] C4  ==&gt;  [Q] [T] [S] [R] C4   :-   P  ==&gt;  Q.</code></pre>
-<p>Note that there is no rewrite rule</p>
+<p>Note that there is no rewrite rule:</p>
 <pre><code>        [P]  ==&gt;  [Q]   :-   P  ==&gt;  Q.</code></pre>
 <p>The reason for this is further explained in section 7.</p>
 <p>The final relation to be introduced is ==&gt;&gt;, the reflexive
-transitive closure of <code>==&gt;</code>. It is defined by</p>
+transitive closure of <code>==&gt;</code>. It is defined by:</p>
 <pre><code>        P  ==&gt;&gt;  P.
         P  ==&gt;&gt;  R   :-   P  ==&gt;  Q,  Q  ==&gt;&gt; R.</code></pre>
 <p>The simplest examples of rewriting axioms are those generated by
 <em>definition</em>s. If an atom <code>name</code> has been defined
-using == as program <code>P</code>, in the form</p>
+using == as program <code>P</code>, in the form:</p>
 <pre><code>        name   ==   P</code></pre>
 <p>then <code>name</code> may be rewritten as <code>P</code>:</p>
 <pre><code>        name   =&gt;   P</code></pre>
 <p>The stack is normally a sequence of values of various types. This
 sequence is just a special list which is modified by programs. The first
-general operator is newstack, which clears the stack. Clearing twice is
-the same as clearing just once. If literals were pushed before the
-clearing, this has the same effect as just clearing. So
-<code>newstack</code> is in fact the <em>right zero</em> element for
-program concatenation.</p>
+general operator is <code>newstack</code>, which clears the stack.
+Clearing twice is the same as clearing just once. If literals were
+pushed before the clearing, this has the same effect as just clearing.
+So <code>newstack</code> is in fact the <em>right zero</em> element for
+program concatenation:</p>
 <pre><code>        newstack  newstack   =&gt;   newstack.
         P  newstack   =&gt;   newstack.</code></pre>
 <p>Since the stack is a list, it should be possible to put this list on
 top of the stack – that is to say, on top of itself. Also, it should be
 possible to make the list on top of the stack become the stack. There
-are two operators that do just that: The stack operator pushes onto the
-stack a list containing all the elements of the stack. The unstack
-operator expects a list on top of the stack and makes that the stack.
-The <code>unstack</code> operator undoes what the <code>stack</code>
-operator does, but the reverse is true only in special cases.</p>
+are two operators that do just that: The <code>stack</code> operator
+pushes onto the stack a list containing all the elements of the stack.
+The <code>unstack</code> operator expects a list on top of the stack and
+makes that the stack. The <code>unstack</code> operator undoes what the
+<code>stack</code> operator does, but the reverse is true only in
+special cases:</p>
 <pre><code>        newstack stack  =&gt;  newstack [].
         [] unstack      =&gt;  newstack.
         newstack  L     =&gt;  [L]  reverse  unstack.</code></pre>
@@ -244,10 +247,10 @@ operators that can be used for any stack. Then follow rules for
 operators on <em>simple type</em>s such as truth values, characters and
 integers. These are then followed by rules for operators on
 <em>aggregate type</em>s such as sets, strings and lists.</p>
-<p>The unary operators pop and dup are defined on all stacks containing
-at least one element. In the rewrite rules to follow, let <code>a</code>
-be any literal or a program whose net effect is to push exactly one
-value onto the stack.</p>
+<p>The unary operators <code>pop</code> and <code>dup</code> are defined
+on all stacks containing at least one element. In the rewrite rules to
+follow, let <code>a</code> be any literal or a program whose net effect
+is to push exactly one value onto the stack:</p>
 <pre><code>        a  pop   =&gt;   id.
         a  dup   =&gt;   a  a.</code></pre>
 <p>The generalisation that <code>a</code> may be not just a literal but
@@ -257,40 +260,44 @@ rare cases like the following:</p>
 <p>The two programs on the left and right of the arrow have the net
 effect of pushing two occurrences of the multiplication operator
 <code>*</code> onto the stack.</p>
-<p>The binary operators swap, popd, and dupd are defined on all stacks
-containing at least two elements. Let <code>a</code> and <code>b</code>
-be any literals or equivalent programs.</p>
+<p>The binary operators <code>swap</code>, <code>popd</code>, and
+<code>dupd</code> are defined on all stacks containing at least two
+elements. Let <code>a</code> and <code>b</code> be any literals or
+equivalent programs:</p>
 <pre><code>        a  b  swap   =&gt;   b  a.
         a  b  popd   =&gt;   b.
         a  b  dupd   =&gt;   a  a  b.</code></pre>
-<p>The ternary operators swapd, rollup, rolldown and rotate are defined
-on all stacks containing at least three elements. Let <code>a</code>,
-<code>b</code> and <code>c</code> be any literals or equivalent
-programs.</p>
+<p>The ternary operators <code>swapd</code>, <code>rollup</code>,
+<code>rolldown</code> and <code>rotate</code> are defined on all stacks
+containing at least three elements. Let <code>a</code>, <code>b</code>
+and <code>c</code> be any literals or equivalent programs:</p>
 <pre><code>        a  b  c  swapd      =&gt;   b  a  c.
         a  b  c  rollup     =&gt;   c  a  b.
         a  b  c  rolldown   =&gt;   b  c  a.
         a  b  c  rotate     =&gt;   c  b  a.</code></pre>
 <p>The ternary operator choice also expects three elements, but the
 third element has to be a truth value. Let <code>a</code> and
-<code>b</code> be any literals or equivalent.</p>
+<code>b</code> be any literals or equivalent:</p>
 <pre><code>        true   a  b  choice   =&gt;   a.
         false  a  b  choice   =&gt;   b.</code></pre>
 <p>The <em>simple type</em>s of Joy are the <em>truth value type</em>,
 the <em>character type</em> and the <em>integer type</em>. The next
 rules are for the operators on these types.</p>
-<p>Rewrite rules for the <em>unary operator</em>s succ, pred, abs and
-sign for integer operands is given by the following rules. Since
-characters are just small positive integers, the operators can also be
-applied to characters. The last two operators can also be applied to
-truth values. In what follows, let <code>i</code>, <code>j</code> and
-<code>k</code> be any integers.</p>
+<p>Rewrite rules for the <em>unary operator</em>s <code>succ</code>,
+<code>pred</code>, <code>abs</code> and <code>sign</code> for integer
+operands is given by the following rules. Since characters are just
+small positive integers, the operators can also be applied to
+characters. The last two operators can also be applied to truth values.
+In what follows, let <code>i</code>, <code>j</code> and <code>k</code>
+be any integers:</p>
 <pre><code>        i  succ   =&gt;   j.               ( j = i+1 )
         i  pred   =&gt;   j.               ( j = i-1 )
         i  abs    =&gt;   j.               ( j = abs(i) )
         i  sign   =&gt;   j.               ( j = sign(i) )</code></pre>
-<p>Rewrite rules for the <em>binary operator</em>s +, -, *, /, rem, max
-and min for integers operands are as follows.</p>
+<p>Rewrite rules for the <em>binary operator</em>s <code>+</code>,
+<code>-</code>, <code>*</code>, <code>/</code>, <code>rem</code>,
+<code>max</code> and <code>min</code> for integers operands are as
+follows:</p>
 <pre><code>        i  j  +     =&gt;   k.             ( k = i+j )
         i  j  -     =&gt;   k.             ( k = i-j )
         i  j  *     =&gt;   k.             ( k = i*j )
@@ -305,24 +312,28 @@ same as the type of the second parameter <code>i</code>.</p>
 operations. Since these will be defined in a library, no reduction rules
 should be given here.</p>
 <p>The type of truth values is one of the Boolean types. The <em>binary
-operator</em>s are and, or and xor (exclusive or). The <em>unary
-operator</em> is not. Let <code>p</code> and <code>q</code> be truth
-values <code>true</code> or <code>false</code>.</p>
+operator</em>s are <code>and</code>, <code>or</code> and
+<code>xor</code> (exclusive or). The <em>unary operator</em> is
+<code>not</code>. Let <code>p</code> and <code>q</code> be truth values
+<code>true</code> or <code>false</code>:</p>
 <pre><code>        p  q  and   =&gt;   r.             ( r = p and q )
         p  q  or    =&gt;   r.             ( r = p or  q )
         p  q  xor   =&gt;   r.             ( r = p xor q )
         p  not      =&gt;   r.             ( r = not p )</code></pre>
 <p>A <em>predicate</em> is a function which leaves a truth value on the
-stack. The <em>unary predicate</em>s null, small, odd, even, positive
-and negative are defined for all numeric types:</p>
+stack. The <em>unary predicate</em>s <code>null</code>,
+<code>small</code>, <code>odd</code>, <code>even</code>,
+<code>positive</code> and <code>negative</code> are defined for all
+numeric types:</p>
 <pre><code>        i  null       =&gt;   p.           ( p = (i=0) )
         i  small      =&gt;   p.           ( p = (i&lt;2) )
         i  odd        =&gt;   p.           ( p = odd(i) )
         i  even       =&gt;   p.           ( p = even(i) )
         i  positive   =&gt;   p.           ( p = positive(i) )
         i  negative   =&gt;   p.           ( p = negative(i) )</code></pre>
-<p>The <em>binary predicate</em>s =, !=, &lt;, &lt;=, &gt; and &gt;=
-have the obvious rewrite rules:</p>
+<p>The <em>binary predicate</em>s <code>=</code>, <code>!=</code>,
+<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> and
+<code>&gt;=</code> have the obvious rewrite rules:</p>
 <pre><code>        i  j  =    =&gt;   p.              ( p = (i = j) )
         i  j  !=   =&gt;   p.              ( p = not(i = j) )
         i  j  &lt;    =&gt;   p.              ( p = (i &lt; j) )
@@ -331,9 +342,9 @@ have the obvious rewrite rules:</p>
         i  j  &gt;=   =&gt;   p.              ( p = (i &gt;= j) )</code></pre>
 <p>The remainder of this section deals with <em>aggregate type</em>s:
 sets, strings and quotations, with lists as a special case. The
-<em>unary operator</em>s first, second, third and rest expect a
-non-empty aggregate on top of the stack. The following are the rules for
-list aggregates:</p>
+<em>unary operator</em>s <code>first</code>, <code>second</code>,
+<code>third</code> and <code>rest</code> expect a non-empty aggregate on
+top of the stack. The following are the rules for list aggregates:</p>
 <pre><code>        [a L]      first    =&gt;   a.
         [a b L]    second   =&gt;   b.
         [a b c L]  third    =&gt;   c.
@@ -341,7 +352,7 @@ list aggregates:</p>
 <p>Here <code>[a L]</code> is a non-empty list or quotation whose first
 member is <code>a</code> and whose rest is <code>[L]</code>. For strings
 an analogous notation can be used to obtain analogous rules. For
-example</p>
+example:</p>
 <pre><code>        &quot;cS&quot;  first   =&gt;   &#39;c.
         &quot;cS&quot;  rest    =&gt;   &quot;S&quot;.</code></pre>
 <p>Here “cS” denotes a non-empty string whose first character is
@@ -355,22 +366,24 @@ following:</p>
 <p>Here <code>{a S}</code> denotes a non-empty set whose smallest member
 is <code>a</code> and whose other members are those of
 <code>{S}</code>.</p>
-<p>The <em>binary operator</em>s cons and swons expect an aggregate and
-a potential member on top of the stack. These are the rules for list
-aggregates:</p>
+<p>The <em>binary operator</em>s <code>cons</code> and
+<code>swons</code> expect an aggregate and a potential member on top of
+the stack. These are the rules for list aggregates:</p>
 <pre><code>        a  [L]  cons    =&gt;   [a L].
         [L]  a  swons   =&gt;   [a L].</code></pre>
 <p>The rules for strings and sets are analogous.</p>
-<p>The <em>unary operator</em>s uncons and unswons also expect a
-non-empty aggregate. The rules for list aggregates are:</p>
+<p>The <em>unary operator</em>s <code>uncons</code> and
+<code>unswons</code> also expect a non-empty aggregate. The rules for
+list aggregates are:</p>
 <pre><code>        [a L]  uncons    =&gt;   a  [L].
         [a L]  unswons   =&gt;   [L]  a.</code></pre>
-<p>So for strings and sets some of the rules are</p>
+<p>So for strings and sets some of the rules are:</p>
 <pre><code>        &#39;c &quot;S&quot;  cons   =&gt;   &quot;cS&quot;.
         {S} a  swons   =&gt;   {a S}.
         {a S} uncons   =&gt;   a  {S}.</code></pre>
-<p>The two <em>binary operator</em>s at and of are for <em>index</em>ing
-into aggregates. For list the rules might be written:</p>
+<p>The two <em>binary operator</em>s <code>at</code> and <code>of</code>
+are for <em>index</em>ing into aggregates. For list the rules might be
+written:</p>
 <pre><code>        [l1 l2 ... li ... ln]  i  at   =&gt;   li.
         i  [l1 l2 ... li ... ln]  of   =&gt;   li.</code></pre>
 <p>So the two operators are converses of each other. For both operators
@@ -400,168 +413,175 @@ optimisation can be expressed in rewrite rules:</p>
 <pre><code>        reverse   =&gt;   []  swap  shunt.
         [L]  []  shunt   =&gt;   [L].
         [L]  [a M]  shunt   =&gt;   [a L]  [M]  shunt.</code></pre>
-<p>The binary operator concat can be applied to two sequences which are
-either both lists or both strings.</p>
+<p>The binary operator <code>concat</code> can be applied to two
+sequences which are either both lists or both strings:</p>
 <pre><code>    []    [L]  concat  =&gt;  [L].
     [a L] [M]  concat  =&gt;  [a N]   :-  [L] [M]  concat  =&gt;  [N].</code></pre>
-<p>The operators and, or, xor and not can be applied not only to truth
-values but also to values of the <em>set type</em>. The reduction rules
-look exactly as for the truth values, except that the operations have to
-be performed bitwise. So they compute the <em>intersection</em>,
-<em>union</em>, <em>symmetric difference</em> and <em>complement</em>
-with respect to the largest set.</p>
-<p>The two <em>unary predicate</em>s null and small can also be applied
-to aggregates. These are the rules for lists, those for strings and sets
-are analogous.</p>
+<p>The operators <code>and</code>, <code>or</code>, <code>xor</code> and
+<code>not</code> can be applied not only to truth values but also to
+values of the <em>set type</em>. The reduction rules look exactly as for
+the truth values, except that the operations have to be performed
+bitwise. So they compute the <em>intersection</em>, <em>union</em>,
+<em>symmetric difference</em> and <em>complement</em> with respect to
+the largest set.</p>
+<p>The two <em>unary predicate</em>s <code>null</code> and
+<code>small</code> can also be applied to aggregates. These are the
+rules for lists, those for strings and sets are analogous:</p>
 <pre><code>        []       null    =&gt;   true.
         [a L]    null    =&gt;   false.
         []       small   =&gt;   true.
         [a]      small   =&gt;   true.
         [a b L]  small   =&gt;   false.</code></pre>
-<p>The two binary predicates in and has test aggregates for members.</p>
+<p>The two binary predicates <code>in</code> and <code>has</code> test
+aggregates for members:</p>
 <pre><code>        a  []  in      =&gt;   false.
         a  [a L]  in   =&gt;   true.
         a  [b L]  in   =&gt;   a  [L]  in</code></pre>
-<p>The has predicate is just the converse:</p>
+<p>The <code>has</code> predicate is just the converse:</p>
 <pre><code>        []     a  has   =&gt;   false.
         [a L]  a  has   =&gt;   true.
         [b L]  a  has   =&gt;   [L]  a  has.</code></pre>
 <p>Most implementations of Joy will provide an operator for sorting a
-sequence and a binary operator merge for combining two already sorted
-sequences. Since these will be implemented in a library, no reduction
-rules are given here. The same applies to many other operators for
-aggregates.</p>
+sequence and a binary operator <code>merge</code> for combining two
+already sorted sequences. Since these will be implemented in a library,
+no reduction rules are given here. The same applies to many other
+operators for aggregates.</p>
 <p>Sometimes it is necessary to test a parameter for its type. The
-<em>unary predicate</em>s logical, char, integer, set, string and list
-are true if the parameter is a truth value, character, integer, set,
-string or list, respectively. The predicate leaf is true if the
-parameter is not a list.</p>
+<em>unary predicate</em>s <code>logical</code>, <code>char</code>,
+<code>integer</code>, <code>set</code>, <code>string</code> and
+<code>list</code> are true if the parameter is a truth value, character,
+integer, set, string or list, respectively. The predicate
+<code>leaf</code> is true if the parameter is not a list:</p>
 <pre><code>        false       logical  =&gt;   true.
         123         logical  =&gt;   false.
         123         integer  =&gt;   true.
         [&#39;A &#39;B &#39;C]  leaf     =&gt;   false.</code></pre>
 <p>There is another operator for multi-choices. It expects a non-empty
 list of non-empty lists on top of the stack and below that one further
-item. The opcase operator matches the type of the item with the
-<code>first</code> members of the lists. When a match is found, the
+item. The <code>opcase</code> operator matches the type of the item with
+the <code>first</code> members of the lists. When a match is found, the
 <code>rest</code> of that list is pushed onto the stack. If no match is
-found, then the last list is used as the default.</p>
+found, then the last list is used as the default:</p>
 <pre><code>        123      [ [0 P] [&#39;a Q] [&quot;&quot; R] ... ]  opcase   =&gt;   123     [P].
         &#39;c       [ [0 P] [&#39;a Q] [&quot;&quot; R] ... ]  opcase   =&gt;   &#39;c      [Q].
         &quot;Hello&quot;  [ [0 P] [&#39;a Q] [&quot;&quot; R] ... ]  opcase   =&gt;   &quot;Hello&quot; [R].</code></pre>
 <h1 id="rules-for-combinators">Rules for combinators</h1>
-<p>The simplest <em>unary combinator</em>s are i and x, they require the
-top of the stack to be <em>one</em> quotation. Let <code>P</code> be any
-program.</p>
+<p>The simplest <em>unary combinator</em>s are <code>i</code> and
+<code>x</code>, they require the top of the stack to be <em>one</em>
+quotation. Let <code>P</code> be any program:</p>
 <pre><code>        [P]  i   =&gt;   P.
         [P]  x   =&gt;   [P]  P.</code></pre>
-<p>The next unary combinators, dip, dip2 and dip3, allow manipulation of
-the stack below the top few elements. Let <code>P</code> be any program,
-let <code>a</code>, <code>b</code> and <code>c</code> be any literals or
-equivalent.</p>
+<p>The next unary combinators, <code>dip</code>, <code>dip2</code> and
+<code>dip3</code>, allow manipulation of the stack below the top few
+elements. Let <code>P</code> be any program, let <code>a</code>,
+<code>b</code> and <code>c</code> be any literals or equivalent:</p>
 <pre><code>        a        [P]  dip   =&gt;   P  a.
         a  b     [P]  dip2  =&gt;   P  a  b.
         a  b  c  [P]  dip3  =&gt;   P  a  b  c.</code></pre>
-<p>Another unary combinator is nullary. Its rewrite rule has to be
-expressed conditionally. Let <code>L</code>, <code>M</code> and
-<code>P</code> be any programs.</p>
+<p>Another unary combinator is <code>nullary</code>. Its rewrite rule
+has to be expressed conditionally. Let <code>L</code>, <code>M</code>
+and <code>P</code> be any programs:</p>
 <pre><code>        L  [P]  nullary   =&gt;   L  a    :-   L  P   =&gt;   M  a.</code></pre>
-<p>Three similar unary combinators are unary, binary and ternary:</p>
+<p>Three similar unary combinators are <code>unary</code>,
+<code>binary</code> and <code>ternary</code>:</p>
 <pre><code>        L b     [P] unary    =&gt;  L a   :-  L b     P  =&gt;  M a.
         L b c   [P] binary   =&gt;  L a   :-  L b c   P  =&gt;  M a.
         L b c d [P] ternary  =&gt;  L a   :-  L b c d P  =&gt;  M a.</code></pre>
-<p>Three further unary combinators are <del>app1</del>i,
-<del>app2</del>unary2 and <del>app3</del>unary3. Let <code>a</code>,
-<code>a'</code>, <code>b</code>, <code>b'</code>, <code>c</code> and
-<code>c'</code> be any literals or equivalent. Note that the primed
-versions are used as the result of applying <code>P</code> to the
-unprimed versions.</p>
+<p>Three further unary combinators are <del>app1</del><code>i</code>,
+<del>app2</del><code>unary2</code> and
+<del>app3</del><code>unary3</code>. Let <code>a</code>, <code>a'</code>,
+<code>b</code>, <code>b'</code>, <code>c</code> and <code>c'</code> be
+any literals or equivalent. Note that the primed versions are used as
+the result of applying <code>P</code> to the unprimed versions:</p>
 <pre><code>        L  a  [P]  i   =&gt;   L  a&#39;   :-                      (* app1 *)
             L a P  =&gt;  M  a&#39;.
         L  a  b  [P]  unary2   =&gt;   L  a&#39;  b&#39;   :-          (* app2 *)
             L a P  =&gt;  M a&#39;,   L b P  =&gt;  N b&#39;
         L  a  b  c  [P]  unary3   =&gt;   L  a&#39;  b&#39;  c&#39;   :-   (* app3 *)
             L a P  =&gt;  M a&#39;,   L b P  =&gt;  N b&#39;,  L c P  =&gt;  O c&#39;.</code></pre>
-<p>There is even an <del>app4</del>unary4 combinator which applies
-<code>[P]</code> to four parameters <code>a</code>, <code>b</code>,
-<code>c</code> and <code>d</code>.</p>
+<p>There is even an <del>app4</del><code>unary4</code> combinator which
+applies <code>[P]</code> to four parameters <code>a</code>,
+<code>b</code>, <code>c</code> and <code>d</code>.</p>
 <p>The <em>binary combinator</em>s expect two quotations on top of the
 stack. The b combinator expects two quotations <code>[P]</code> and
-<code>[Q]</code>, with <code>[Q]</code> on top.</p>
+<code>[Q]</code>, with <code>[Q]</code> on top:</p>
 <pre><code>        [P]  [Q]  b   =&gt;   P  Q.</code></pre>
-<p>The cleave combinator also expects two quotations, and below that an
-item <code>a</code>.</p>
+<p>The <code>cleave</code> combinator also expects two quotations, and
+below that an item <code>a</code>:</p>
 <pre><code>        L a [P] [Q] cleave  =&gt;  L b c   :-   L a P  =&gt;  M b, L a Q  =&gt;  N c.</code></pre>
 <p>The <em>ternary combinator</em>s expect three quotations on top of
-the stack. One of the most important is ifte which performs branching.
-Its third parameter is the if-part, its second parameter is the
-then-part, its first parameter, on top, is the else-part.</p>
+the stack. One of the most important is <code>ifte</code> which performs
+branching. Its third parameter is the if-part, its second parameter is
+the then-part, its first parameter, on top, is the else-part:</p>
 <pre><code>        L  [I]  [T]  [E]  ifte   =&gt;   T   :-
             L  I   =&gt;  M  true.
         L  [I]  [T]  [E]  ifte   =&gt;   E   :-
             L  I   =&gt;  M  false.</code></pre>
-<p>The binary while<del>do</del> combinator is similar to the
-<code>ifte</code> combinator in that it has a test, the while-part,
+<p>The binary <code>while</code><del>do</del> combinator is similar to
+the <code>ifte</code> combinator in that it has a test, the while-part,
 which is second on the stack. The combinator repeatedly executes the
 while-part and while that yields <code>true</code> it executes the other
-part, the do-part.</p>
+part, the do-part:</p>
 <pre><code>        L  [W]  [D]  while   =&gt;   L   :-
             L  W   =&gt;   M  false.
         L  [W]  [D]  while   =&gt;   L  D  [W]  [D]  while   :-
             L  W   =&gt;   M  true.</code></pre>
-<p>The ternary tailrec combinator for <em>tail recursion</em> also has a
-test, the third parameter. If that yields true, the second parameter is
-executed and the combinator exits, otherwise the top parameter is
-executed and after that the process is repeated.</p>
+<p>The ternary <code>tailrec</code> combinator for <em>tail
+recursion</em> also has a test, the third parameter. If that yields
+<code>true</code>, the second parameter is executed and the combinator
+exits, otherwise the top parameter is executed and after that the
+process is repeated:</p>
 <pre><code>        L  [I]  [T]  [R]  tailrec   =&gt;   L  T   :-
             L  I   =&gt;   M  true.
         L  [I]  [T]  [R]  tailrec   =&gt;   L  R  [I]  [T]  [R]  tailrec   :-
             L  I   =&gt;   M  false.</code></pre>
 <p>The <em>quaternary combinator</em>s expect four quotations on top of
-the stack. The linrec combinator for <em>linear recursion</em> expects
-an if-part <code>[I]</code>, a then-part <code>[T]</code>, and two
-recursion parts <code>[R1]</code> and <code>[R2]</code>.</p>
+the stack. The <code>linrec</code> combinator for <em>linear
+recursion</em> expects an if-part <code>[I]</code>, a then-part
+<code>[T]</code>, and two recursion parts <code>[R1]</code> and
+<code>[R2]</code>:</p>
 <pre><code>    L [I] [T] [R1] [R2] linrec  =&gt;  L  T   :-
             L  I   =&gt;   M  true.
     L [I] [T] [R1] [R2] linrec  =&gt;  L R1 [I] [T] [R1] [R2] linrec R2   :-
             L  I   =&gt;   M  false.</code></pre>
-<p>The binrec combinator for <em>binary recursion</em> is similar,
-except that the first recursion part has to produce two values. The
-recursion with all four parts is applied to the two values separately.
-The second recursion part then has available the two results from these
-two applications.</p>
+<p>The <code>binrec</code> combinator for <em>binary recursion</em> is
+similar, except that the first recursion part has to produce two values.
+The recursion with all four parts is applied to the two values
+separately. The second recursion part then has available the two results
+from these two applications:</p>
 <pre><code>    L [I] [T] [R1] [R2] binrec  =&gt;  L  T   :-
         L  I   =&gt;   M  true.
     L [I] [T] [R1] [R2] binrec  =&gt; L  a b R2   :-
         L T   =&gt;   M false,
         L R1 [I] [T] [R1] [R2] binrec  =&gt;  N  a b.</code></pre>
-<p>The genrec combinator for <em>general recursion</em> also has an
-if-part, a then-part and two recursion parts. It differs from the other
-two combinators in that after the execution of the first recursion part
-nothing in particular is executed, but a program consisting of the four
-parts and the combinator is pushed onto the stack. The second recursion
-part thus has it available as a parameter.</p>
+<p>The <code>genrec</code> combinator for <em>general recursion</em>
+also has an if-part, a then-part and two recursion parts. It differs
+from the other two combinators in that after the execution of the first
+recursion part nothing in particular is executed, but a program
+consisting of the four parts and the combinator is pushed onto the
+stack. The second recursion part thus has it available as a
+parameter:</p>
 <pre><code>    L  [I]  [T]  [R1]  [R2]  genrec   =&gt;   L  T   :-
         L  I   =&gt;   M  true.
     L  [I]  [T]  [R1]  [R2]  genrec   =&gt;
             L  R1  [[I] [T] [R1] [R2] genrec]  R2   :-
         L  I   =&gt;   M  false.</code></pre>
 <p>There are several combinators which do not have a fixed number of
-quotation parameters. Instead they use a list of quotations. The cond
-combinator is like the one in Lisp, it is a generalisation of the
-<code>ifte</code> combinator. It expects a non-empty list of programs,
-each consisting of a quoted if-part followed by a then-part. The various
-if-parts are executed until one is found that returns <code>true</code>,
-and then its corresponding then-part is executed. The last program in
-the list is the default which is executed if none of the if-parts yield
-<code>true</code>.</p>
+quotation parameters. Instead they use a list of quotations. The
+<code>cond</code> combinator is like the one in Lisp, it is a
+generalisation of the <code>ifte</code> combinator. It expects a
+non-empty list of programs, each consisting of a quoted if-part followed
+by a then-part. The various if-parts are executed until one is found
+that returns <code>true</code>, and then its corresponding then-part is
+executed. The last program in the list is the default which is executed
+if none of the if-parts yield <code>true</code>:</p>
 <pre><code>        L  [ [[I1] T1] REST ]  cond   =&gt;  L  T1   :-
             L  I1   =&gt;   M  true.
         L  [ [[I1] T1] REST ]  cond   =&gt;   L [ REST ] cond   :-
             L  I1   =&gt;   M  false.</code></pre>
-<p>The condlinrec combinator is similar, it expects a list of pairs or
-triples of quoted programs. Pairs consist of an if-part and a
-then1-part, and triples consist of an if-part, a rec1-part and a
+<p>The <code>condlinrec</code> combinator is similar, it expects a list
+of pairs or triples of quoted programs. Pairs consist of an if-part and
+a then1-part, and triples consist of an if-part, a rec1-part and a
 rec2-part. Again the first if-part that yields <code>true</code> selects
 its corresponding then-part or rec1-part for execution. If there is a
 rec2-part, the combinator first recurses and then executes the
@@ -572,25 +592,25 @@ if-part.</p>
 and above that a list of quotations. Each quotation in the list will
 produce a value that will eventually be pushed onto the stack, and the
 first quotation determines the stack onto which these values will be
-pushed.</p>
+pushed:</p>
 <pre><code>        L [P] [..[Qi]..] construct =&gt;  L P ..qi..  :-  L Qi  =&gt;  M qi.</code></pre>
 <p>Some combinators expect values of specific types below their
 quotation parameters. The next few combinators expect values of simple
 types.</p>
-<p>The binary combinator branch expects a truth value below its two
-quotation parameters: The branch combinator resembles the
-<code>choice</code> operator and the <code>ifte</code> combinator. The
-truth value below the two quotations determines which of the two
-quotations will be executed. If the truth value is <code>true</code>,
-then the if-part, the second parameter, is executed, otherwise the
-then-part, the top parameter, is executed.</p>
+<p>The binary combinator <code>branch</code> expects a truth value below
+its two quotation parameters: The <code>branch</code> combinator
+resembles the <code>choice</code> operator and the <code>ifte</code>
+combinator. The truth value below the two quotations determines which of
+the two quotations will be executed. If the truth value is
+<code>true</code>, then the if-part, the second parameter, is executed,
+otherwise the then-part, the top parameter, is executed:</p>
 <pre><code>        true   [P]  [Q]  branch   =&gt;   P.
         false  [P]  [Q]  branch   =&gt;   Q.</code></pre>
-<p>The unary combinator times expects a numeric value below its
-quotation parameter: The <code>times</code> combinator executes its
+<p>The unary combinator <code>times</code> expects a numeric value below
+its quotation parameter: The <code>times</code> combinator executes its
 quotation parameter as many times as indicated by the numeric value; if
 the value is zero or less, then the quotation is not executed at
-all.</p>
+all:</p>
 <pre><code>        0  [P]  times   =&gt;   id.
         n  [P]  times   =&gt;   P  (n-1)  [P]  times.</code></pre>
 <p>The stack is normally a list, so any list could serve as the stack,
@@ -598,69 +618,73 @@ including a list which happens to be on top of the stack. But the stack
 can also contain operators and combinators, although this does not
 happen often. So the stack is always a quotation, and any other
 quotation could serve as the stack, including one on top of the stack.
-The infra combinator expects a quotation <code>[P]</code> which will be
-executed and below that another quotation which normally will be just a
-list <code>[M]</code>. The <code>infra</code> combinator temporarily
-discards the remainder of the stack and takes the quotation or list
-<code>[M]</code> to be the stack. It then executes the top quotation
-<code>[P]</code> which yields a result stack. This resulting stack is
-then pushed as a list <code>[N]</code> onto the original stack replacing
-the original quotation or list. Hence any quotation can serve as a
-complex unary operation on other quotations or lists.</p>
+The <code>infra</code> combinator expects a quotation <code>[P]</code>
+which will be executed and below that another quotation which normally
+will be just a list <code>[M]</code>. The <code>infra</code> combinator
+temporarily discards the remainder of the stack and takes the quotation
+or list <code>[M]</code> to be the stack. It then executes the top
+quotation <code>[P]</code> which yields a result stack. This resulting
+stack is then pushed as a list <code>[N]</code> onto the original stack
+replacing the original quotation or list. Hence any quotation can serve
+as a complex unary operation on other quotations or lists:</p>
 <pre><code>        L  [M]  [P]  infra  =&gt;  L  [N]   :-  [M]  unstack  P  =&gt;  N.</code></pre>
 <p>For linear recursion over <em>numeric type</em>s the if-part often is
 <code>[null]</code> and the first recursion part is
-<code>[dup pred]</code>. The primrec combinator has this built in. For
-integers the rewrite rules are:</p>
+<code>[dup pred]</code>. The <code>primrec</code> combinator has this
+built in. For integers the rewrite rules are:</p>
 <pre><code>        0  [T]  [R2]  primrec   =&gt;   pop  T.
         i  [T]  [R2]  primrec   =&gt;   i  dup pred  [T]  [R2]  primrec  R2.</code></pre>
 <p>The <code>primrec</code> combinator can also be used for aggregates.
 The implicit if-part is again <code>[null]</code>, and the implicit
 first recursion part is <code>[rest]</code>. Below is the version for
-lists, the versions for sets and strings are analogous.</p>
+lists, the versions for sets and strings are analogous:</p>
 <pre><code>        []     [T]  [R2]  primrec   =&gt;   pop  T.
         [a L]  [T]  [R2]  primrec   =&gt;   a  [L]  [T] [R2] primrec R2.</code></pre>
-<p>The unary combinators step, map, filter and split all expect an
-aggregate below their quotation parameter.</p>
-<p>For step operating on lists the rewrite rule is:</p>
+<p>The unary combinators <code>step</code>, <code>map</code>,
+<code>filter</code> and <code>split</code> all expect an aggregate below
+their quotation parameter.</p>
+<p>For <code>step</code> operating on lists the rewrite rule is:</p>
 <pre><code>        []  [P]  step   =&gt;   id.
         K  [a L]  [P]  step   =&gt;   M  [L]  [P]  step   :-
             K  a  P   =&gt;   M.</code></pre>
 <p>For strings and sets the rules are analogous. The same is true of the
-rules to follow. For map operating on lists the rewrite rule is:</p>
+rules to follow. For <code>map</code> operating on lists the rewrite
+rule is:</p>
 <pre><code>        []  [P]  map   =&gt;   [].
         K  [a L]  [P]  map   =&gt;   K  [b M]   :-
             K  a  P   =&gt;   K  b,   K  [L]  [P]  map   =&gt;   K  M.</code></pre>
-<p>The filter combinator expects a predicate as its quotation
-parameter.</p>
+<p>The <code>filter</code> combinator expects a predicate as its
+quotation parameter:</p>
 <pre><code>        []  [P]  filter   =&gt;   [].
         K  [a L]  [P]  filter   =&gt;   K  [a M]   :-
             K  a  P  =&gt;  J  true,    K  [L]  [P]  filter   =&gt;   K  [M].
         K  [a L]  [P]  filter   =&gt;   K  [M]   :-
             K  a  P  =&gt;  J  false,   K  [L]  [P]  filter   =&gt;   K  [M].</code></pre>
-<p>The split combinator is like <code>filter</code> except that it
-produces two lists. The first list is just like the one from
+<p>The <code>split</code> combinator is like <code>filter</code> except
+that it produces two lists. The first list is just like the one from
 <code>filter</code>, the second list is the list of those elements which
 did not pass the predicate test <code>[P]</code> and hence are not
-members of the first list.</p>
+members of the first list:</p>
 <pre><code>        []  [P]  split   =&gt;   [].
         K  [a L]  [P]  split   =&gt;   K  [a M]  [N]   :-
             K  a  P  =&gt;  J  true,   K  [L]  [P]  split  =&gt;  K  [M]  [N].
         K  [a L]  [P]  split  =&gt;  K  [M]  [a N]   :-
             K  a  P  =&gt;  J  false,   K  [L]  [P]  split  =&gt;  K  [M]  [N].</code></pre>
-<p>The unary combinator fold expects a quotation which computes a binary
-operation. Below that has to be a literal and below that an aggregate.
-The literal is used as a start value to fold or reduce the aggregate.
-Applied to lists the combinator has these rules:</p>
+<p>The unary combinator <code>fold</code> expects a quotation which
+computes a binary operation. Below that has to be a literal and below
+that an aggregate. The literal is used as a start value to fold or
+reduce the aggregate. Applied to lists the combinator has these
+rules:</p>
 <pre><code>        []  a  [P]  fold   =&gt;   a.
         [b L]  a  [P]  fold   =&gt;   d   :-
             a  b  P   =&gt;   c,
             [L]  a  [P]  fold  c  P   =&gt;   d.</code></pre>
-<p>The two <em>unary combinator</em>s some and all expect an aggregate
-below their quotation parameter. The quotation must be a predicate,
-yielding a truth value. The some combinator returns <code>true</code> if
-some members of the aggregate pass the test of the quotation, otherwise
-it returns <code>false</code>. The all combinator returns
+<p>The two <em>unary combinator</em>s <code>some</code> and
+<code>all</code> expect an aggregate below their quotation parameter.
+The quotation must be a predicate, yielding a truth value. The
+<code>some</code> combinator returns <code>true</code> if some members
+of the aggregate pass the test of the quotation, otherwise it returns
+<code>false</code>. The <code>all</code> combinator returns
 <code>true</code> if all members of the aggregate pass the test of the
 quotation, otherwise it returns <code>false</code>. For empty aggregates
 <code>some</code> returns <code>false</code> and <code>all</code>
@@ -676,9 +700,9 @@ returns <code>true</code>. The rules for <code>some</code> are:</p>
             L  a  P   =&gt;   M  false.
         L  [a A]  [P]  all   =&gt;   L  [A]  [P]  all   :-
             L  a  P   =&gt;   M  true.</code></pre>
-<p>The unary combinator zipwith expects two aggregates and above that a
-program suitable for combining their respective elements. For lists the
-rules are</p>
+<p>The unary combinator <code>zipwith</code> expects two aggregates and
+above that a program suitable for combining their respective elements.
+For lists the rules are:</p>
 <pre><code>        []  [A]  [P]  zipwith   =&gt;   [].
         [A]  []  [P]  zipwith   =&gt;   [].
         L  [a A]  [b B]  [P]  zipwith   =&gt;   L  [c C]   :-
@@ -710,10 +734,10 @@ rule. Apply the rule. Repeat until no more rules can be applied.</p>
 redexes are found early. The following is an example. Again all
 operators are binary, but note that except at the beginning operators
 and literals alternate. In each step the first three symbols constitute
-a redex.</p>
+a redex:</p>
 <pre><code>        10  5  /  3  *  4  -  1  +</code></pre>
 <p>The strategy is least efficient when a redex is found late. In the
-example below, note that all operators occur towards the end.</p>
+example below, note that all operators occur towards the end:</p>
 <pre><code>        3  2  6  8  6  -  /  +  *</code></pre>
 <p>The strategy requires skipping the <code>3</code>, <code>2</code> and
 <code>6</code> and only then replacing <code>8 6 -</code> by
@@ -771,7 +795,7 @@ that it is merely a rephrasing of the semantics with a stack. Purists
 would probably prefer a system with such a lean ontology in which there
 are essentially just programs operating on other programs. But most
 programmers are so familiar with stacks that it seems more helpful to
-give a semantics with a stack. Its is of course irrelevant for the
+give a semantics with a stack. It is of course irrelevant for the
 semantics that for efficiency reasons any implementation of Joy will in
 fact use a stack.</p>
 <p>There is one other argument for a stack semantics. By a program one
@@ -789,16 +813,16 @@ for example for a Joy interpreter joy written in Joy itself. Such an
 interpreter is described in another paper.</p>
 <h1 id="quotation-revisited">Quotation revisited</h1>
 <p>It was mention in section 3 that for <em>quotation</em>s there is no
-rewrite rule of the form</p>
+rewrite rule of the form:</p>
 <pre><code>        [P]  ==&gt;  [Q]   :-   P  ==&gt;  Q.</code></pre>
-<p>If there were such a rule, then the rewriting</p>
+<p>If there were such a rule, then the rewriting:</p>
 <pre><code>        42  dup   ==&gt;   42  42.</code></pre>
-<p>would license</p>
+<p>would license:</p>
 <pre><code>        [ 42  dup ]   ==&gt;   [ 42  42 ].</code></pre>
-<p>and hence</p>
+<p>and hence:</p>
 <pre><code>        [ 42  dup ]  second   ==&gt;&gt;   [ 42  42 ]  second.
         dup   ==&gt;&gt;  42.</code></pre>
-<p>which is absurd. On the other hand,</p>
+<p>which is absurd. On the other hand:</p>
 <pre><code>        [ 42  dup ]  i  +   ==&gt;   [ 42  42 ]  i  +</code></pre>
 <p>is acceptable. So, quotations must not allow substitutions in all
 contexts, but only in those where the quotation is guaranteed to be
@@ -819,12 +843,12 @@ can be inserted into lists and later extracted. But only
 <code>(P)</code> can be used as a parameter for combinators, and it
 cannot be treated as a list. On the other hand, <code>[P]</code> cannot
 be used as a parameter for combinators, but it can be treated as a list.
-Importantly, there could then be a reduction rule</p>
+Importantly, there could then be a reduction rule:</p>
 <pre><code>        (P)  ==&gt;  (Q)   :-   P  ==&gt;  Q.</code></pre>
 <p>and hence quotation would be an <em>extensional constructor</em>.</p>
-<p>This is a draconian solution, it allows programs such as</p>
+<p>This is a draconian solution, it allows programs such as:</p>
 <pre><code>        [2]  cons  reverse</code></pre>
-<p>but forbids</p>
+<p>but forbids:</p>
 <pre><code>        (+)  cons  map</code></pre>
 <p>The latter uses <code>map</code> to add a single number on top of the
 stack to each member of a list that is second on the stack. If the
@@ -885,13 +909,13 @@ so are their concatenation <code>(T1 T2)</code> and their cancellation
 <code>T1-&gt;T2</code>. If <code>P1</code> and <code>P2</code> are
 programs of types <code>T1</code> and <code>T2</code>, then the type of
 their concatenation <code>(P1 P2)</code> is the concatenation
-<code>(T1 T2)</code> of their types. Cancellation satisfies the law</p>
+<code>(T1 T2)</code> of their types. Cancellation satisfies the law:</p>
 <pre><code>                T1  T1-&gt;T2   =&gt;   T2</code></pre>
 <p>For types with concatenated parameter types:</p>
 <pre><code>                (T1 T2)-&gt;T3   =&gt;   T1-&gt;(T2-&gt;T3)</code></pre>
 <p>The expression on the right of the arrow can be written without
 parentheses on the convention that the cancellation operator
-<code>\</code> is taken to be right associative.</p>
+<code>-&gt;</code> is taken to be right associative.</p>
 <p>The three rules given above should now be rewritten in this
 style:</p>
 <pre><code>        swap   =&gt;     (T1 T2) -&gt; (T2 T1).
@@ -899,7 +923,7 @@ style:</p>
         size   =&gt;         Str -&gt; Int.</code></pre>
 <p>The following are a sample of further rules in the two styles: Those
 in the left column are in the earlier style, those in the right are in
-the new style.</p>
+the new style:</p>
 <pre><code>        Chr      succ    =&gt;  Chr.       succ    =&gt;  Chr-&gt;Chr.
         Int Int  &gt;       =&gt;  Log.       &gt;       =&gt;  (Int Int)-&gt;Log.
         Log Log  and     =&gt;  Log.       and     =&gt;  (Log Log)-&gt;Log.
@@ -913,14 +937,14 @@ the new style.</p>
 the concatenation of the types of its parts, in the line just below. All
 the types here are built from the atomic type <code>Int</code> of
 integers. By four applications of cancellation the type in line 1 is
-simplified to the type <code>Int</code> in line 4.</p>
+simplified to the type <code>Int</code> in line 4:</p>
 <pre><code>P:    2      3      +                dup              *
 1.    Int    Int    (Int Int)-&gt;Int   Int-&gt;(Int Int)   (Int Int)-&gt;Int
 2.                  Int              Int-&gt;(Int Int)   (Int Int)-&gt;Int
 3.                                   (Int Int)        (Int Int)-&gt;Int
 4.                                                    Int</code></pre>
-<p>For combinators only a few examples will be given here, for i and
-map.</p>
+<p>For combinators only a few examples will be given here, for
+<code>i</code> and <code>map</code>:</p>
 <pre><code>        i     =&gt;   [T] -&gt; T.
         map   =&gt;   ([T1 -&gt; T2]) -&gt; ([T1] -&gt; [T2]).</code></pre>
 <p>The formalism used in this section is that of <em>categorial
@@ -936,7 +960,7 @@ semantics, then the rewriting rules have to be shown to be correct with
 respect to this semantics. This is true of the rewriting rules of the
 previous sections which dealt with values. It is also true for the
 rewriting rules for types. The basic semantic notion here is that of
-assigning types to programs. These take the form</p>
+assigning types to programs. These take the form:</p>
 <pre><code>        P   :   T</code></pre>
 <p>which is <em>not</em> a rewriting rule but a <em>statement</em> which
 says that program <code>P</code> is of type <code>T</code>. The basic
@@ -946,9 +970,9 @@ combinators. Here are some examples:</p>
         succ  :  Chr -&gt; Chr         &gt;   :  Int Int -&gt; Log
         first :  [T Lst] -&gt; T       i   :  [T] -&gt; T</code></pre>
 <p>This is the style adopted in the Joy manual. To obtain rewrite rules
-using =&gt; a single conditional rule is needed which converts the
-semantic predicate : into the syntactic <code>=&gt;</code>, as
-follows.</p>
+using <code>=&gt;</code> a single conditional rule is needed which
+converts the semantic predicate : into the syntactic <code>=&gt;</code>,
+as follows:</p>
 <pre><code>        X =&gt; T   :-   X : T.</code></pre>
 <p>The material in this section has very tentative, most of the details
 need to be worked out fully.</p>

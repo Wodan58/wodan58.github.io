@@ -12,9 +12,10 @@ acquaintance with the field.</p>
 <blockquote>
 <p><strong>Keywords:</strong> functional languages, lambda calculus,
 elimination of variables, combinatory logic, elimination of function
-application, category theory, function composition, high level
+application, category theory, function composition, high-level
 programming languages.</p>
 </blockquote>
+<hr />
 <h1 id="introduction-functional-languages">Introduction – functional
 languages</h1>
 <p>All natural languages and most artificial languages contain as a
@@ -86,33 +87,23 @@ is needed, but what?</p>
 <p>In set theory the many predicates of languages are replaced by
 expressions denoting sets. A few new formal predicates are introduced,
 principally one for membership. If <code>Y</code> is a set, then the
-sentence <code>"x is a member of Y"</code> is generally written <embed
-src="https://latex.codecogs.com/svg.latex?x%20%5Cepsilon%20Y"
-title="x \epsilon Y" style="vertical-align:middle" />. Expressions can
-be <em>set abstractions</em>s such as</p>
+sentence <code>"x is a member of Y"</code> is generally written .
+Expressions can be <em>set abstractions</em>s such as:</p>
 <pre><code>    {x : cold(x)}
     {&lt;x,y&gt; : bigger(x,y)}</code></pre>
 <p>If these two sets are called <code>C</code> and <code>B</code>, then
-the two statements <code>Siberia</code> <embed
-src="https://latex.codecogs.com/svg.latex?%5Cepsilon" title="\epsilon"
-style="vertical-align:middle" /> <code>C</code> and
-<code>&lt;China,Italy&gt;</code> <embed
-src="https://latex.codecogs.com/svg.latex?%5Cepsilon" title="\epsilon"
-style="vertical-align:middle" /> <code>B</code> are true.</p>
+the two statements <code>Siberia</code> <code>C</code> and
+<code>&lt;China,Italy&gt;</code> <code>B</code> are true.</p>
 <p>In the lambda calculus something similar occurs. Functional
 expressions are built from variables and constants by just two
 constructions.</p>
 <p>One of these is <em>lambda abstraction</em>, which resembles set
 abstraction. If <code>(..x..)</code> is an expression containing a
-variable, then its lambda abstraction is generally written <embed
-src="https://latex.codecogs.com/svg.latex?%5Clambda" title="\lambda"
-style="vertical-align:middle" /><code>x(..x..)</code>. To avoid Greek
-letters, though, I shall write <code>Fun</code> instead of the lambda
-<embed src="https://latex.codecogs.com/svg.latex?%5Clambda"
-title="\lambda" style="vertical-align:middle" />. Thus
-<code>Fun x (..x..)</code> is to be pronounced “the function of one
-parameter <code>x</code> which yields the result <code>(..x..)</code>”.
-Here is an example:</p>
+variable, then its lambda abstraction is generally written
+<code>x(..x..)</code>. To avoid Greek letters, though, I shall write
+<code>Fun</code> instead of the lambda . Thus <code>Fun x (..x..)</code>
+is to be pronounced “the function of one parameter <code>x</code> which
+yields the result <code>(..x..)</code>”. Here is an example:</p>
 <pre><code>    Fun x (product(x,x))</code></pre>
 <p>This is the function of one parameter which yields as value the
 product of the parameter with itself. This of course is the unary
@@ -127,13 +118,13 @@ membership in set theory. If <code>f</code> is a function, then
 The earlier examples are rewritten like as follows. The first is
 pronounced “the application of the <code>capital</code> function to
 <code>France</code>”, or more simply “<code>capital</code> applied to
-<code>France</code>”.</p>
+<code>France</code>”:</p>
 <pre><code>    capital @ France                                    --&gt;  Paris
     between @ &lt;Canada,Mexico&gt;                           --&gt;  U.S.A
     cold @ Siberia                                      --&gt;  true
     first @ [a b c]                                     --&gt;  a
     first @ (rest @ (reverse @ [a b c d]))              --&gt;  c</code></pre>
-<p>The two earlier examples of abstraction should now be written</p>
+<p>The two earlier examples of abstraction should now be written:</p>
 <pre><code>    maternal-grandfather  =  Fun x (father @ (mother @ x))
     square                =  Fun x (product @ &lt;x,x&gt;)</code></pre>
 <p>Functions of several parameters are still a nuisance because one has
@@ -143,14 +134,14 @@ to write ordered pairs <code>&lt;x,y&gt;</code> or triples
     between @ &lt;Canada,Mexico&gt;                           --&gt;  U.S.A.</code></pre>
 <p>By a device called <em>currying</em><a href="#fn1"
 class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> all
-functions are taken to be unary, and one writes</p>
+functions are taken to be unary, and one writes:</p>
 <pre><code>    (sum  @  2)  @  3                                   --&gt;  5</code></pre>
-<p>where the subexpression</p>
+<p>where the subexpression:</p>
 <pre><code>    sum  @  2</code></pre>
 <p>is the <em>curried</em> unary function of one parameter which adds 2
 to its argument. When that unary function is applied to 3 it yields 5.
 If application is taken to be left-associative, the entire expression
-can be written without parentheses as</p>
+can be written without parentheses as:</p>
 <pre><code>    sum  @  2  @  3                                     --&gt;  5</code></pre>
 <p>The definition of <code>square</code> now looks like this:</p>
 <pre><code>    square                =  Fun x (product @ x @ x)</code></pre>
@@ -172,7 +163,7 @@ been “<code>twice</code>d” already:</p>
 in two ways:</p>
 <pre><code>    map  @  square  @  [1 2 3]                          --&gt;  [1 4 9]
     map  @  Fun x (product @ x @ x)  @  [1 2 3]         --&gt;  [1 4 9]</code></pre>
-<p>In the first, the subexpression</p>
+<p>In the first, the subexpression:</p>
 <pre><code>    map  @  square</code></pre>
 <p>is the curried unary function which, when applied to a list of
 numbers, produces the list of their <code>square</code>s. Of course
@@ -204,7 +195,7 @@ appropriate higher order functions or <em>combinator</em>s similar to
 class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <p>One of the few immediately intuitive combinators is the <em>W
 combinator</em>. Its effect is to create a replica of the argument
-supplied to the function. It may be defined as</p>
+supplied to the function. It may be defined as:</p>
 <pre><code>    W  f  x         =   f  x  x</code></pre>
 <p>Something like this can be used for the squaring function, or for
 other “self”-concepts:</p>
@@ -270,20 +261,20 @@ application operator <code>@</code>:</p>
 <em>composition</em> of unary functions is again a unary function, and
 it can be applied like any other unary function. Let us write
 composition with an infix dot <code>"."</code>. Then the composition of
-the four functions above is</p>
+the four functions above is:</p>
 <pre><code>    square . first . rest . reverse</code></pre>
 <p>This can be applied to the original list:</p>
 <pre><code>    (square . first . rest . reverse)  @  [1 2 3 4]     --&gt;  9</code></pre>
 <p>One might even introduce definitions in this style:</p>
 <pre><code>    second          =   first . rest
     second-last     =   second . reverse</code></pre>
-<p>and then write</p>
+<p>and then write:</p>
 <pre><code>    (square . second-last)  @  [1 2 3 4]                --&gt;  9</code></pre>
 <p>This and also the preceding definitions would not make sense with
 application instead of composition. Importantly, a definition can be
 used to textually replace the <em>definiendum</em> by its
 <em>definiens</em> to obtain the original long composition expression.
-Unlike application, composition is semantically <em>associative</em> —
+Unlike application, composition is semantically <em>associative</em> –
 no matter how the long expression is parenthesised, it denotes the same
 function. Furthermore, the textual operation of compounding several
 expressions to make a larger one is mapped onto the semantic operation
@@ -292,7 +283,7 @@ of composing the functions denoted by the expressions.</p>
 only trouble is that the resultant composition expression still has to
 be applied to an argument, the list <code>[1 2 3 4]</code>. If we could
 elevate that list to the status of a function, we could eliminate
-application entirely from the expression and write</p>
+application entirely from the expression and write:</p>
 <pre><code>    square . first . rest . reverse . [1 2 3 4]         --&gt;  9</code></pre>
 <p>The numeral <code>9</code> would also need to denote a function. Can
 this be done?</p>
@@ -302,7 +293,7 @@ same value no matter what the argument is. The language of <em>Cartesian
 closed categories</em><a href="#fn13" class="footnote-ref" id="fnref13"
 role="doc-noteref"><sup>13</sup></a> is an alternative to the (typed)
 lambda calculus and to combinatory logic. However, this language has
-never been entertained as a high level language suitable for human
+never been entertained as a high-level language suitable for human
 reasoning.</p>
 <p>In the language Joy the functions are applied to a mystery object
 that is never mentioned explicitly, although it may but need not enter
@@ -314,7 +305,7 @@ dot <code>"."</code> is the only infix operator, so it might as well be
 omitted:</p>
 <pre><code>    square  first  rest  reverse  [1 2 3 4]             --&gt;  9</code></pre>
 <p>Secondly, there is an advantage in reversing the composition notation
-so that we now write</p>
+so that we now write:</p>
 <pre><code>    [1 2 3 4]  reverse  rest  first  square             --&gt;  9</code></pre>
 <p>Although the mystery object is never referred to in the functional
 expression, its nature has to be revealed when explaining the
@@ -338,13 +329,13 @@ makes Joy unique is the large collection of <em>combinator</em>s which
 minimise the need for users to introduce defined symbols.</p>
 <h1 id="a-little-tutorial">A little tutorial</h1>
 <p>The following is a very brief introduction to Joy.</p>
-<p>Two such general recursion combinators are and for computing
-<em>linear recursion</em> and <em>binary recursion</em> without having
-to introduce definitions.</p>
+<p>Two such general recursion combinators are for computing <em>linear
+recursion</em> and <em>binary recursion</em> without having to introduce
+definitions.</p>
 <p>In the remainder of this section a small program is to be constructed
 which takes one sequence as parameter and returns the list of all
 <em>permutation</em>s of that sequence. For example, the list of
-permutations of the string <code>"abcd"</code> is</p>
+permutations of the string <code>"abcd"</code> is:</p>
 <pre><code>    [&quot;abcd&quot; &quot;bacd&quot; &quot;bcad&quot; &quot;bcda&quot; &quot;acbd&quot; &quot;cabd&quot; &quot;cbad&quot; &quot;cbda&quot;
      &quot;acdb&quot; &quot;cadb&quot; &quot;cdab&quot; &quot;cdba&quot; &quot;abdc&quot; &quot;badc&quot; &quot;bdac&quot; &quot;bdca&quot;
      &quot;adbc&quot; &quot;dabc&quot; &quot;dbac&quot; &quot;dbca&quot; &quot;adcb&quot; &quot;dacb&quot; &quot;dcab&quot; &quot;dcba&quot;]</code></pre>
@@ -412,68 +403,66 @@ Joy small and simple for as long as possible. Eventual behemothification
 is irresistible, inevitable, irresponsible and irreversible.<a
 href="#fn14" class="footnote-ref" id="fnref14"
 role="doc-noteref"><sup>14</sup></a></p>
-<hr />
-<section class="footnotes footnotes-end-of-document"
+<section id="footnotes" class="footnotes footnotes-end-of-document"
 role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Generally attributed to Curry, but
-freely acknowledged by him to be due to <a
-href="joybibl.html#92">Schönfinkel</a>. The term “Schönfinkeling” never
-caught on.<a href="#fnref1" class="footnote-back"
+<li id="fn1"><p>Generally attributed to Curry, but freely acknowledged
+by him to be due to <a href="joybibl.html#92">Schönfinkel</a>. The term
+“Schönfinkeling” never caught on.<a href="#fnref1" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>It comes as a surprise that all
-<em>computable function</em>s can be expressed in the lambda calculus
-with just variables, abstraction and application, and can then be
-computed by reduction. However, any efficient implementation will need
-constants, and all practical programming languages based on the lambda
-calculus provide them. The best known functional programming languages
-are <em>Lisp</em> and its many earlier descendants, and the newer
-languages <em>ML</em> and <em>Miranda</em>. Being descendants of Lisp
-and ultimately the lambda calculus, they are also based on abstraction
-and application.<a href="#fnref2" class="footnote-back"
+<li id="fn2"><p>It comes as a surprise that all <em>computable
+function</em>s can be expressed in the lambda calculus with just
+variables, abstraction and application, and can then be computed by
+reduction. However, any efficient implementation will need constants,
+and all practical programming languages based on the lambda calculus
+provide them. The best known functional programming languages are
+<em>Lisp</em> and its many earlier descendants, and the newer languages
+<em>ML</em> and <em>Miranda</em>. Being descendants of Lisp and
+ultimately the lambda calculus, they are also based on abstraction and
+application.<a href="#fnref2" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p><a href="joybibl.html#76">Peyton
-Jones 1987 Chapter 2</a> contains a good exposition to the lambda
-calculus, including many extensions. The survey paper <a
-href="joybibl.html#57">Hudak</a> compares many features of different
-functional languages, with a minor emphasis on <em>Haskell</em>. A very
-elegant general introduction to modern functional programming in a
-non-Lisp language can be found in <a href="joybibl.html#58">Hughes</a>.
-A recent introduction to Miranda is in <a
-href="joybibl.html#107">Turner</a>. A notable variation on the lambda
-calculus is described in <a href="joybibl.html#34">Cartwright</a>.<a
-href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p><a href="joybibl.html#31">Brus <em>et
-al</em></a> write “if one wants to have a computational model for
-functional languages which is also close to their implementations, pure
-lambda calculus is not the obvious choice anymore”. They present the
-language <em>Clean</em> in which programs consist of rewrite rules (for
-graphs) using pattern matching extensively.<a href="#fnref4"
+<li id="fn3"><p><a href="joybibl.html#76">Peyton Jones 1987 Chapter
+2</a> contains a good exposition to the lambda calculus, including many
+extensions. The survey paper <a href="joybibl.html#57">Hudak</a>
+compares many features of different functional languages, with a minor
+emphasis on <em>Haskell</em>. A very elegant general introduction to
+modern functional programming in a non-Lisp language can be found in <a
+href="joybibl.html#58">Hughes</a>. A recent introduction to Miranda is
+in <a href="joybibl.html#107">Turner</a>. A notable variation on the
+lambda calculus is described in <a
+href="joybibl.html#34">Cartwright</a>.<a href="#fnref3"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5" role="doc-endnote"><p><a
-href="joybibl.html#87">Robinson</a> remarked: “whatever can be expressed
-in a language based on application <em>and</em> abstraction as
-fundamental notions can be expressed in a far simpler language <em>based
-on application alone</em>.” The simpler language is <em>combinatory
-logic</em>. It is not a way of doing logic in a combinatory way, but it
-deals with the logic of combinators which denote higher order functions.
-The key idea came from <a href="joybibl.html#92">Schönfinkel</a> but was
-greatly expanded by Curry. The classic reference, <a
-href="joybibl.html#40">Curry and Feys</a> uses the same notation as is
-used today. A recent short exposition of the basic combinators is given
-for example in <a href="joybibl.html#54">Henson</a>.<a href="#fnref5"
+<li id="fn4"><p><a href="joybibl.html#31">Brus <em>et al</em></a> write
+“if one wants to have a computational model for functional languages
+which is also close to their implementations, pure lambda calculus is
+not the obvious choice anymore”. They present the language
+<em>Clean</em> in which programs consist of rewrite rules (for graphs)
+using pattern matching extensively.<a href="#fnref4"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6" role="doc-endnote"><p>The calculus of combinators can be
-understood without reference to its connection with the lambda calculus,
-as indeed it is done in many expositions. But for the present purposes
-it is best to keep in mind the goal of eliminating abstraction from the
-lambda calculus while retaining <em>Turing completenes</em>.<a
-href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7" role="doc-endnote"><p>Abstraction is an operation in the
-<em>object language</em>, the lambda calculus. In combinatory logic this
-operation is replaced by an operation in the <em>metalanguage</em>. This
-new operation is called <em>bracket abstraction</em>. It takes an object
+<li id="fn5"><p><a href="joybibl.html#87">Robinson</a> remarked:
+“whatever can be expressed in a language based on application
+<em>and</em> abstraction as fundamental notions can be expressed in a
+far simpler language <em>based on application alone</em>.” The simpler
+language is <em>combinatory logic</em>. It is not a way of doing logic
+in a combinatory way, but it deals with the logic of combinators which
+denote higher order functions. The key idea came from <a
+href="joybibl.html#92">Schönfinkel</a> but was greatly expanded by
+Curry. The classic reference, <a href="joybibl.html#40">Curry and
+Feys</a> uses the same notation as is used today. A recent short
+exposition of the basic combinators is given for example in <a
+href="joybibl.html#54">Henson</a>.<a href="#fnref5"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>The calculus of combinators can be understood without
+reference to its connection with the lambda calculus, as indeed it is
+done in many expositions. But for the present purposes it is best to
+keep in mind the goal of eliminating abstraction from the lambda
+calculus while retaining <em>Turing completenes</em>.<a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>Abstraction is an operation in the <em>object
+language</em>, the lambda calculus. In combinatory logic this operation
+is replaced by an operation in the <em>metalanguage</em>. This new
+operation is called <em>bracket abstraction</em>. It takes an object
 language variable and an object language expression as arguments and it
 yields a new object language expression as value. The new expression
 will contain some function symbols specific to combinatory logic. If all
@@ -484,24 +473,23 @@ should be seen as a compilation. Since all lambda calculus expressions
 can be compiled in this manner, the language of combinators is again
 Turing complete.<a href="#fnref7" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn8" role="doc-endnote"><p><a href="joybibl.html#106">Turner</a>
-introduced some optimisations into the standard translator from lambda
-calculus to combinator notation. With these optimisations the size of
-the combinatory code was kept within an acceptable limit. Turner’s
+<li id="fn8"><p><a href="joybibl.html#106">Turner</a> introduced some
+optimisations into the standard translator from lambda calculus to
+combinator notation. With these optimisations the size of the
+combinatory code was kept within an acceptable limit. Turner’s
 implementation method using combinators has been used to build a
 hardware reduction machine, the <em>CURRY chip</em>, see <a
 href="joybibl.html#82">Ramsdell</a>.<a href="#fnref8"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9" role="doc-endnote"><p><a href="joybibl.html#76">Peyton
-Jones 1987 Chapter 16</a> contains a good exposition on the translation
-from the lambda calculus to combinators and many details of the
-implementation of Miranda. <a href="joybibl.html#55">Hindley and
-Seldin</a> provide a very complete parallel account of the lambda
-calculus, combinatory logic and their relationship. <a
-href="joybibl.html#87">Robinson</a> shows how the language of
-Schönfinkel and Curry can be used in the mechanisation of theorem
-proving in higher order logic. <a href="joybibl.html#43">Fradet and Le
-Métayer</a> show how to compile lambda calculus into conventional
+<li id="fn9"><p><a href="joybibl.html#76">Peyton Jones 1987 Chapter
+16</a> contains a good exposition on the translation from the lambda
+calculus to combinators and many details of the implementation of
+Miranda. <a href="joybibl.html#55">Hindley and Seldin</a> provide a very
+complete parallel account of the lambda calculus, combinatory logic and
+their relationship. <a href="joybibl.html#87">Robinson</a> shows how the
+language of Schönfinkel and Curry can be used in the mechanisation of
+theorem proving in higher order logic. <a href="joybibl.html#43">Fradet
+and Le Métayer</a> show how to compile lambda calculus into conventional
 machine code. <a href="joybibl.html#44">Fradet</a> uses what are
 described as low level indexed combinators as a target language to
 implement a lambda calculus language. Impressive execution times are
@@ -512,10 +500,9 @@ languages, (see for example <a href="joybibl.html#76">Peyton Jones 1987
 p274</a>). But it is unlikely that a high level programming language
 could be designed which uses these principles.<a href="#fnref9"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn10" role="doc-endnote"><p>Backus gives an elaborate
-axiomatisation of the algebra; in <a
-href="joybibl.html#111">Williams</a> a smaller version is given
-comprising just 11 axioms. The FP system is further explained and
+<li id="fn10"><p>Backus gives an elaborate axiomatisation of the
+algebra; in <a href="joybibl.html#111">Williams</a> a smaller version is
+given comprising just 11 axioms. The FP system is further explained and
 expanded in <a href="joybibl.html#111">Williams</a>. A very useful
 exposition to the FP systems is found in <a
 href="joybibl.html#54">Henson</a>. The book also gives a very extensive
@@ -540,14 +527,14 @@ variant is the language <em>GRAAL</em> which implements (“infinite”)
 streams using call-by-need; it is described in <a
 href="joybibl.html#23">Bellot and Robinet</a>.<a href="#fnref10"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn11" role="doc-endnote"><p>In addition to objects as in FP
-there are now explicit expressions. In addition to the listforming
-constructor as in FP there is now a new binary constructor to form
-<em>application</em>s consisting of an operator and an operand. Operator
-expressions which are atoms of course denote functions which can be
-applied to an argument. Operator expressions which are lists must have
-as their first element an expression denoting a function. This last
-rule, <em>metacomposition</em>, is immensely powerful. It can be used to
+<li id="fn11"><p>In addition to objects as in FP there are now explicit
+expressions. In addition to the listforming constructor as in FP there
+is now a new binary constructor to form <em>application</em>s consisting
+of an operator and an operand. Operator expressions which are atoms of
+course denote functions which can be applied to an argument. Operator
+expressions which are lists must have as their first element an
+expression denoting a function. This last rule,
+<em>metacomposition</em>, is immensely powerful. It can be used to
 define arbitrary new functional forms, including of course the fixed
 forms from FP. The rule also makes it possible to compute recursive
 functions without a recursive definition. This is because in the
@@ -563,28 +550,27 @@ rely heavily on higher order functions, and both obey the principle that
 <em>program = data</em>. Both permit construction of first order and
 higher order recursive and non-recursive functions without ever using
 named formal parameters. An effect similar to metacomposition is
-achieved in Joy with the combinator, which expects a quoted program on
+achieved in Joy with the x combinator, which expects a quoted program on
 top of the stack and executes it without popping it off.<a
 href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn12" role="doc-endnote"><p><a href="joybibl.html#71">Meertens
-1989 p 72</a> speaks of “the need of a suitable system of combinators
-for making functions out of component functions without introducing
-extra names in the process. Composition should be the major method, and
-not application.” He also writes (p 71) “The basic problem is that the
-basic operation of the classical combinator calculus (and also of the
-closely related lambda calculus) is application instead of composition.
-Application has not a single property. Function composition is
-associative and has an identity element (if one believes in the
-‘generic’ identity function).” He develops a system of combining
-functions that is more suitable to formal manipulation than the
-classical combinators.<a href="#fnref12" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
-<li id="fn13" role="doc-endnote"><p>Cartesian closed categories are
-explained for example in <a href="joybibl.html#22">Barr and Wells</a>
-and in <a href="joybibl.html#79">Poigne</a>. Barr and Wells give an
-example of a simple lambda expression with variables and a complicated
-looking categorical equivalent formula. Category theory has given rise
-to another model of computation: the <em>CAM</em> or <em>Categorical
+<li id="fn12"><p><a href="joybibl.html#71">Meertens 1989 p 72</a> speaks
+of “the need of a suitable system of combinators for making functions
+out of component functions without introducing extra names in the
+process. Composition should be the major method, and not application.”
+He also writes (p 71) “The basic problem is that the basic operation of
+the classical combinator calculus (and also of the closely related
+lambda calculus) is application instead of composition. Application has
+not a single property. Function composition is associative and has an
+identity element (if one believes in the ‘generic’ identity function).”
+He develops a system of combining functions that is more suitable to
+formal manipulation than the classical combinators.<a href="#fnref12"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13"><p>Cartesian closed categories are explained for example
+in <a href="joybibl.html#22">Barr and Wells</a> and in <a
+href="joybibl.html#79">Poigne</a>. Barr and Wells give an example of a
+simple lambda expression with variables and a complicated looking
+categorical equivalent formula. Category theory has given rise to
+another model of computation: the <em>CAM</em> or <em>Categorical
 Abstract Machine</em>, described in <a href="joybibl.html#37">Cousineau
 <em>et al</em></a>, <a href="joybibl.html#38">Cousineau <em>et
 al</em></a>, and in <a href="joybibl.html#39">Currien</a>. The machine
@@ -606,9 +592,9 @@ for data-parallel computation has been implemented by <a
 href="joybibl.html#48">Hains and Foisy</a> to run on a distributed
 version of the CAM.<a href="#fnref13" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn14" role="doc-endnote"><p>The unpublished paper <a
-href="j00ovr.html">von Thun</a> contains an outline of various aspects
-of Joy and references to further working papers.<a href="#fnref14"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn14"><p>The unpublished paper <a href="j00ovr.html">von
+Thun</a> contains an outline of various aspects of Joy and references to
+further working papers.<a href="#fnref14" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>

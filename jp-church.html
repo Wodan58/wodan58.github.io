@@ -3,19 +3,24 @@ logic</h1>
 <p><em>by Manfred von Thun</em></p>
 <p>Contents:</p>
 <ol type="1">
-<li>Introduction</li>
-<li>Church numerals</li>
-<li>Arithmetic operators for Church numerals</li>
-<li>Quotation numerals and quotation operators</li>
-<li>Church truth values</li>
-<li>Church predicates, Church conditionals and Church lists</li>
-<li>Miscellaneous</li>
-<li>Brent Kerby's elegant and efficient alternative Church numerals</li>
-<li>Testing Brent Kerby's Church numerals</li>
-<li>Another kind of Church numeral, also by Brent Kerby</li>
-<li>Yet another kind of Church numeral, again by Brent Kerby</li>
+<li><a href="#TOC-1">Introduction</a></li>
+<li><a href="#TOC-2">Church numerals</a></li>
+<li><a href="#TOC-3">Arithmetic operators for Church numerals</a></li>
+<li><a href="#TOC-4">Quotation numerals and quotation operators</a></li>
+<li><a href="#TOC-5">Church truth values</a></li>
+<li><a href="#TOC-6">Church predicates, Church conditionals and Church
+lists</a></li>
+<li><a href="#TOC-7">Miscellaneous</a></li>
+<li><a href="#TOC-8">Brent Kerby’s elegant and efficient alternative
+Church numerals</a></li>
+<li><a href="#TOC-9">Testing Brent Kerby’s Church numerals</a></li>
+<li><a href="#TOC-10">Another kind of Church numeral, also by Brent
+Kerby</a></li>
+<li><a href="#TOC-11">Yet another kind of Church numeral, again by Brent
+Kerby</a></li>
 </ol>
-<h1 id="introduction">Introduction</h1>
+<hr />
+<h1 id="TOC-1">Introduction</h1>
 <p>Numbers are often taken to be be sets or constructions out of sets.
 Thus the number five can be taken to be the set of all those sets that
 have 5 members: the set of fingers on my left hand, the set of fingers
@@ -28,14 +33,14 @@ are possible answers to the question "how many" or more precisely, "how
 many things".</p>
 <p>But natural numbers can equally well be taken to be answers to the
 question "how many times" or "how often". This is how they are treated
-in Church's lambda calculus. They are functions which take a unary
+in Church’s lambda calculus. They are functions which take a unary
 function as argument and return a unary function as value. If the
 argument function is the squaring function, and the number in question
 is three, then the returned function computes the square of the square
 of the square. So numbers are second order functions. But since they are
 unary functions, they can be applied to themselves at least in the
 untyped lambda calculus. So numbers are also third order functions, and
-so forth - they are simply higher order functions.</p>
+so forth – they are simply higher order functions.</p>
 <p>Numbers must be distinguished from numerals or more generally,
 numeric expressions. The numerals "7", "seven", "sept", "VII" and also
 the expressions "3+4" and "10-3" are all different, and yet they denote
@@ -43,7 +48,7 @@ the same natural number. The so-called Church numerals of the lambda
 calculus are expressions which denote higher order functions of the kind
 described above. The remainder of this note shows how Church numerals
 can also be expressed in Joy.</p>
-<h1 id="church-numerals">Church numerals</h1>
+<h1 id="TOC-2">Church numerals</h1>
 <p>In Joy a Church numeral will have to be a program which expects on
 the stack a quoted program, say [P], and below that whatever parameters
 are needed to execute the quoted program. The numeral will indicate how
@@ -69,7 +74,7 @@ repetitions of execution of a program. So they need a program [P] to be
 repeated zero or more times. Preferably the output should bear some
 resemblance to what is being tested. A good choice is the ordinary
 successor function succ for ordinary numbers, to be called zero or more
-times with the ordinary number 0 on top of the stack.</p>
+times with the ordinary number 0 on top of the stack:</p>
 <pre><code>    DEFINE 
         Peano  ==  0 [succ]. </code></pre>
 <p>Here are the obvious tests:</p>
@@ -82,7 +87,7 @@ times with the ordinary number 0 on top of the stack.</p>
     Peano [[[C0] Csucc] Csucc] Csucc. 
 3</code></pre>
 <p>It is convenient to introduce definitions for the first few positive
-Church numerals. The tests follow.</p>
+Church numerals. The tests follow:</p>
 <pre><code>    DEFINE 
         C1  ==  [C0] Csucc; 
         C2  ==  [C1] Csucc; 
@@ -120,8 +125,7 @@ are two examples:</p>
 [i i]
     Lists C3. 
 [i i i]</code></pre>
-<h1 id="arithmetic-operators-for-church-numerals">Arithmetic operators
-for Church numerals</h1>
+<h1 id="TOC-3">Arithmetic operators for Church numerals</h1>
 <p>Church numerals in the lambda calculus or in Joy can be added,
 multiplied and exponentiated just like ordinary numerals. The three
 operators Cadd, Cmul and Cpow all take two quoted Church numerals [Cm]
@@ -132,8 +136,8 @@ value.</p>
 is also what the definition of Cadd below will do. It will transform the
 quotation [Cm] into another quotation by repeatedly constructing the
 successor quotation, where the number of repetitions is given by [Cn]
-which is called by the first i. The resulting quotation is then called
-by the final i.</p>
+which is called by the first <code>i</code>. The resulting quotation is
+then called by the final <code>i</code>.</p>
 <p>To multiply two numbers m and n, we can start with 0 and add m
 exactly n times. To exponentiate, to compute m to the n-th power, we
 start with 1 and multiply by m exactly n times. This is also what the
@@ -144,9 +148,10 @@ are binary. The starting values are quoted, as [C0] and [C1]
 respectively, and they are squeezed below the [Cm] and [Cn]. At the same
 time [Cm] is transformed into either [[[Cm] Cadd] cons] or [[[Cm] Cmul]
 cons] respectively. This is then repeatedly executed, where the number
-of repetitions is given by [Cn] which is called by the first i. The
-resulting quotation is then called by the final i.</p>
-<p>Here follow the definitions and two forms of tests.</p>
+of repetitions is given by [Cn] which is called by the first
+<code>i</code>. The resulting quotation is then called by the final
+<code>i</code>.</p>
+<p>Here follow the definitions and two forms of tests:</p>
 <pre><code>    DEFINE 
         Cadd  ==  [ [[Csucc] cons] ] dip i i; 
         Cmul  ==  [ [[C0]] dip  [Cadd] cons [cons] cons ] dip i i; 
@@ -168,7 +173,7 @@ resulting quotation is then called by the final i.</p>
 <p>The operators can of course be used in complex expressions, as in
 these examples. The first just computes a value, and the second compares
 the same value with the identical value obtained from ordinary
-arithmetic.</p>
+arithmetic:</p>
 <pre><code>    Peano [[[[[C3] Csucc] [C2] Cadd] [C3] Cmul] Csucc] [C2] Cadd . 
 21
     Peano [[[[[C3] Csucc] [C2] Cadd] [C3] Cmul] Csucc] [C2] Cadd 
@@ -187,15 +192,14 @@ are performing in infix notation.</p>
 with expressing Church arithmetic in Joy, or whether there is a way of
 expressing Church arithmetic in Joy that retains the usual bracket free
 notation of Joy as for ordinary arithmetic.</p>
-<h1 id="quotation-numerals-and-quotation-operators">Quotation numerals
-and Quotation operators</h1>
+<h1 id="TOC-4">Quotation numerals and Quotation operators</h1>
 <p>In Joy it is possible to define quotations and also quotation
 producing operators on quotations. Such quotations can then be executed
-by the i combinator or any other combinator. For an analogue of Church
-arithmetic the quotations will have to be the quoted Church numerals.
-These will be called quotation numerals. The quotation operators,
-corresponding to the Church operators, will take quotations off the
-stack and leave a new quotation on top of the stack.</p>
+by the <code>i</code> combinator or any other combinator. For an
+analogue of Church arithmetic the quotations will have to be the quoted
+Church numerals. These will be called quotation numerals. The quotation
+operators, corresponding to the Church operators, will take quotations
+off the stack and leave a new quotation on top of the stack.</p>
 <p>The remainder of this section defines quotation numerals and
 quotation operators in the same sequence as in the two preceding
 sections.</p>
@@ -241,7 +245,7 @@ the first four quotation numerals:</p>
 exponentiation are just like the quotation operator Qsucc: they expect
 quotations as parameters and produce quotations as results. Their
 definitions below are a simple adaptation of the corresponding Church
-operators. A few tests also follow.</p>
+operators. A few tests also follow:</p>
 <pre><code>    DEFINE 
         Qadd  == 
           [ [[Qsucc i] cons] swap i i ]  cons cons; 
@@ -270,25 +274,25 @@ written without being called:</p>
 section now written in quotation notation. As can be seen, there are no
 quotation brackets visible, and as the second example shows, the whole
 structure of the expression is identical to the ordinary postfix
-expression for ordinary arithmetic.</p>
+expression for ordinary arithmetic:</p>
 <pre><code>    Peano      Q3 Qsucc  Q2 Qadd  Q3 Qmul Qsucc Q2 Qadd i. 
 21
     Peano      Q3 Qsucc  Q2 Qadd  Q3 Qmul Qsucc Q2 Qadd i 
                 3  succ   2  +     3  *    succ  2  +      = . 
 true</code></pre>
-<h1 id="church-truth-values">Church truth values</h1>
+<h1 id="TOC-5">Church truth values</h1>
 <p>Whereas Church numerals can be taken to be answers to the question
 "how often", Church truth values can be taken to be answers to the
 question "which one", when there is a choice of two. From an operational
 point of view, Church numerals represent looping (for-loops), and Church
-numerals represent branching. Whereas Church numerals take as a
+truth values represent branching. Whereas Church numerals take as a
 parameter one function, Church truth values take two parameters of which
 one will be ignored and the other evaluated. In Joy these two parameters
 will have to be quotations on the top of the stack. As for Church
 numerals, Church truth values do not denote data values, but choices
 between executing one of two quoted programs to be executed.</p>
 <p>Here are the definitions of the two Church truth values, also two
-pairs of functions, and of course some tests.</p>
+pairs of functions, and of course some tests:</p>
 <pre><code>    DEFINE  
         Ctrue  ==  pop i; 
         Cfalse  ==  popd i. 
@@ -309,12 +313,12 @@ false</code></pre>
 parameter a quotation which, when executed, will expect two quotations
 on the stack. In analogy with the definition of Church negation in the
 lambda calculus, the Cnot operator for Church truth values in Joy might
-be defined as</p>
+be defined as:</p>
 <pre><code>    DEFINE
         Cnot  ==  [ [Cfalse] [Ctrue] ] dip i. </code></pre>
 <p>However, because Joy is stack-based, a much simpler definition
 results if the Cnot operator simply swaps the two quotation parameters
-below the Church truth value, as follows.</p>
+below the Church truth value, as follows:</p>
 <pre><code>    DEFINE 
         Cnot  ==  swapd i. 
 
@@ -327,7 +331,7 @@ true
     Comparison [[Cfalse] Cnot] Cnot. 
 false</code></pre>
 <p>The definition of the two binary operators on Church truth values
-look quite different from the binary operators on Church numerals. This
+looks quite different from the binary operators on Church numerals. This
 is because Church truth values take two quotation parameters, whereas
 Church numerals only take one. Apart from that, the definitions of the
 disjunction and conjunction operators on truth values are actually
@@ -345,7 +349,7 @@ fully determines the result yielded by Cor. Since the second quotation
 is only executed when its result is needed, this definition of Cor is
 what is sometimes called a "short circuit" implementation.</p>
 <p>The definition of Cand is entirely analogous. The four tests for Cor
-and for Cand also follow.</p>
+and for Cand also follow:</p>
 <pre><code>    DEFINE 
         Cor  ==  [[Ctrue]] dipd i; 
         Cand  ==  [[Cfalse]] dip i. 
@@ -367,8 +371,8 @@ and for Cand also follow.</p>
 &quot;No, no&quot;
     Boole [Cfalse] [Cfalse] Cand. 
 &quot;No, no&quot;</code></pre>
-<h1 id="church-predicates-church-conditionals-and-church-lists">Church
-predicates, Church conditionals and Church lists</h1>
+<h1 id="TOC-6">Church predicates, Church conditionals and Church
+lists</h1>
 <p>The operators for Church logic are not so useful when they can only
 operate on Church truth value constants Ctrue and Cfalse. But they
 become more useful when there are predicates whose evaluation yields
@@ -392,11 +396,12 @@ second of these may be executed zero or more times. The first time, if
 ever, it will replace the [Ctrue] by [Cfalse], and any further time it
 will replace the [Cfalse] it has placed there last time by a new
 [Cfalse]. After these two quotations have been inserted below the quoted
-Church numeral [Cn], the first i executes [Cn], resulting in either the
-original [Ctrue] or a [Cfalse] to become the top element on the stack.
-Finally, the second i executes that, as required.</p>
+Church numeral [Cn], the first <code>i</code> executes [Cn], resulting
+in either the original [Ctrue] or a [Cfalse] to become the top element
+on the stack. Finally, the second <code>i</code> executes that, as
+required.</p>
 <p>After the definitions there are some obvious tests, and the last two
-also use the equality predicate in expressions using Cor and Cand.</p>
+also use the equality predicate in expressions using Cor and Cand:</p>
 <pre><code>    DEFINE 
         Ceq0  == [ [Ctrue] [pop [Cfalse]] ] dip i i. 
 
@@ -418,14 +423,15 @@ quotation on the stack that is executed to determine which of the other
 two is to be executed. The third quotation, the if-part, could be above
 of below the other two, the then-part and the else-part. For efficient
 execution the if-part should be on top, to be executed by the combinator
-i. On the other hand, for analogy with the ordinary combinator ifte, it
-is best if the if-part is the third element on the stack. In the
-following definition of a Church combinator Cifte, the if-part is moved
-to the top by rolling down the other two parts. Following that, the
-if-part is executed by the i combinator.</p>
+<code>i</code>. On the other hand, for analogy with the ordinary
+combinator ifte, it is best if the if-part is the third element on the
+stack. In the following definition of a Church combinator Cifte, the
+if-part is moved to the top by rolling down the other two parts.
+Following that, the if-part is executed by the <code>i</code>
+combinator.</p>
 <p>Several examples also follow. The later examples, which use Church
 conditionals nested within Church conditionals, are written over several
-lines for ease of reading.</p>
+lines for ease of reading:</p>
 <pre><code>    DEFINE 
         Cifte  ==  rolldown i. 
 
@@ -460,12 +466,13 @@ lines for ease of reading.</p>
 3</code></pre>
 <p>Church truth values are actually very similar to the two operations
 which select one or the other from a pair of objects. The "dotted pair"
-constructor cons in Lisp and Scheme builds a pair of objects from its
-two parameters. The two operators car and cdr select the first or the
-second from such a pair. The last sentence just about captures the
-semantics of the constructor cons and the two operators. Any
-implementation must capture this semantic condition, but otherwise any
-further detail of the implementation is immaterial.</p>
+constructor <code>cons</code> in Lisp and Scheme builds a pair of
+objects from its two parameters. The two operators <code>car</code> and
+<code>cdr</code> select the first or the second from such a pair. The
+last sentence just about captures the semantics of the constructor
+<code>cons</code> and the two operators. Any implementation must capture
+this semantic condition, but otherwise any further detail of the
+implementation is immaterial.</p>
 <p>The following define a constructor Ccons and two operators Ccar and
 Ccdr. The latter use the Church truth values Ctrue and Cfalse to effect
 the selection from a pair constructed by Ccons. Ccons of course expects
@@ -479,7 +486,7 @@ caused the execution of [i].</p>
 requires its topmost parameter to be a list.</p>
 <p>The last four examples are again written over several lines for ease
 of reading. They are the four list-counterparts of the four conditionals
-of the previous examples.</p>
+of the previous examples:</p>
 <pre><code>    DEFINE 
         Ccons  ==  [i]; 
         Ccar  ==  [Ctrue] swap i; 
@@ -506,7 +513,7 @@ of the previous examples.</p>
               [[C2] [C3] Ccons Ccdr]
               Ccons Ccdr. 
 3</code></pre>
-<h1 id="miscellaneous">Miscellaneous</h1>
+<h1 id="TOC-7">Miscellaneous</h1>
 <p>As may be seen, complex expressions using any of the operators of the
 preceding two sections will require the same annoying bracketing as was
 encountered in the sections on Church arithmetic. However, in analogy
@@ -524,24 +531,23 @@ href="https://github.com/Wodan58/joy1/blob/master/lib/jp-church.joy">jp-church.j
 theoretical books dealing with functional languages based on the lambda
 calculus. There is also a vast literature available online, a web search
 for "Church numeral" will find many excellent expositions.</p>
-<h1
-id="brent-kerbys-elegant-and-efficient-alternative-church-numerals">Brent
-Kerby's elegant and efficient alternative Church numerals</h1>
+<h1 id="TOC-8">Brent Kerby’s elegant and efficient alternative Church
+numerals</h1>
 <p>Shortly after I put the preceding sections on the web page for Joy,
 on 9-Oct-2002 Brent Kerby sent a note to the "concatenative" mailing
 list. The remainder of this section is the first part of his note.</p>
 <p>About the construction of Csucc (which adds one to a church
-number),</p>
-<pre><code>  Csucc ==  [dup [i] dip] dip i.</code></pre>
+number):</p>
+<pre><code>  Csucc ==  [dup [i] dip] dip i</code></pre>
 <p>this can be simplified a bit:</p>
-<pre><code>  Csucc ==  [dup dip] dip i.</code></pre>
+<pre><code>  Csucc ==  [dup dip] dip i</code></pre>
 <p>because "dup [i] dip" is the same as "dup dip"; by the way, the "dup
 dip" combinator is an interesting one; I call it "run", since it in
 effect executes a program without destroying the program.</p>
 <pre><code>----------</code></pre>
 <p>Anyhow, onto the next construction:</p>
-<pre><code>  Cadd ==  [ [[Csucc] cons] ] dip i i;</code></pre>
-<p>Here's an alternative:</p>
+<pre><code>  Cadd ==  [ [[Csucc] cons] ] dip i i</code></pre>
+<p>Here’s an alternative:</p>
 <pre><code>  Cadd == [sip] dip i</code></pre>
 <p>It works like this:</p>
 <pre><code>   [p] [m] [n] [sip] dip i
@@ -550,8 +556,8 @@ effect executes a program without destroying the program.</p>
 == [p] m [p] n
 
 ------------</code></pre>
-<p>Next,</p>
-<pre><code>  Cmul ==  [ [[C0]] dip  [Cadd] cons [cons] cons ] dip i i;</code></pre>
+<p>Next:</p>
+<pre><code>  Cmul ==  [ [[C0]] dip  [Cadd] cons [cons] cons ] dip i i</code></pre>
 <p>An alternative:</p>
 <pre><code>  Cmul == [cons] dip i</code></pre>
 <p>It works like this:</p>
@@ -560,8 +566,8 @@ effect executes a program without destroying the program.</p>
 == [[p] m] n
 
 -----------------</code></pre>
-<p>Finally,</p>
-<pre><code>  Cpow ==  [ [[C1]] dip  [Cmul] cons [cons] cons ] dip i i.</code></pre>
+<p>Finally:</p>
+<pre><code>  Cpow ==  [ [[C1]] dip  [Cmul] cons [cons] cons ] dip i i</code></pre>
 <p>And, an alternative:</p>
 <pre><code>  Cpow == [[cons] cons] dip i i</code></pre>
 <p>Working like this:</p>
@@ -572,8 +578,7 @@ effect executes a program without destroying the program.</p>
 <p>Unfortunately, in this system of church numbers, the Cpow is not a
 true combinator, only a pseudo-combinator (unlike Csucc, Cadd, and Cmul,
 which are true combinators).</p>
-<h1 id="testing-brent-kerbys-church-numerals">Testing Brent Kerby's
-Church numerals</h1>
+<h1 id="TOC-9">Testing Brent Kerby’s Church numerals</h1>
 <pre><code>    # The original definitions, commented away, are given for comparison. 
     # Brent Kerby&#39;s new definitions over-ride the old ones. 
      
@@ -614,18 +619,17 @@ Church numerals</h1>
     Peano [[[[[C3] Csucc] [C2] Cadd] [C3] Cmul] Csucc] [C2] Cadd 
                 3   succ    2   +      3   *     succ    2   +      = . 
 true</code></pre>
-<h1 id="another-kind-of-church-numeral-also-by-brent-kerby">Another kind
-of Church numeral, also by Brent Kerby</h1>
+<h1 id="TOC-10">Another kind of Church numeral, also by Brent Kerby</h1>
 <p>This section is verbatim the second part of his note.</p>
 <p>By the way, there are several other ways of doing church numbers in
-Joy. The current way assumes,</p>
+Joy. The current way assumes:</p>
 <pre><code>  [p] Cn  ==  p p ... p</code></pre>
 <p>But alternatively we could do:</p>
 <pre><code>  [p] Rn  ==  p p ... p [p]</code></pre>
 <p>The only difference here is that we save the original program "p".
 The principal advantage of this approach is that then Rn are reversible
 combinators (note, Cn were all irreversible combinators since they
-destroy the original program). We'd have,</p>
+destroy the original program). We’d have:</p>
 <pre><code>  R0 ==
   R1 == run
   R2 == run run
@@ -633,7 +637,7 @@ destroy the original program). We'd have,</p>
   ...</code></pre>
 <p>This is quite an elegant setup, seeing that simply "run" acts as a
 successor function, and C0 is simply the empty program. Also, the
-negative church numbers then are</p>
+negative church numbers then are:</p>
 <pre><code>  R-1 == unrun
   R-2 == unrun unrun
   R-3 == unrun unrun unrun
@@ -646,7 +650,7 @@ Also, to add church numbers is simply to concatenate them. Of course,
 notice it preserves one of the parameters, like a reversible addition
 function should. Also, unlike Cadd, it does not execute the newly formed
 program (doing so would be irreversible, as "i" is irreversible).</p>
-<p>Here's how to multiply these Rn church numbers:</p>
+<p>Here’s how to multiply these Rn church numbers:</p>
 <pre><code>  Rmul == swap cons untack</code></pre>
 <p>It works, for example, like this:</p>
 <pre><code>   [2] [3] swap cons untack
@@ -654,10 +658,10 @@ program (doing so would be irreversible, as "i" is irreversible).</p>
 == [3 3 [3]] untack
 == [3 3] [3]
 == [6] [3]</code></pre>
-<p>So that's nice, except that this is not really reversible, since
+<p>So that’s nice, except that this is not really reversible, since
 "cons" is not reversible (assuming we have transparent quotation; if we
 have opaque quotation then "cons" is reversible, but the multiplication
-then doesn't work because "untack" fails):</p>
+then doesn’t work because "untack" fails):</p>
 <pre><code>  [a] [dup] cons    == [[a] dup]  ==  [[a] [a]]
   [[a] [a]] [] cons == [[a] [a]]</code></pre>
 <p>See how cons can give the same result from different inputs? This
@@ -667,7 +671,9 @@ expect to fail in the case of multiplying by zero, since that is
 irreversible. Also, having a reversible Rmul would give us the ability
 to do division, and the ability to construct fractional church numbers.
 But do fractional church numbers make sense? For example, the church
-number for 1/2 would have the rule:</p>
+number for <img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%201%2F2"
+alt="1/2" title="1/2" class="math inline" /> would have the rule:</p>
 <pre><code>  [a a] R1/2  == a [a a]</code></pre>
 <p>In a system with transparent quotation, it seems like R1/2 would not
 be straightforward to implement, perhaps impossible, since it would
@@ -675,13 +681,13 @@ require the system to try to coerce an arbitrary "[p]" into the form "[a
 a]", by using reductions and expansions inside the quotation. But maybe
 there is some reasonable way to do it ...</p>
 <pre><code>- Brent</code></pre>
-<h1 id="yet-another-kind-of-church-numeral-again-by-brent-kerby">Yet
-another kind of Church numeral, again by Brent Kerby</h1>
+<h1 id="TOC-11">Yet another kind of Church numeral, again by Brent
+Kerby</h1>
 <p>Also on 9-Oct-2002 Brent wrote another note, which is reproduced her
 in full:</p>
 <pre><code>[ a propos my question: ]
 &gt; Could you clarify why you say that your Cpow is not a true combinator?</code></pre>
-<p>Well, it's pretty simple, really. When we try to write a "reduction
+<p>Well, it’s pretty simple, really. When we try to write a "reduction
 rule" for Cpow, the best we can get is this:</p>
 <pre><code>  [p] [m] [n] Cpow  ==  [p] [[m] cons] n i</code></pre>
 <p>Note the appearances of "cons" and "i" on the right hand side. This
@@ -701,7 +707,7 @@ of this kind.</p>
 only true combinators, no pseudo-combinators. Such a system would have
 to get rid of quotation, since the quotation of any combinator is a
 pseudo-combinator (e.g., "[dup]" or "[swap]" is a pseudo-combinator,
-since it possesses no reduction rule). This idea hasn't been fully
+since it possesses no reduction rule). This idea hasn’t been fully
 explored, but you might like to look back on the <a
 href="https://groups.yahoo.com/neo/groups/concatenative/conversations/messages/1051">post</a>
 and other posts thereabouts. The idea is that a workable base is {nil,
@@ -715,7 +721,7 @@ zap, dup, i, unit, take, cat}:</p>
  [b] [a] cat  == [b a]</code></pre>
 <p>I suspect that all true combinators can be constructed form these,
 using concatenation alone (no quotations allowed), and there is very
-probably a smaller base that will work. Here's a few examples of some
+probably a smaller base that will work. Here’s a few examples of some
 constructions in this system (a searcher reveals that these are the
 minimal constructions):</p>
 <pre><code>  dip  == take i
@@ -725,7 +731,7 @@ minimal constructions):</p>
        == unit take i dup unit take take i
   sip  == unit take i unit dup cat take i take i
        == unit take i dup unit take take i take i</code></pre>
-<p>More simply, we could have</p>
+<p>More simply, we could have:</p>
 <pre><code>  dupd == swap dup flip
   sip  == dupd dip
 
@@ -738,10 +744,10 @@ minimal constructions):</p>
 <p>Yes, in the classical combinatory logic you can exponentiate Church
 numbers simply by applying them (although it is the base that is applied
 to the exponent, not the other way around). We can do the same thing in
-Joy if we reform the Church numbers once more (I'll call them Zn, as
+Joy if we reform the Church numbers once more (I’ll call them Zn, as
 that is what the Church numbers are standardly called):</p>
 <pre><code>  [x] [p] Zn  ==  [[[[[x] p] p] ...] p</code></pre>
-<p>For example,</p>
+<p>For example:</p>
 <pre><code>  [x] [p] Z0  == x
   [x] [p] Z1  == [x] p
   [x] [p] Z2  == [[x] p] p</code></pre>
@@ -752,7 +758,7 @@ way:</p>
  [x] [p] [n] [m] Zadd  ==  [[x] [p] n] [p] m
  [x] [p] [n] [m] Zmul  ==  [x] [[p] n] m
  [x] [p] [n] [m] Zpow  ==  [x] [p] [n] m</code></pre>
-<p>Or by construction,</p>
+<p>Or by construction:</p>
 <pre><code>  Zsucc  == [B] S
   Zadd   == [B] N
   Zmul   == B
@@ -763,14 +769,14 @@ way:</p>
 [d] [c] [b] [a] N == [[d] c] [[d] b] a</code></pre>
 <p>See how neat that works, with Zpow being simply "i".</p>
 <p>Anyhow, these Zn seem to be the true analogue of the classical Church
-numbers, although that's not to say that they are necessarily the most
+numbers, although that’s not to say that they are necessarily the most
 appropriate in a concatenative system. But, Zn do have use; for
-example,</p>
+example:</p>
 <pre><code>  dip2 == [dip] Z2
   dip3 == [dip] Z3
   dip4 == [dip] Z4
   ...</code></pre>
-<p>See,</p>
+<p>See:</p>
 <pre><code>   [p] dip3
 == [p] [dip] Z3
 == [[[p] dip] dip] dip</code></pre>

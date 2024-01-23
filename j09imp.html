@@ -13,18 +13,19 @@
 <li><a href="#TOC-8">The libraries</a></li>
 <li><a href="#TOC-9">Miscellaneous features</a></li>
 </ol>
-<p><em>Abstract</em> Joy is a functional programming language which is
+<p><em>Abstract:</em> Joy is a functional programming language which is
 not based on the application of functions to arguments but on the
 composition of functions. This paper serves as a manual for the current
 prototype implementation. Other implementations might differ in some
 details.</p>
+<hr />
 <h2 id="TOC-1"><strong>Introduction</strong></h2>
 <p>The prototype implementation of Joy is written in unadorned C. It is
 not the first implementation, earlier ones have been written in Pascal,
 Prolog and Lisp. A small version in C was written by a group of
 students. The current prototype bears almost no resemblance to these
 earlier versions.</p>
-<p>This manual includes references to John Cowan's (2001) major
+<p>This manual includes references to John Cowan’s (2001) major
 extension to the earlier version of the prototype, and also to some
 additions by Nick Forde. Their help has been invaluable, and it is a
 pleasure to acknowledge their support. I am also grateful to many other
@@ -91,13 +92,13 @@ semicolon ; and the period . :</p>
             &quot;[&quot;  |  &quot;]&quot;  |  &quot;{&quot;  |  &quot;}&quot;  |  &quot;;&quot;  |  &quot;.&quot;</code></pre>
 <p>Another kind of token is that of <em>integer constant</em>, a string
 of one or more decimal digits "0" .. "9" possibly immediately preceded
-by a unary minus "-".</p>
+by a unary minus "-" :</p>
 <pre><code>    integer-constant  ::=
             [ &quot;-&quot; ]  ( &quot;0&quot; | &quot;1&quot; .. | &quot;9&quot; )  { &quot;0&quot; | &quot;1&quot; .. | &quot;9&quot; }</code></pre>
 <p>An integer constant can contain up to 10 digits but must not exceed
-the platform dependent maximum integer (generally <span
-class="math inline">2<sup>31</sup> − 1</span>). <a href="#fn1"
-class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+the platform dependent maximum integer (generally 2<sup>31</sup> − 1).<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a></p>
 <p>Apart from integers, the current implementation of Joy also has real
 numbers or "floats". In the simplest form a <em>float constant</em>
 consists of a string of one or more decimal digits, then a <em>decimal
@@ -114,7 +115,7 @@ digits "0" .. "9" "A" .. "F").</p>
 constant</em>s. Some character sequences beginning with the backslash
 "\" character inside string constants or character constants are treated
 as <em>escaped character</em>s. A character other than the backslash
-character is an ordinary character.</p>
+character is an ordinary character:</p>
 <pre><code>    escaped-character  ::=
                &quot;\n&quot;                     newline
             |  &quot;\t&quot;                     tab
@@ -131,7 +132,7 @@ character is an ordinary character.</p>
 character ", enclosing any sequence of zero or more special characters
 or ordinary characters. A <em>character constant</em> begins with the
 single quote character ' followed by a special character or an ordinary
-character; there is no closing single quote.</p>
+character; there is no closing single quote:</p>
 <pre><code>    string-constant  ::=
             &#39;&quot;&#39;  { escaped-character | ordinary-character } &#39;&quot;&#39;
     character-constant  ::=
@@ -147,7 +148,7 @@ synonyms for "PRIVATE" and "PUBLIC", and they may eventually be declared
 obsolescent.</p>
 <p>Any other token beginning with a printing character and possibly
 continuing with upper or lower case letters, digits or the three
-characters "=", "_" or "-" is an <em>atomic symbol</em>.</p>
+characters "=", "_" or "-" is an <em>atomic symbol</em>:</p>
 <pre><code>    atomic-symbol  ::=
         any printing character which is not a reserved character
             or a digit or the single or double quote character
@@ -167,14 +168,14 @@ three constants: integer constant, character constant or string
 constant. A factor can also consist of a (possibly empty) sequence of
 integer or character constants enclosed in the curly brace tokens { and
 }. Finally, a factor can also be a (possibly empty) term enclosed in the
-square bracket tokens [ and ].</p>
+square bracket tokens [ and ] :</p>
 <pre><code>    factor  ::=
            atomic-symbol
         |  integer-constant | float-constant
         |  character-constant | string-constant
         |  &quot;{&quot;  { character-constant | integer-constant } &quot;}&quot;
         |  &quot;[&quot;  term  &quot;]&quot;</code></pre>
-<p>A <em>term</em> consists of zero or more factors.</p>
+<p>A <em>term</em> consists of zero or more factors:</p>
 <pre><code>    term  ::=
         { factor }</code></pre>
 <p>For the <em>semantics</em> another classification is essential.
@@ -188,7 +189,7 @@ enclosing characters or integers – these are the <em>set literals</em>.
 Finally a literal can consist of the brackets enclosing a term – these
 are the <em>quotation literals</em> or simply <em>quotations</em>. If
 the term consists just of literals, the factor is called a <em>list
-list</em> or just a <em>list</em>.</p>
+list</em> or just a <em>list</em>:</p>
 <pre><code>    literal  ::=
            &quot;true&quot;  |  &quot;false&quot;
            |  integer-constant | float-constant
@@ -240,7 +241,7 @@ or because they make the program more intelligible. The first two
 reasons are less compelling in Joy than in most other languages.</p>
 <p>Often one needs not just one <em>definition</em> but a
 <em>sequence</em> of definitions, and these are then separated by
-semicolons ";".</p>
+semicolons ";" :</p>
 <pre><code>    definition-sequence  ::=
         definition  { &quot;;&quot;  definition }</code></pre>
 <p>Definitions can be of two kinds: simple or compound. A <em>simple
@@ -266,7 +267,8 @@ must be present:</p>
 <p>Instead of PRIVATE...PUBLIC... the combination HIDE...IN... can be
 used, and instead of PUBLIC... the syntax LIBRA... or DEFINE... can be
 used. These alternative symbols may become obsolescent in the future,
-but will be supported for the time being.</p>
+but will be supported for the time being.<a href="#fn2"
+class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p>In the simplest case only the PUBLIC-part is present. In that case
 all <em>definition</em>s in the <em>definition sequence</em> are entered
 into the symbol table. If there is a PRIVATE-part, then any
@@ -275,14 +277,15 @@ into the symbol table and are then available for use by the PUBLIC-part.
 However, the PRIVATE <em>definition</em>s are then obscured at the end
 of the PUBLIC <em>definition sequence</em> and are then not available
 any further. If there is a MODULE-part, then all subsequent PRIVATE and
-PUBLIC <em>definition</em> are visible as before except that at the end
+PUBLIC <em>definition</em>s are visible as before except that at the end
 of the PUBLIC <em>definition sequence</em> all <em>definition</em>s are
 obscured except the name of the module. In that case the
 <em>definition</em>s of the PUBLIC-part can only be accessed as factors
-by what is called "qualified access", in the form</p>
-<pre><code>    m . f   or   m.f</code></pre>
-<p>where m and f are respectively the name of the module and of a
-function from its PUBLIC-part.</p>
+by what is called "qualified access", in the form:</p>
+<pre><code>    m.f</code></pre>
+<p>where <code>m</code> and <code>f</code> are respectively the name of
+the module and of a function from its PUBLIC-part.<a href="#fn3"
+class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <p>In many uses of Joy the initial input will be from the terminal
 keyboard and the output will be to the terminal screen. Operating
 systems will generally allow the input and the output to be redirected,
@@ -290,7 +293,7 @@ so that the input comes from a disk file or the output goes to a disk
 file, or both. Whatever the actual input file is, it will consist of a
 number of requests to the Joy system. A request is either a compound
 <em>definition</em> or it is a term followed by either the END token or
-just a period ".".</p>
+just a period "." :</p>
 <pre><code>    cycle  ==
         {    compound-definition
           |  term  ( &quot;END&quot; | &quot;.&quot; ) }</code></pre>
@@ -301,29 +304,29 @@ stack is then written to the output file, normally the screen. If
 several terms are executed in succession, each term inherits from the
 preceding term the remainder of the stack. This can be useful when
 debugging larger programs. On the other hand, every library declaration
-clears the stack. <a href="#fn2" class="footnote-ref" id="fnref2"
-role="doc-noteref"><sup>2</sup></a> The inbuilt factor
+clears the stack.<a href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a> The inbuilt factor
 <code>abort</code> returns to the main cycle, but it leaves the stack
 intact.</p>
 <h2 id="TOC-5"><strong>Initiating a Joy session</strong></h2>
 <p>A session with Joy is initiated by running the Joy interpreter in
 whatever ways the installation allows or requires. In most cases this
 will be done from the top level of the command language. In Unix it
-might simply be</p>
+might simply be:</p>
 <pre><code>    $  ./joy</code></pre>
-<p>and under VMS it might be</p>
+<p>and under VMS it might be:</p>
 <pre><code>    $  RUN JOY</code></pre>
-<p>or, if "JOY" has been appropriately defined as a symbol,</p>
+<p>or, if "JOY" has been appropriately defined as a symbol:</p>
 <pre><code>    $  JOY</code></pre>
 <p>The Joy interpreter will then announce itself with a brief banner. In
 the simplest case the Joy interpreter will then use the keyboard as the
 first input device and start the main cycle by taking input from there.
 Output will be to the screen.</p>
 <p>However, although this is the simplest case, it is not the most
-common. If the current directory <a href="#fn3" class="footnote-ref"
-id="fnref3" role="doc-noteref"><sup>3</sup></a> contains a file by the
+common. If the current directory<a href="#fn5" class="footnote-ref"
+id="fnref5" role="doc-noteref"><sup>5</sup></a> contains a file by the
 name <a
-href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">"usrlib.joy"</a>,
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>,
 this will become the first input file, and the main cycle will start
 reading requests from there. Typically this file will contain some
 <em>definition</em>s specific to the particular user, or to the
@@ -345,12 +348,15 @@ the input redirected from a file, say "my-input.joy", like this:</p>
 redirections occur:</p>
 <pre><code>    $  JOY /INPUT=MY-INPUT.JOY  /OUTPUT=MY-OUTPUT.TXT</code></pre>
 <p>With redirection of the input the behaviour of the Joy interpreter
-again depends on whether the current directory <a href="#fn4"
-class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>
-contains a file "usrlib.joy". If there is such file, then that is read
-first, and only then the main cycle reads not from the keyboard but from
-the redirected file. If there is no file "usrlib.joy", the main cycle
-will immediately read from the redirected file.</p>
+again depends on whether the current directory<a href="#fn6"
+class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>
+contains a file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>.</p>
+<p>If there is such file, then that is read first, and only then the
+main cycle reads not from the keyboard but from the redirected file. If
+there is no file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>,
+the main cycle will immediately read from the redirected file.</p>
 <p>Under some operating systems it is possible to give what are called
 command line arguments to a program that is to run. This is very
 familiar under Unix, where the Joy interpreter might be run like
@@ -360,20 +366,21 @@ this:</p>
 possible to define programs as "foreign commands" by a
 <em>definition</em> (possibly in login.com):</p>
 <pre><code>    $  JOY == &quot;$DSK-XYZ[MYNAME.JOYDIR]JOY.EXE&quot;</code></pre>
-<p>where DSK-XYZ, MYNAME and JOYDIR are respectively the user's disk,
-the user's name and the directory on which the executable interpreter is
-located. The joy interpreter is then run with parameters P1 P2 P3 by</p>
+<p>where DSK-XYZ, MYNAME and JOYDIR are respectively the user’s disk,
+the user’s name and the directory on which the executable interpreter is
+located. The joy interpreter is then run with parameters P1 P2 P3
+by:</p>
 <pre><code>    $  JOY  P1  P2  P3</code></pre>
 <p>When the Joy interpreter is run with command line arguments, the
-first parameter P1 must be a valid file name. <a href="#fn5"
-class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> The
+first parameter P1 must be a valid file name.<a href="#fn7"
+class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> The
 interpreter then attempts to open that file for reading, and if that
 attempt fails it exits. If the attempt succeeds, all further commands
 are taken not from standard input (possibly redirected) but from that
 file. This means that any explicit input from the "get" command can
-still come from standard input. <a href="#fn6" class="footnote-ref"
-id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
-<p>When Joy is run with command line parameters, say by</p>
+still come from standard input.<a href="#fn8" class="footnote-ref"
+id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
+<p>When Joy is run with command line parameters, say by:</p>
 <pre><code>    $  ./joy  test.joy  mary  42</code></pre>
 <p>the number of parameters is available by the operator
 <code>argc</code> which pushes an "argument count", in this case 3.
@@ -390,36 +397,38 @@ would have to start with "#!joy" as the first line, and the rest of the
 file as input to Joy. The file <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/gcd.joy">gcd.joy</a>
 is an example which uses Joy to compute the greatest common divisor.
-After it has been created, it has to be made executable with</p>
+After it has been created, it has to be made executable with:</p>
 <pre><code>$ chmod +x gcd.joy</code></pre>
-<p>and thereafter it can be run with command lines such as</p>
+<p>and thereafter it can be run with command lines such as:</p>
 <pre><code>$ ./gcd.joy 45 100</code></pre>
 <p>which will give the answer 5.</p>
 <h2 id="TOC-6"><strong>Input and output</strong></h2>
 <p>For many applications no explicit output operation is needed because
 in the default mode the main cycle will always write the value of the
 top of stack to the output stream. But sometimes explicit output is
-useful. There are two basic output operators: put will remove a value of
-any type from the stack and write it to the output stream. putch will
-remove a value of a numeric type (character or integer) and write it as
-a single ASCII character to the output stream. Other useful output
-operations are defined in the library.</p>
+useful. There are two basic output operators: <code>put</code> will
+remove a value of any type from the stack and write it to the output
+stream; <code>putch</code> will remove a value of a numeric type
+(character or integer) and write it as a single ASCII character to the
+output stream. Other useful output operations are defined in the
+library.</p>
 <p>In the default mode the Joy system will write the value of the top of
 stack item to the output. The mode is under the control of a flag with
 value 0 and 1. If the value is 0, no automatic output occurs. If the
 value is 1, the default, output of the top value occurs after the
 evaluation of every term in the main cycle. If the value is 2, the
 entire stack is output after such an evaluation. The value of this flag
-can be changed by the setautoput operator, typical use is</p>
+can be changed by the <code>setautoput</code> operator, typical use
+is:</p>
 <pre><code>        0  setautoput.</code></pre>
 <p>Most Joy programs operate on a stack, several input files and one
 output file. The initial input comes either from the keyboard or it can
 be redirected to come from a diskfile, or it can be not from standard
 input but from a file specified as a command line argument. Often it is
 useful to include other files, typically diskfiles, in the input. Joy
-has an include operator for this purpose. It takes a string on the stack
-as a parameter and opens a file with that name and henceforth accepts
-input from there. A typical use might be</p>
+has an <code>include</code> operator for this purpose. It takes a string
+on the stack as a parameter and opens a file with that name and
+henceforth accepts input from there. A typical use might be:</p>
 <pre><code>        &quot;test.joy&quot;  include.</code></pre>
 <p>Included files can contain library <em>definition</em>s or
 <em>term</em>s to be executed. They can contain other include operators,
@@ -428,13 +437,14 @@ reverts to the previous file which contained the relevant include
 operator. The include files therefore form a stack.</p>
 <p>Users will often want their own selection of systems or private
 libraries read in automatically when the system starts up. For this
-purpose the Joy system always starts by checking whether a file
-"usrlib.joy" exists in the user's current directory. <a href="#fn7"
-class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>
+purpose the Joy system always starts by checking whether a file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+exists in the user’s current directory.<a href="#fn9"
+class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a>
 That file can be empty, but it can contain user specific
 <em>definition</em>s and it can contain particular <em>term</em>s to be
 executed. One such <em>term</em> might be a directive to include yet
-another file, perhaps</p>
+another file, perhaps:</p>
 <pre><code>        &quot;inilib.joy&quot;  include.</code></pre>
 <p>which transfers input to the <em>initial library</em>, <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>,
@@ -452,7 +462,7 @@ output from others. If the value is 3, then each tab is preceded by a
 line number specific to the current input file. When input reverts to an
 earlier file, the earlier line numbering is resumed. The value of the
 echo flag can be set by the operator <code>setecho</code>. Typically the
-value will be set by something like</p>
+value will be set by something like:</p>
 <pre><code>        2  setecho.</code></pre>
 <h2 id="TOC-7"><strong>Error messages</strong></h2>
 <p>When a Joy program is processed, two kinds of programming errors can
@@ -466,13 +476,13 @@ the possibilities for runtime errors are great.</p>
 input line is still available at that time, it is possible for the error
 message to point to the exact place at which the error occurred. If
 input comes from the initial input file, most likely the terminal, it is
-not repeated. In other case it is repeated, including its line number.
+not repeated. In other cases it is repeated, including its line number.
 The next line then consists of just an up-arrow "^" pointing to the
 error position. Following that is a line containing the specific error
 message.</p>
 <p>The following (rare) message can be reported when reading tokens, it
 occurs when the second or third digit in an escaped character is
-missing.</p>
+missing:</p>
 <pre><code>        digit expected</code></pre>
 <p>The following errors can occur when reading factors:</p>
 <pre><code>        numeric expected in set
@@ -487,7 +497,7 @@ missing.</p>
 <p>All other errors are <em>runtime error</em>s. These are given in the
 form:</p>
 <pre><code>        &quot;run time error: &quot;  MESSAGE  &quot; needed for &quot;  NAME</code></pre>
-<p>Two examples are</p>
+<p>Two examples are:</p>
 <pre><code>        run time error: fewer include files needed for include
         run time error: valid file name needed for include</code></pre>
 <p>In general, the NAME is the name of the operator or combinator whose
@@ -539,17 +549,21 @@ just about all other libraries and hence is quite non-specific.</p>
 <p><a
 href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>:</p>
 <p>This <em>user library</em> is intended to be just an example of what
-a personalised file <code>usrlib.joy</code> might look like. When Joy is
-run with input coming from the <em>standard input stream</em>, on
-startup Joy will first determine whether there is a file usrlib.joy in
-the current directory. <a href="#fn8" class="footnote-ref" id="fnref8"
-role="doc-noteref"><sup>8</sup></a> If there is, it is opened for
-reading. When the end is reached, or when there is no such file, the
-terminal or the designated input file is used. For any particular user
-this file might look very different – it might be empty, or it might
-might contain just a directive to include the library described next, or
-it might contain fewer or it might contain more definitions, or it might
-contain definitions of a very different kind.</p>
+a personalised file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+might look like. When Joy is run with input coming from the <em>standard
+input stream</em>, on startup Joy will first determine whether there is
+a file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+in the current directory.<a href="#fn10" class="footnote-ref"
+id="fnref10" role="doc-noteref"><sup>10</sup></a> If there is, it is
+opened for reading. When the end is reached, or when there is no such
+file, the terminal or the designated input file is used. For any
+particular user this file might look very different – it might be empty,
+or it might might contain just a directive to include the library
+described next, or it might contain fewer or it might contain more
+definitions, or it might contain definitions of a very different
+kind.</p>
 <p><a
 href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>:</p>
 <p>This <em>initial library</em> contains a disparate collection of
@@ -569,28 +583,31 @@ href="https://github.com/Wodan58/joy1/blob/master/lib/agglib.joy">agglib.joy</a>
 <p>This <em>aggregate library</em> contains definitions of operators and
 combinators most of which are applicable to all of the three
 <em>aggregate</em> datatypes such as <em>list</em>s, <em>string</em>s
-and <em>set</em>s. (Note that the next library seqlib.joy is
-specifically for sequence datatypes such as lists and strings.)</p>
-<p>The agglib.joy library contains definitions of several unary and
-binary operators for building special cases of these datatypes, and for
-accessing parts of these datatypes. There are also some ("dipped")
-variants which operate not on the top of the stack but one below. The
-combinators in this library are mainly for traversing these datatypes.
-(At the end there are a few definitions of statistical operators, but in
-the future these might be moved to a more extensive statistics
-library.)</p>
+and <em>set</em>s. (Note that the next library <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/seqlib.joy">seqlib.joy</a>
+is specifically for sequence datatypes such as lists and strings.)</p>
+<p>The <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/agglib.joy">agglib.joy</a>
+library contains definitions of several unary and binary operators for
+building special cases of these datatypes, and for accessing parts of
+these datatypes. There are also some ("dipped") variants which operate
+not on the top of the stack but one below. The combinators in this
+library are mainly for traversing these datatypes. (At the end there are
+a few definitions of statistical operators, but in the future these
+might be moved to a more extensive statistics library.)</p>
 <p><a
 href="https://github.com/Wodan58/joy1/blob/master/lib/seqlib.joy">seqlib.joy</a>:</p>
 <p>This <em>sequence library</em> contains definitions of functions
 specific to the <em>sequence datatypes</em> such as lists and strings.
-When this library is loaded, it ensures that the agglib.joy library will
-also be loaded. This library contains definitions of functions for
-reversing lists or strings, for flattening lists of sequences, for
-generating lists of various subsequences of sequences, sorting and
-merging of sequences and inserting into and deleting from sequences. (At
-the end there are a few definitions of functions applicable to
-<em>tree</em>s or recursive lists, but in the future these might be
-moved to a more extensive tree library.)</p>
+When this library is loaded, it ensures that the <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/agglib.joy">agglib.joy</a>
+library will also be loaded. This library contains definitions of
+functions for reversing lists or strings, for flattening lists of
+sequences, for generating lists of various subsequences of sequences,
+sorting and merging of sequences and inserting into and deleting from
+sequences. (At the end there are a few definitions of functions
+applicable to <em>tree</em>s or recursive lists, but in the future these
+might be moved to a more extensive tree library.)</p>
 <p><a
 href="https://github.com/Wodan58/joy1/blob/master/lib/numlib.joy">numlib.joy</a>:</p>
 <p>This <em>numerical library</em> contains definitions of functions and
@@ -598,7 +615,7 @@ combinators for numerical work on integers and floating numbers, some
 convenience predicates such as positive, negative, odd, even and prime,
 some standard functions such as factorial, fibonacci, greatest common
 divisor and temperature conversion. Also included are methods for
-finding roots of quadratic equations and Newton's method for finding
+finding roots of quadratic equations and Newton’s method for finding
 solutions of equations in one variable.</p>
 <p><a
 href="https://github.com/Wodan58/joy1/blob/master/lib/symlib.joy">symlib.joy</a>:</p>
@@ -608,8 +625,11 @@ translations from one notation to another. There is a <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/symtst.joy">symtst.joy</a>
 test file and its <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/symtst.out">symtst.out</a>
-output. This library is currently used by the special libraries
-grmlib.joy and plglib.joy, see below.</p>
+output. This library is currently used by the special libraries <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/grmlib.joy">grmlib.joy</a>
+and <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/plglib.joy">plglib.joy</a>,
+see below.</p>
 <p>The following <em>special libraries</em> contain definitions of
 operators and combinators that are very specific to a particular field
 or problem.</p>
@@ -658,7 +678,9 @@ href="https://github.com/Wodan58/joy1/blob/master/lib/plglib.joy">plglib.joy</a>
 <p>A library for <em>propositional logic</em> using semantic tableaux
 for determining whether a formula is a tautology (or for determining
 satisfiability). This library depends on (and loads) the <em>symbolic
-library</em> symlib.joy. There is a <a
+library</em> <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/symlib.joy">symlib.joy</a>.
+There is a <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/plgtst.joy">plgtst.joy</a>
 file of test input and its <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/plgtst.out">plgtst.out</a>
@@ -667,8 +689,9 @@ output.</p>
 href="https://github.com/Wodan58/joy1/blob/master/lib/grmlib.joy">grmlib.joy</a>:</p>
 <p>A <em>grammar library</em> for regular expressions and context free
 grammars. Both parsing and generating are supported. This library
-depends on (and loads) the <em>symbolic library</em> symlib.joy. There
-is a <a
+depends on (and loads) the <em>symbolic library</em> <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/symlib.joy">symlib.joy</a>.
+There is a <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/grmtst.joy">grmtst.joy</a>
 test input and its <a
 href="https://github.com/Wodan58/joy1/blob/master/lib/grmtst.out">grmtst.out</a>
@@ -691,124 +714,155 @@ extensive Joy manual in HTML format.</p>
 <p>Several Mandelbrot programs in Joy by Nick Forde et. al. collected by
 Nick Forde.</p>
 <h2 id="TOC-9"><strong>Miscellaneous features</strong></h2>
-<p>Joy has a help command to remind users of the names of currently
-defined symbols. The command does not expect any parameters on the
-stack, and it does not affect the stack. The effect is to write all user
-defined symbols and all inbuilt symbols to the output which is normally
-the screen. The list begins with the most recently defined symbols,
-typically those specially defined just for the current run, then the
-library symbols and finally the inbuilt symbols. The help command is
-just a factor:</p>
+<p>Joy has a <code>help</code> command to remind users of the names of
+currently defined symbols. The command does not expect any parameters on
+the stack, and it does not affect the stack. The effect is to write all
+user defined symbols and all inbuilt symbols to the output which is
+normally the screen. The list begins with the most recently defined
+symbols, typically those specially defined just for the current run,
+then the library symbols and finally the inbuilt symbols. The help
+command is just a factor:</p>
 <pre><code>        help.</code></pre>
 <p>More details about a particular symbol can be obtained by the
-helpdetail operator. It expects a list of atoms on the stack and gives a
-short message for each symbol. If the symbol is defined, then the
-message consists of the <em>definition</em> for the symbol. If the
-symbol is inbuilt, then the message consists of a brief description of
-its usage.</p>
+<code>helpdetail</code> operator. It expects a list of atoms on the
+stack and gives a short message for each symbol. If the symbol is
+defined, then the message consists of the <em>definition</em> for the
+symbol. If the symbol is inbuilt, then the message consists of a brief
+description of its usage:</p>
 <pre><code>        [ swap step product ]  helpdetail.</code></pre>
-<p>asks for detailed help about the inbuilt operator swap, the inbuilt
-combinator step and the defined operator product. The message is</p>
-<pre><code>        swap   :   X Y  -&gt;  Y X
-          Interchanges X and Y on top of the stack.
-        step   :   A [P]  -&gt;  ...
-          Pushing successive members of aggregate A onto stack,
-          executes P for each.
+<p>asks for detailed help about the inbuilt operator <code>swap</code>,
+the inbuilt combinator <code>step</code> and the defined operator
+<code>product</code>.<a href="#fn11" class="footnote-ref" id="fnref11"
+role="doc-noteref"><sup>11</sup></a> The message is:</p>
+<pre><code>        swap    :   X Y  -&gt;  Y X.
+        Interchanges X and Y on top of the stack.
+
+        step    :   A [P]  -&gt;  ....
+        Sequentially putting members of aggregate A onto stack,
+        executes P for each member of A.
+
         product  ==
-          1  swap  [*]  step</code></pre>
+            1 [*] fold</code></pre>
 <p>For the inbuilt primitives the -&gt; arrow indicates the type of the
 symbol. To the left of the arrow are the required parameters in
 ascending order. To the right of the arrow are the results, where
 possible. If that cannot be specified in this simple notation, a
-dieresis ... is used.</p>
+ellipsis … is used.</p>
 <p>As described in section 2, Joy already allows escapes to the
 operating system at the level of input lines. Another such escape is at
-the level of Joy operators. The system operator expects a string as a
-parameter and passes that to the operating system. A typical use might
-be:</p>
+the level of Joy operators. The <code>system</code> operator expects a
+string as a parameter and passes that to the operating system. A typical
+use might be:</p>
 <pre><code>        &quot;directory&quot;  system</code></pre>
 <p>The string parameter does not have to be pushed as a literal, it can
 equally well have been constructed. For example, the system operator can
-be used as in the following. My personal USRLIB.JOY contains the
-<em>definition</em></p>
+be used as in the following. My personal <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+contains the <em>definition</em>:</p>
 <pre><code>        editor  ==  &quot;EDIT/TECO &quot;</code></pre>
-<p>The general STDLIB.JOY file contains</p>
+<p>The general <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+file contains:</p>
 <pre><code>        edit  ==  dup editor swoncat system include</code></pre>
 <p>Then, to edit and immediately read in a file, say TEST.JOY, I can use
-the Joy command</p>
+the Joy command:</p>
 <pre><code>        &quot;TEST.JOY&quot;  edit</code></pre>
-<p>This calls the edit operator to make a duplicate of the string
-"TEST.JOY". One copy is concatenated with the editor string, and the
-result passed on to the system. That will call my favourite editor to
-edit the file. When the editing is finished, the original string
+<p>This calls the <code>edit</code> operator to make a duplicate of the
+string "TEST.JOY". One copy is concatenated with the editor string, and
+the result passed on to the system. That will call my favourite editor
+to edit the file. When the editing is finished, the original string
 "TEST.JOY" is used to include the edited file. Note that other users
 might put a different name of their editor in their own USRLIB.JOY. For
-example, Unix users would probably put</p>
+example, Unix users would probably put:</p>
 <pre><code>        editor  ==  &quot;vi &quot;</code></pre>
-<p>The <em>definition</em> of edit in STDLIB.JOY remains unchanged.</p>
-<hr />
-<section class="footnotes footnotes-end-of-document"
+<p>The <em>definition</em> of edit in <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>
+remains unchanged.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
 role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>If an integer exceeds
-<code>maxint</code>, it is automatically converted to a floating point
-with loss of precision. As the world is now 64 bits, the number of
-decimal digits is 19.<a href="#fnref1" class="footnote-back"
+<li id="fn1"><p>If an integer on input exceeds <code>maxint</code>, it
+is automatically converted to a floating point with loss of precision.
+As the world is now 64 bits, the maximum number of decimal digits is
+19.<a href="#fnref1" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>In Joy. Other implementations do not
+<li id="fn2"><p>The grammar of the compound definition is not complete
+as presented. For a full explanation, see the comments at the start of
+<a
+href="https://github.com/Wodan58/joy1/blob/master/main.c">main.c</a>.<a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>The legacy version of Joy allowed space characters
+around the full stop between module and member. These space characters
+are no longer allowed.<a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>In Joy. Other implementations, such as joy1, do not
 clear the stack. Joy must clear the stack because it has become invalid.
 Definitions are stored at one end of the memory array and can overwrite
-what comes after that, including the stack.<a href="#fnref2"
+what comes after that, including the stack.<a href="#fnref4"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>Or the directory where the joy binary
-is located. The current directory is tried first, then the directory
-where the joy binary is located. It is very convenient to have the
-possibility to store the libraries in another directory than the current
-one. The only thing needed to chain load other libraries is to specify
-the path to inilib.joy in the file usrlib.joy. From then on
-<code>libload</code> can be used to load the rest of the libraries.<a
-href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>Or the directory where the joy binary
-is located. The current directory is tried first, then the directory
-where the joy binary is located. It is very convenient to have the
-possibility to store the libraries in another directory than the current
-one. The only thing needed to chain load other libraries is to specify
-the path to inilib.joy in the file usrlib.joy. From then on
-<code>libload</code> can be used to load the rest of the libraries.<a
-href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5" role="doc-endnote"><p>The first parameter need not be a
-filename. Parameters can be options, filenames, or other parameters. The
-other parameters must be positive numbers and options start with
-<code>-</code>. The three types of parameters are mutually exclusive and
-thus can be given in any order. Filename parameters cannot start with
-<code>-</code> or a digit, but they can be preceded by a pathname, such
-as <code>./</code>. The option <code>-h</code> is available to show what
-options there are. The options are not fixed, it depends on how the
-binary was created.<a href="#fnref5" class="footnote-back"
+<li id="fn5"><p>Or the directory where the joy binary is located. The
+current directory is tried first, then the directory where the joy
+binary is located. It is very convenient to have the possibility to
+store the libraries in another directory than the current one. The only
+thing needed to chain load other libraries is to specify the path to <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>
+in the file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>.
+From then on <code>libload</code> can be used to load the rest of the
+libraries.<a href="#fnref5" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
-<li id="fn6" role="doc-endnote"><p><code>get</code> reads from standard
-input. If the standard input is read from a file then <code>get</code>
-also reads from that file. That is how it is in the <a
-href="https://github.com/Wodan58/joy0">original joy</a> and that is how
-it should be. The proper behaviour of redirection is that it should make
-no difference whether input comes from a keyboard or from a file.<a
-href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7" role="doc-endnote"><p>Or the directory where the joy binary
-is located. The current directory is tried first, then the directory
-where the joy binary is located. It is very convenient to have the
-possibility to store the libraries in another directory than the current
-one. The only thing needed to chain load other libraries is to specify
-the path to inilib.joy in the file usrlib.joy. From then on
-<code>libload</code> can be used to load the rest of the libraries.<a
+<li id="fn6"><p>Or the directory where the joy binary is located. The
+current directory is tried first, then the directory where the joy
+binary is located. It is very convenient to have the possibility to
+store the libraries in another directory than the current one. The only
+thing needed to chain load other libraries is to specify the path to <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>
+in the file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>.
+From then on <code>libload</code> can be used to load the rest of the
+libraries.<a href="#fnref6" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>The first parameter need not be a filename. Parameters
+can be options, filenames, or other parameters. The other parameters
+must be positive numbers and options start with <code>-</code>. The
+three types of parameters are mutually exclusive and thus can be given
+in any order. Filename parameters cannot start with <code>-</code> or a
+digit, but they can be preceded by a pathname, such as <code>./</code>.
+The option <code>-h</code> is available to show what options there are.
+The options are not fixed, it depends on how the binary was created.<a
 href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8" role="doc-endnote"><p>Or the directory where the joy binary
-is located. The current directory is tried first, then the directory
-where the joy binary is located. It is very convenient to have the
-possibility to store the libraries in another directory than the current
-one. The only thing needed to chain load other libraries is to specify
-the path to inilib.joy in the file usrlib.joy. From then on
-<code>libload</code> can be used to load the rest of the libraries.<a
-href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p><code>get</code> reads input from the stack of input
+files. If input comes from a file <code>get</code> reads from that file.
+That is how it was in the <a
+href="https://github.com/Wodan58/joy0">original joy</a> and that is how
+it should be.<a href="#fnref8" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>Or the directory where the joy binary is located. The
+current directory is tried first, then the directory where the joy
+binary is located. It is very convenient to have the possibility to
+store the libraries in another directory than the current one. The only
+thing needed to chain load other libraries is to specify the path to <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>
+in the file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>.
+From then on <code>libload</code> can be used to load the rest of the
+libraries.<a href="#fnref9" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>Or the directory where the joy binary is located. The
+current directory is tried first, then the directory where the joy
+binary is located. It is very convenient to have the possibility to
+store the libraries in another directory than the current one. The only
+thing needed to chain load other libraries is to specify the path to <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/inilib.joy">inilib.joy</a>
+in the file <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/usrlib.joy">usrlib.joy</a>.
+From then on <code>libload</code> can be used to load the rest of the
+libraries.<a href="#fnref10" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn11"><p>The definition of product is available in the <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/seqlib.joy">seqlib.joy</a>
+library. That library must have been loaded first.<a href="#fnref11"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>

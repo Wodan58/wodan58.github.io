@@ -17,6 +17,7 @@ various aspects of the language.</p>
 <p><em>Keywords:</em> lambda calculus, combinatory logic, lambda
 abstraction, function application, function composition, postfix
 notation</p>
+<hr />
 <h1 id="introduction">Introduction</h1>
 <p>The language Joy is a purely functional programming language. Whereas
 all other functional programming languages are based on the application
@@ -38,13 +39,13 @@ higher order functions in other languages, they minimise the need for
 recursive and non-recursive definitions. Joy has a rich but simple
 algebra, and its programs are easily manipulated by hand and by other
 programs.</p>
-<p>Joy is an attempt to design a high level programming language which
+<p>Joy is an attempt to design a high-level programming language which
 is based on a computational paradigm that is different from the three
 paradigms on which existing functional languages are based. Two of these
 paradigms have been criticised in the literature, and Joy aims to
 overcome the complexity of the third by a simpler mechanism.</p>
 <p>The remainder of this paper is organised as follows. The next two
-section of the paper assume some familiarity with three paradigms: the
+sections of the paper assume some familiarity with three paradigms: the
 lambda calculus, combinatory calculus and, to a lesser extent, the basic
 notions of category theory. The purpose of these sections is to contrast
 Joy with these paradigms and to motivate the departure. The other
@@ -80,7 +81,7 @@ to be unary. The binary application operation is still written in infix
 notation, and by making it left-associative some parentheses can be
 saved. Furthermore, since it is the <em>only</em> binary operation, the
 <code>@</code> symbol is simply left out.</p>
-<p>The notation makes the expression</p>
+<p>The notation makes the expression:</p>
 <pre><code>        +  2  3</code></pre>
 <p>potentially ambiguous. On one reading it is a prefix expression,
 entirely equivalent to the infix <code>2 + 3</code> or the postfix
@@ -130,25 +131,26 @@ in <a href="joybibl.html#40">Curry and Feys (1958)</a>. Variables can
 indeed be eliminated completely, provided some appropriate higher order
 functions or combinators are introduced. Most such systems use as their
 basis a translation scheme from the lambda calculus to a combinatory
-calculus which only <em>needs</em> two combinators, the S combinator and
-the K combinator. Abstraction is an operation in the <em>object
-language</em>, the lambda calculus. In combinatory logic this operation
-is replaced by an operation in the <em>metalanguage</em>. This new
-operation is called bracket abstraction, essentially a compilation.
-Since all lambda calculus expressions can be compiled in this manner,
-the language of combinators is again Turing complete. The simple
-compilation scheme yields translations whose length can be exponential
-in the length of the source expression. Using additional combinators it
-is possible to produce translations of acceptable lengths. The
-combinators <code>S</code> and <code>K</code> can be used to define all
-other combinators one might desire, or even on their own to eliminate
-variables and hence lambda abstractions <code>lambda x (..x..)</code>.
-Even recursion can be handled with the “paradoxical” Y combinator which
-is equivalent to a (hideous) expression just in <code>S</code> and
-<code>K</code>. A similar <code>y</code> combinator in Joy is discussed
-in section 5. <code>Y</code> and <code>y</code> cannot be given a finite
-type, so they are not definable in typed languages. Joy, like Lisp, is
-untyped, hence it requires runtime checks.</p>
+calculus which only <em>needs</em> two combinators, the <code>S</code>
+combinator and the <code>K</code> combinator. Abstraction is an
+operation in the <em>object language</em>, the lambda calculus. In
+combinatory logic this operation is replaced by an operation in the
+<em>metalanguage</em>. This new operation is called bracket abstraction,
+essentially a compilation. Since all lambda calculus expressions can be
+compiled in this manner, the language of combinators is again Turing
+complete. The simple compilation scheme yields translations whose length
+can be exponential in the length of the source expression. Using
+additional combinators it is possible to produce translations of
+acceptable lengths. The combinators <code>S</code> and <code>K</code>
+can be used to define all other combinators one might desire, or even on
+their own to eliminate variables and hence lambda abstractions
+<code>lambda x (..x..)</code>. Even recursion can be handled with the
+“paradoxical” Y combinator which is equivalent to a (hideous) expression
+just in <code>S</code> and <code>K</code>. A similar <code>y</code>
+combinator in Joy is discussed in section 5. <code>Y</code> and
+<code>y</code> cannot be given a finite type, so they are not definable
+in typed languages. Joy, like Lisp, is untyped, hence it requires
+runtime checks.</p>
 <p>So we can do without abstraction but with application together with
 first and higher order functions. The resultant system is simpler, but
 because it is so low level, it has never been proposed as a programming
@@ -185,7 +187,7 @@ compositions and their types. Like Backus, Meertens develops a system of
 combining functions that is more suitable to formal manipulation than
 the classical combinators.</p>
 <p>Consider a long expression, here again written explicitly with the
-application operator <code>@</code>. Note the need for parentheses.</p>
+application operator <code>@</code>. Note the need for parentheses:</p>
 <pre><code>    square @ (first @ (rest @ (reverse @ [1 2 3 4])))   --&gt;  9</code></pre>
 <p>All the functions are unary, and unary functions can be composed. The
 composition of unary functions is again a unary function, and it can be
@@ -211,14 +213,14 @@ manipulation. The only trouble is that the resultant composition
 expression still has to be applied to an argument, the list
 <code>[1 2 3 4]</code>. If we could elevate that list to the status of a
 function, we could eliminate application entirely from the expression
-and write</p>
+and write:</p>
 <pre><code>    square . first . rest . reverse . [1 2 3 4]         --&gt;  9</code></pre>
 <p>The numeral <code>9</code> would also need to denote a function. Can
 this be done?</p>
 <p>Indeed it can be. We just let numerals and list constants denote
 functions which take a fixed dummy argument, written <code>?</code>, as
 argument and return a number or a list as value. So we should now
-write</p>
+write:</p>
 <pre><code>  (square . first . rest . reverse . [1 2 3 4])  @  ?   --&gt;   9 @ ?</code></pre>
 <p>We just have to pretend that <code>@ ?</code> is not there, that
 everything is a function anyhow. The dummy argument device is routinely
@@ -227,7 +229,7 @@ superior view.</p>
 <p>All this works well with unary functions, but how is one to deal with
 functions of several arguments? In category theory there is the notion
 of <em>products</em>, and in the category of functions it is a way of
-dealing with interrelated pairs — function pairs to produce value pairs
+dealing with interrelated pairs – function pairs to produce value pairs
 of a type pair. (Backus in his FP used a similar mechanism,
 <em>construction</em> which used function tuples to produce value
 tuples. But the function tuples ultimately need the application
@@ -262,7 +264,7 @@ exciting hardware applications, see <a href="joybibl.html#48">Hains and
 Foisy (1993)</a>.</p>
 <p>Many categorical concepts have been successfully used in otherwise
 applicative languages, such as the polymorphically typed Haskell, see
-the recent <a href="joybibl.html#28">Bird and de Moor (1997)</a> for the
+the recent <a href="joybibl.html#29">Bird and de Moor (1997)</a> for the
 now mature theory and for many references. Compact “pointfree”
 definitions in the style of <code>second-last</code> above are used
 routinely, but many need additional operators, even application, for
@@ -278,16 +280,16 @@ given list to produce a list of just <code>1</code>s, then take the sum
 of those.</p>
 <p>At least for handling functions of several arguments categorical
 concepts are rather heavy artillery. Are there other ways? Consider
-again the runnning example. Written in plain prefix notation it needs no
+again the running example. Written in plain prefix notation it needs no
 parentheses at all:</p>
 <pre><code>    square  first  rest  reverse  [1 2 3 4]             --&gt;  9</code></pre>
 <p>An expression with binary operators such as the infix expression
 <code>((6 - 4) * 3) + 2</code> is written in prefix notation also
-without parentheses as</p>
+without parentheses as:</p>
 <pre><code>        +     *     -     6     4     3     2           --&gt;  8</code></pre>
 <p>(Note in passing that the four consecutive numerals look suspiciously
 like a list of numbers.) We now have to make sense of the corresponding
-compositional notation</p>
+compositional notation:</p>
 <pre><code>       (+  .  *  .  -  .  6  .  4  .  3  .  2)  @  ?    --&gt;  8 @ ?</code></pre>
 <p>Clearly the “<code>2</code>-function” is applied to the dummy
 argument. But the other “number functions” also have to be applied to
@@ -349,7 +351,7 @@ effect of higher order functions is obtained by first order functions
 which take such quotations as parameters.</p>
 <h1 id="a-little-tutorial-on-joy">A little tutorial on Joy</h1>
 <p>To add two integers, say 2 and 3, and to write their sum, you type
-the program</p>
+the program:</p>
 <pre><code>        2  3  +</code></pre>
 <p>This is how it works internally: the first numeral causes the integer
 2 to be pushed onto a stack. The second numeral causes the integer 3 to
@@ -398,7 +400,7 @@ element, for example <code>2 [3 4] cons</code> yields
 are not commutative, it is often useful to use <code>swoncat</code> and
 <code>swons</code> which conceptually perform a <code>swap</code> first.
 Lisp programmers should note that there is no notion of dotted pairs in
-Joy. Lists are the most important sequence types, the other are strings
+Joy. Lists are the most important sequence types, the others are strings
 of characters. Sequences are ordered, but there are also sets (currently
 only implemented as wordsize bitstrings, with the obvious limitations).
 Sequences and sets constitute the aggregate types. Where possible
@@ -409,7 +411,7 @@ that they expect something specific on top of the stack. But unlike
 operators they execute what they find on top of the stack, and this has
 to be the quotation of a program, enclosed in square brackets. One of
 these is a combinator for <code>map</code>ping elements of one list via
-a function to another list. Consider the program</p>
+a function to another list. Consider the program:</p>
 <pre><code>        [1 2 3 4]  [dup *]  map</code></pre>
 <p>It first pushes the list of integers and then the quoted program onto
 the stack. The <code>map</code> combinator then removes the list and the
@@ -448,7 +450,7 @@ If its execution yields truth, then the then-part is executed, which is
 second from the top. Otherwise the else-part on top is executed. The
 order was chosen because in most cases the three parts will be pushed
 just before <code>ifte</code> executes. For example, the following
-yields the absolute value of an integer, note the empty else-part.</p>
+yields the absolute value of an integer, note the empty else-part:</p>
 <pre><code>        [0 &lt;]  [0 swap -]  []  ifte</code></pre>
 <p>Sometimes it is necessary to affect the elements just below the top
 element. This might be to add or swap the second and third element, to
@@ -476,17 +478,17 @@ hence there is no substitution of actual parameters for formal
 parameters. Definitions consist of a new symbol to be defined, then the
 <code>==</code> symbol, and then a program. After the first definition
 below, the symbol <code>square</code> can be used in place of
-<code>dup *</code>.</p>
+<code>dup *</code>:</p>
 <pre><code>        square   ==   dup  *
         size     ==   [pop 1]  map  sum</code></pre>
 <p>The second definition is the counterpart of the definition of
-<code>length</code> in Bird and de Moor (1997 p 10) mentioned in the
-previous section, except that it is called <code>size</code> because it
-also applies to sets. (Note that no local definition of <code>one</code>
-is needed.) As in other programming languages, definitions may be
-recursive, but the effect of recursion can be obtained by other means.
-Joy has several combinators which make recursive execution of programs
-more succinct.</p>
+<code>length</code> in <a href="joybibl.html#29">Bird and de Moor (1997
+p 10)</a> mentioned in the previous section, except that it is called
+<code>size</code> because it also applies to sets. (Note that no local
+definition of <code>one</code> is needed.) As in other programming
+languages, definitions may be recursive, but the effect of recursion can
+be obtained by other means. Joy has several combinators which make
+recursive execution of programs more succinct.</p>
 <p>One of these is the <code>genrec</code> combinator which takes four
 program parameters in addition to whatever data parameters it needs.
 Fourth from the top is an if-part, followed by a then-part. If the
@@ -500,7 +502,7 @@ will then execute the bundled form, either with <code>i</code> or with
 <del>app2</del><code>unary2</code>, or some other combinator. The
 following pieces of code, <em>without any definitions</em>, compute the
 factorial, the (naive) Fibonacci and quicksort. The four parts are here
-aligned to make comparisons easier.</p>
+aligned to make comparisons easier:</p>
 <pre><code>  [null ] [succ] [dup pred        ] [i *                     ] genrec
   [small] [    ] [pred dup pred   ] [unary2 +                ] genrec  (* app2 *)
   [small] [    ] [uncons [&gt;] split] [unary2 swapd cons concat] genrec  (* app2 *)</code></pre>
@@ -531,7 +533,7 @@ returns the list of all permutations of that sequence. For example, from
 sequences of 4 elements such as the string <code>"abcd"</code>, the
 heterogeneous list <code>[foo 7 'A "hello"]</code> or the quotation
 <code>[[1 2 3] [dup *] map reverse]</code> it will produce the list of
-24 permutation strings or lists or quotations.</p>
+24 permutation strings or lists or quotations:</p>
 <pre><code>1               [ small ]
 2               [ unitlist ]
 3               [ uncons ]
@@ -575,13 +577,13 @@ stack, then <code>[F S T | R]</code> is the program or list or stack
 whose first, second and third elements are <code>F</code>,
 <code>S</code> and <code>T</code>, and whose remainder is
 <code>R</code>. The first two equations express that programs are
-evaluated sequentially from left to right.</p>
+evaluated sequentially from left to right:</p>
 <pre><code>EvP( [] , S)  =  S
 EvP( [A | P] , S)  =  EvP( P , EvA(A, S))</code></pre>
 <p>The remaining equations concern atomic programs. This small selection
 is restricted to those literals, operators and combinators that were
 mentioned in the paper. The exposition also ignores the data types
-character, string and set.</p>
+character, string and set:</p>
 <pre><code>(Push literals:)
   EvA( numeral , S)  =  [number | S]  (e.g.  7  42  -123 )
   EvA( true    , S)  =  [true   | S]  (ditto &quot;false&quot;)
@@ -680,7 +682,7 @@ that is only correct for a small fragment.</p>
 <code>a)</code> to <code>f)</code> represent the stack growing to the
 right followed by the remainder of the program. The latter now has to be
 read as a sequence of instructions, or equivalently as denoting the
-composition of unary stack functions.</p>
+composition of unary stack functions:</p>
 <pre><code>    1  a)                             2   3   +   4   *
        b)     2                       3   +   4   *
        c)     2   3                   +   4   *
@@ -706,12 +708,12 @@ the same function. In other words, programs <code>Q1</code> and
 <code>Q2</code> can replace each other in concatenations. This can serve
 as a rule of inference for a rewriting system because identity of
 functions is of course already an equivalence.</p>
-<p>To illustrate rewriting in Joy, the “paradoxical” Y combinator for
-recursion in the lambda calculus and combinatory logic has a counterpart
-in Joy, the <code>y</code> combinator defined recursively in the first
-definition below. Then that needs to be the only recursive definition.
-Alternatively it can be defined without recursion as in the second
-definition.</p>
+<p>To illustrate rewriting in Joy, the “paradoxical” <code>Y</code>
+combinator for recursion in the lambda calculus and combinatory logic
+has a counterpart in Joy, the <code>y</code> combinator defined
+recursively in the first definition below. Then that needs to be the
+only recursive definition. Alternatively it can be defined without
+recursion as in the second definition:</p>
 <pre><code>        y   ==  dup  [[y] cons]  dip  i
         y   ==  [dup cons]  swap  concat  dup  cons  i</code></pre>
 <p>The second definition is of greater interest. It expects a program on
@@ -742,7 +744,7 @@ the extra two <code>pop</code>s and the extra <code>dip</code> which are
 needed to bypass the quotation constructed by line 9 above. The third
 definition is discussed below. In the three bodies the recursive step is
 initiated by <code>f1</code>, <code>i</code> and <code>x</code>
-respectively.</p>
+respectively:</p>
 <pre><code>f1  ==    [    null]  [    succ]  [ dup pred      f1 *]  ifte
 f2  ==  [ [pop null]  [pop succ]  [[dup pred] dip i  *]  ifte ]  y
 f3  ==  [ [pop null]  [pop succ]  [[dup pred] dip x  *]  ifte ]  x</code></pre>
@@ -772,7 +774,7 @@ ever constructed.</p>
 <p>To return to rewriting, Joy has the extensional composition
 constructor concatenation satisfying the substitution rule. Joy has only
 one other constructor, quotation, but that is <em>intensional</em>. For
-example, altough the two stack functions <code>succ</code> and
+example, although the two stack functions <code>succ</code> and
 <code>1 +</code> are identical, the quotations <code>[succ]</code> and
 <code>[1 +]</code> are not, since for instance their <code>size</code>s
 or their <code>first</code>s are different. However, most combinators do
@@ -794,9 +796,9 @@ number <code>x</code> by 2 gives the same result as adding it to itself.
 The second says that the <code>size</code> of a <code>reverse</code>d
 list is the same as the <code>size</code> of the original list in Joy
 algebra. The second line gives the same equations <em>without
-variables</em> in Joy.</p>
+variables</em> in Joy:</p>
 <pre><code>        2 * x  =  x + x                 size(reverse(x))  =  size(x)
-        2  *   ==   dup  +              reverse  size   ==   size</code></pre>
+        2  *   ==   dup  +              reverse  size    ==  size</code></pre>
 <p>Other equivalences express algebraic properties of various
 operations. For example the predecessor function is the inverse of the
 successor function, so their composition is the identity function
@@ -805,7 +807,7 @@ values is idempotent. The less than relation <code>&lt;</code> is the
 converse of the greater than relation <code>&gt;</code>. Inserting a
 number with <code>cons</code> into a list of numbers and then taking the
 <code>sum</code> of that gives the same result as first taking the sum
-of the list and then adding the other number.</p>
+of the list and then adding the other number:</p>
 <pre><code>        succ  pred   ==   id            dup  and   ==   id
         &lt;   ==   swap &gt;                 cons  sum  ==   sum  +</code></pre>
 <p>Some properties of operations have to be expressed by combinators. In
@@ -817,7 +819,7 @@ homomorphism from lists with concatenation to numbers with addition. The
 last example uses both combinators to express that multiplication
 distributes from the right over addition. Note that the program
 parameter for <del>app2</del><code>unary2</code> is first constructed
-from the multiplicand and <code>*</code>.</p>
+from the multiplicand and <code>*</code>:</p>
 <pre><code>        [+]  dip  +   ==   +  +
         and  not      ==   [not]  unary2  or     (* app2 *)
         concat  size  ==   [size]  unary2  +     (* app2 *)
@@ -839,7 +841,7 @@ requires mapping each sublist by <code>[map] cons map</code>.
 Transposition is a list operation which abstractly interchanges rows and
 columns.</p>
 <p>Such laws are proved by providing dummy parameters to both sides and
-showing that they reduce to the same result. For example</p>
+showing that they reduce to the same result. For example:</p>
 <pre><code>        M  [P]  [transpose]  dip  [map]  cons  map
         M  [P]  [map]  cons  map  transpose</code></pre>
 <p>reduce, from the same matrix <code>M</code>, along two different
@@ -874,7 +876,7 @@ EvA( s, [F G X | S])  =  EvP(F,[X | T])  where EvP(G, [X | S]) = T</code></pre>
 <code>EvP</code> for programs, hence they will always be quotations. The
 required translation scheme is as in the first line below, where the
 primed variables represent the translations of their unprimed
-counterparts.</p>
+counterparts:</p>
 <pre><code>    K y   =&gt;    [&#39;y] k        S f g   =&gt;    [&#39;g] [&#39;f] s
     K y x =&gt; &#39;x [&#39;y] k        S f g x =&gt; &#39;x [&#39;g] [&#39;f] s</code></pre>
 <p>The second line shows the translations for the combinatory expression
@@ -885,7 +887,7 @@ for in the quote early in section 3. Since <code>x</code> is an
 argument, its translation <code>'x</code> has to push something onto the
 Joy stack.</p>
 <p>Alternatively, <code>s</code>, <code>k</code> and others may be
-variously defined from</p>
+variously defined from:</p>
 <pre><code> k == [pop ] dip i            s == cons2 b
  c == [swap] dip i        cons2 == [[dup] dip cons swap] dip cons
  w == [dup ] dip i         cons == dup cons2 pop
@@ -938,14 +940,14 @@ has an everpresent extra element which is conceptually on top of the
 stack, a state consisting of variable-value pairs. Most activity of the
 stack occurs below the state, only the <em>purely functional</em>
 <code>fetch X</code> and <code>assign Y</code> perform a read or write
-from the state and and they perform a push or a pop on the remainder of
-the stack. The authors also propose uses of <em>continuations</em> for
-such a language. Adapting these ideas to Joy is still on the backburner,
-and so are many other ideas like the relation of the stack to linear
-logic and the use of categorial grammars (nothing to do with category
-theory) for the rewriting. Since the novelty of Joy is for programming
-in the small, no object oriented extensions are planned beyond a current
-simple device for hiding selected auxiliary definitions from the outside
+from the state and they perform a push or a pop on the remainder of the
+stack. The authors also propose uses of <em>continuations</em> for such
+a language. Adapting these ideas to Joy is still on the backburner, and
+so are many other ideas like the relation of the stack to linear logic
+and the use of categorial grammars (nothing to do with category theory)
+for the rewriting. Since the novelty of Joy is for programming in the
+small, no object oriented extensions are planned beyond a current simple
+device for hiding selected auxiliary definitions from the outside
 view.</p>
 <p>For any algebra, any relational structure, any programming language
 it is possible to have alternative sets of primitives and alternative

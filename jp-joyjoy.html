@@ -20,7 +20,7 @@ on top of the stack and executes it. The following is the design of Joy
 interpreter joy written in Joy itself. The first version of the
 interpreter is merely a reminder that Joy already has a combinator, the
 <code>i</code> combinator, which removes a program from the top of the
-stack and executes it.</p>
+stack and executes it:</p>
 <pre><code>joy  ==  i </code></pre>
 <p>The next version makes explicit the fact that Joy programs are
 sequences which are executed by stepping through the members of the
@@ -28,8 +28,9 @@ sequence. For each member in the sequence an appropriate action is
 taken. The <code>step</code> combinator will indiscriminately leave
 literals, operators and combinators on top of the stack. But any
 operators and combinators <em>on top of the stack</em> cannot actually
-be executed. However, their unitlist can be executed by the i
-combinator. So this is the next version of the interpreter:</p>
+be executed. However, their <code>unitlist</code> can be executed by the
+<code>i</code> combinator. So this is the next version of the
+interpreter:</p>
 <pre><code>joy  == 
         [ unitlist 
           i ] 
@@ -51,15 +52,15 @@ If the top number is any list
 and executing the appropriate action. So in the previous version of the
 interpreter we must replace the <code>unitlist</code> by something more
 specific. It has to consist of several cases, for the various literals,
-operators and combinators. The opcase operator is suitable for just
-that. It expects any kind of item on top of the stack, and above that a
-list of cases. Each case is a list consisting of a test item and a
-(possibly) empty rest. The effect of the <code>opcase</code> operator is
-to remove the top item and the list of cases, and to leave behind the
-rest of case for which the item matched the test item. The last case in
-the list is the default, it does not have a test item. The default is
-returned if there was no match. For the present design step the default
-does nothing. The following is what has to replace the
+operators and combinators. The <code>opcase</code> operator is suitable
+for just that. It expects any kind of item on top of the stack, and
+above that a list of cases. Each case is a list consisting of a test
+item and a (possibly) empty rest. The effect of the <code>opcase</code>
+operator is to remove the top item and the list of cases, and to leave
+behind the rest of case for which the item matched the test item. The
+last case in the list is the default, it does not have a test item. The
+default is returned if there was no match. For the present design step
+the default does nothing. The following is what has to replace the
 <code>unitlist</code> in the interpreter:</p>
 <pre><code>      [ [ 0 ]                           (* sample number *) 
         [ [] ]                          (* sample list *) 
@@ -73,7 +74,7 @@ They have to be treated just like numbers and list:</p>
         [ true ]                        (* sample truth value *) 
         [ &quot;&quot; ]                          (* sample string *) 
         [ {} ]                          (* sample set *) </code></pre>
-<p>Similarly, other operators have to be added such as</p>
+<p>Similarly, other operators have to be added such as:</p>
 <pre><code>        [ swap pop swap ]               (* swap operator *) 
         [ cons pop cons ]               (* cons operator *) </code></pre>
 <p>For the combinators it is tempting to treat them just like
@@ -93,7 +94,7 @@ gives cases like the following:</p>
         [ dip  pop [joy] cons  dip ]    (* dip combinator *) 
         [ map  pop [joy] cons  map ]    (* map combinator *) </code></pre>
 <p>The case for the <code>i</code> combinator is unnecessarily
-inefficient, it could be optimised to</p>
+inefficient, it could be optimised to:</p>
 <pre><code>        [ i    pop             joy ]    (* i combinator *) </code></pre>
 <p>However, for uniformity this optimisation will not be used here.</p>
 <p>So that we do not lose track, here is the interpreter as designed so
@@ -128,7 +129,8 @@ things need to be fixed. Obviously the <em>binary combinator</em>s have
 to be treated in a way that is similar to the unary ones: The two
 program parameters <code>[P]</code> and <code>[Q]</code> have to be
 replaced by <code>[[P] joy]</code> and <code>[[Q] joy]</code>. This is
-best done by using the <del>app2</del>unary2 combinator as follows:</p>
+best done by using the <del>app2</del><code>unary2</code> combinator as
+follows:</p>
 <pre><code>        [[joy] cons]    unary2          (* app2 *)</code></pre>
 <p>So for the binary combinators the cases look like this:</p>
 <pre><code>                                        (* binary combinators *) 
@@ -137,8 +139,9 @@ best done by using the <del>app2</del>unary2 combinator as follows:</p>
 <p>For the <em>ternary combinator</em>s and <em>quaternary
 combinator</em>s the pattern is much the same, there are now three or
 four program parameters that need to be modified. This is easily done
-using the <del>app3</del>unary3 and <del>app4</del>unary4 combinators to
-effect the modification.</p>
+using the <del>app3</del><code>unary3</code> and
+<del>app4</del><code>unary4</code> combinators to effect the
+modification:</p>
 <pre><code>                                        (* ternary combinators *) 
         [ ifte          pop [[joy] cons] unary3   ifte   ]  (* app3 *)
                                         (* quaternary combinators *) 
@@ -157,24 +160,25 @@ defined symbols. Just as any number will do as the prototype for
 numbers, so any user defined symbol will do as the prototype for defined
 symbols. We might as well choose “joy”. When a defined symbol has been
 encountered, it is necessary to find its definition, which is the
-program that constitutes the body of that definition. The body operator
-will find that, it expects a user defined symbol on top of the stack and
-returns the defining program in quoted form. The Joy interpreter now has
-to execute this. But it is essential that the Joy interpreter should
-execute inside that quotation. So it will not do to use the
-<code>i</code> combinator, but the <code>joy</code> interpreter itself
-has to be used. Hence the case for user defined symbols is just</p>
+program that constitutes the body of that definition. The
+<code>body</code> operator will find that, it expects a user defined
+symbol on top of the stack and returns the defining program in quoted
+form. The Joy interpreter now has to execute this. But it is essential
+that the Joy interpreter should execute inside that quotation. So it
+will not do to use the <code>i</code> combinator, but the
+<code>joy</code> interpreter itself has to be used. Hence the case for
+user defined symbols is just:</p>
 <pre><code>        [ joy           body joy ] </code></pre>
 <p>The single most common case will be the call of a defined atom rather
 than an inbuilt one. To improve efficiency this case (with
 <code>joy</code>) is placed to the front of the caselist.</p>
-<p>It always possible that the interpreter is used for programs which
+<p>It is always possible that the interpreter is used for programs which
 contain operators or combinators that are part of the language (not user
 defined) but have not been given cases in the interpreter itself, either
 intentionally or through neglect. The joy interpreter should be able to
 perform reasonably for those operators and combinators. So this is where
 the default clause for the <code>opcase</code> operator comes in handy.
-When none of the listed case apply, treat the symbol as we did in the
+When none of the listed cases apply, treat the symbol as we did in the
 second version of the interpreter: take the <code>unitlist</code> and
 use the <code>i</code> combinator to execute that. Instead of using
 <code>unitlist</code> it is better to use its definition
@@ -199,16 +203,14 @@ useful to make a number of changes to the design.</p>
 <p>Firstly, the cases for the combinators of various arities contain
 common code which is repeated again and again. The interpreter becomes
 more readable if such instances are factored out and defined separately.
-There are cases for unary, binary, ternary and quaternary combinators,
-and for each of these the common code will be called <code>cr1</code>,
-<code>cr2</code>, <code>cr3</code> and <code>cr4</code>. For uniformity
-the code for <code>cr1</code> is assimilated to that of the others,
-using <del>app1</del>i. Since they are not likely to be wanted anywhere
-else, their definitions are given inside a HIDE declaration.</p>
+There are cases for unary,
+binary<code>, ternary and quaternary combinators, and for each of these the common code will be called</code>cr1<code>,</code>cr2<code>,</code>cr3<code>and</code>cr4<code>. For uniformity the code for</code>cr1<code>is assimilated to that of the others, using ~~app1~~</code>i`.
+Since they are not likely to be wanted anywhere else, their definitions
+are given inside a HIDE declaration.</p>
 <p>Secondly, it could be useful if the default case does its job not
 silently but traces out each symbol that it hands over to the Joy
 system. Such symbols are <code>dup</code>licated and then written out by
-put. This now makes the default case</p>
+<code>put</code>. This now makes the default case:</p>
 <pre><code>        [               dup put [] cons i ] </code></pre>
 <p>The interpreter joy now looks like this:</p>
 <pre><code>HIDE 
@@ -252,7 +254,7 @@ comprehensive and even complete.</p>
 to interpret itself and leaves everything else to the default clause.
 The following is the minimal Joy interpreter joy0; for variety it uses
 the optimisation for the <code>i</code> combinator mentioned
-earlier.</p>
+earlier:</p>
 <pre><code>joy0  == 
     [ [ [ joy0          body            joy0     ] 
         [ []                                     ] 

@@ -1,6 +1,6 @@
 <h1 id="fast-small-truth-tables">Fast small truth tables</h1>
 <p><em>by Manfred von Thun</em></p>
-<p><em>Abstract</em>: This note describes how small Joy sets (of up to
+<p><em>Abstract:</em> This note describes how small Joy sets (of up to
 32 members) can be used to encode the lines in a truth table for up to
 five propositions. This results in a surprisingly simple method of
 providing truth table tests for the modal status of formulas (or other
@@ -16,6 +16,7 @@ notation</a></li>
 <li><a href="#TOC-5">Using Cambridge notation</a></li>
 <li><a href="#TOC-6">Other applications</a></li>
 </ul>
+<hr />
 <h2 id="TOC-1">Truthfunctional and set-theoretic operations</h2>
 <p>Truth tables are the simplest way to determine the modal status of a
 formula: if it is true in all lines then it is a tautology, if it is
@@ -60,11 +61,12 @@ onwards (generally up to 31). These integers can be taken to be the line
 numbers of a truth table, starting with line number 0.</p>
 <p>What is needed, for each atomic proposition, is the set of line
 numbers of the lines in which that proposition is true. In the usual way
-of writing truth tables, these are the five guide columns. In
-setlib.joy, the standard Joy library for (small and large) sets, there
-is a module ss for small (32-bit) sets which contains, among others,
-just the right definitions for the current purpose. These definitions
-are here reproduced for convenience:</p>
+of writing truth tables, these are the five guide columns. In <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/setlib.joy">setlib.joy</a>,
+the standard Joy library for (small and large) sets, there is a module
+ss for small (32-bit) sets which contains, among others, just the right
+definitions for the current purpose. These definitions are here
+reproduced for convenience:</p>
 <pre><code>    s1  == { 0  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30 };
     s2  == { 0  1  4  5  8  9 12 13 16 17 20 21 24 25 28 29 };
     s4  == { 0  1  2  3  8  9 10 11 16 17 18 19 24 25 26 27 };
@@ -75,21 +77,24 @@ descriptive for general use, but they are not customary in logic.
 Moreover, since these sets are defined inside a module, they would have
 to be referenced as ss.s1, ss.s2, ss.s4 and so on. But this is easily
 overcome by some definitions, chosing p, q, r and so on. Also, it is
-necessary to load the setlib.joy library:</p>
+necessary to load the <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/setlib.joy">setlib.joy</a>
+library:</p>
 <pre><code>&quot;setlib&quot; libload.
 
 DEFINE
   p == ss.s1; q == ss.s2; r == ss.s4; s == ss.s8; t == ss.s16.</code></pre>
-<p>Joy has the Boolean operators 'and', 'or' and 'not', and they are
-defined for the two Boolean types of truth values and (small) sets. So
-these three can already be used for the operations on sets of lines.</p>
+<p>Joy has the Boolean operators <code>and</code>, <code>or</code> and
+<code>not</code>, and they are defined for the two Boolean types of
+truth values and (small) sets. So these three can already be used for
+the operations on sets of lines.</p>
 <p>But in logic one frequently uses material implication and material
 equivalence, and these operations will be needed. In the definition
-below they have been chosen as say, 'imp' and 'iff'. Also, a set of
-lines represents a tautology if and only if it comprises all lines if
-and only if it is the universal set. In the definition below the
-predicate 'tautology' is defined to be true if the complement of the set
-is empty.</p>
+below they have been chosen as say, <code>imp</code> and
+<code>iff</code>. Also, a set of lines represents a tautology if and
+only if it comprises all lines if and only if it is the universal set.
+In the definition below the predicate 'tautology' is defined to be true
+if the complement of the set is empty:</p>
 <pre><code>DEFINE
   imp == [not] dip or;
   iff == [imp] [swap imp] cleave and popd;
@@ -100,7 +105,7 @@ END</code></pre>
 formulas in Joy postfix notation and determine whether they are
 tautologies. It does so simply by executing them and then use the
 'tautology' predicate to determine whether what is on top of the stack
-is the unversal set.</p>
+is the universal set:</p>
 <pre><code>p q imp p and  q  imp tautology.
 true
 p q imp q and  p  imp tautology.
@@ -112,7 +117,7 @@ false</code></pre>
 <p>A formula that is not a tautology is either contingent or it is a
 contradiction. It might be useful to have two more predicates for this.
 But simpler still is to have a function 'modality' which simply
-determines which of the three possibilities obtains.</p>
+determines which of the three possibilities obtains:</p>
 <pre><code>DEFINE
   modality == 
     [ [ [null] &quot;contradiction&quot; ]
@@ -122,7 +127,7 @@ determines which of the three possibilities obtains.</p>
     popd
 END</code></pre>
 <p>The use of this predicate is illustrated by the following three
-similar looking stock examples.</p>
+similar looking stock examples:</p>
 <pre><code>p p not and   modality.
 &quot;contradiction&quot;
 p q not and   modality.
@@ -171,17 +176,17 @@ DEFINE
 END</code></pre>
 <p>In the following the first item is a Joy tree representing a formula
 in minimally parenthesised infix notation. This is then translated into
-a quotation of the same formula in Joy notation. The i combinator then
-executes the quotation, with the result that the top of the stack is now
-the set of lines in the truth table in which that formula is true. The
-tautology predicate then determines whether that set is the set of all
-lines, just as before.</p>
+a quotation of the same formula in Joy notation. The <code>i</code>
+combinator then executes the quotation, with the result that the top of
+the stack is now the set of lines in the truth table in which that
+formula is true. The tautology predicate then determines whether that
+set is the set of all lines, just as before:</p>
 <pre><code>[ [p imp q] and p  imp  q ] Min2Rev i tautology.
 true
 [ [p imp q] and q  imp  p ] Min2Rev i tautology.
 false</code></pre>
 <p>But it is more convenient not to have to specify the translation
-operator and the i combinator every time:</p>
+operator and the <code>i</code> combinator every time:</p>
 <pre><code>DEFINE
   Mtautology == Min2Rev i tautology;
   Mmodality  == Min2Rev i modality
@@ -206,10 +211,11 @@ Mmodality.
 Mmodality.
 &quot;contingent&quot;</code></pre>
 <h2 id="TOC-5">Using Cambridge notation</h2>
-<p>In the symlib.joy library there is also a translator from Cambridge
-(or Lisp) style notation to Joy notation. The translator is called
-Cam2Rev, and it is useful to define the following operators straight
-away:</p>
+<p>In the <a
+href="https://github.com/Wodan58/joy1/blob/master/lib/symlib.joy">symlib.joy</a>
+library there is also a translator from Cambridge (or Lisp) style
+notation to Joy notation. The translator is called Cam2Rev, and it is
+useful to define the following operators straight away:</p>
 <pre><code>DEFINE
   Ctautology == Cam2Rev i tautology;
   Cmodality  == Cam2Rev i modality
@@ -245,7 +251,7 @@ END</code></pre>
 <p>Since from inconsistent data anything follows, no advice should be
 given at all and an appropriate warning should be supplied. Also, a
 warning should be given if the information was not sufficient to give
-any kind of advice.</p>
+any kind of advice:</p>
 <pre><code>DEFINE
   takeadvice == 
     Min2Rev i 

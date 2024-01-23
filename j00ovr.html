@@ -5,7 +5,7 @@ different from other programming languages of that kind. This paper
 provides an overview of most of its practical and theoretical
 aspects.</p>
 <p>To add two integers, say 2 and 3, and to write their sum, you type
-the program</p>
+the program:</p>
 <pre><code>        2  3  +</code></pre>
 <p>This is how it works internally: the first numeral causes the integer
 2 to be pushed onto a stack. The second numeral causes the integer 3 to
@@ -46,7 +46,7 @@ operators in that they expect something specific on top of the stack.
 But unlike operators they execute what they find on top of the stack,
 and this has to be the <em>quotation</em> of a program, enclosed in
 square brackets. One of these is a combinator for mapping elements of
-one list via a function to another list. Consider the program</p>
+one list via a function to another list. Consider the program:</p>
 <pre><code>        [1 2 3 4]  [dup *]  map</code></pre>
 <p>It first pushes the list of integers and then the quoted program onto
 the stack. The <code>map</code> combinator then removes the list and the
@@ -55,7 +55,7 @@ member of the given list. The result is the list <code>[1 4 9 16]</code>
 which is left on top of the stack.</p>
 <p>In <em>definition</em>s of new functions no formal parameters are
 used, and hence there is no substitution of actual parameters for formal
-parameters. After the following definition</p>
+parameters. After the following definition:</p>
 <pre><code>        square   ==   dup  *</code></pre>
 <p>the symbol <code>square</code> can be used in place of
 <code>dup *</code>.</p>
@@ -63,14 +63,14 @@ parameters. After the following definition</p>
 example in the definition of the factorial function. That definition
 uses a certain recursive pattern that is useful elsewhere. In Joy there
 is a combinator for <em>primitive recursion</em> which has this pattern
-built in and thus avoids the need for a definition. The primrec
-combinator expects two quoted programs in addition to a data parameter.
-For an integer data parameter it works like this: If the data parameter
-is zero, then the first quotation has to produce the value to be
-returned. If the data parameter is positive then the second has to
-combine the data parameter with the result of applying the function to
-its predecessor. For the factorial function the required quoted programs
-are very simple:</p>
+built in and thus avoids the need for a definition. The
+<code>primrec</code> combinator expects two quoted programs in addition
+to a data parameter. For an integer data parameter it works like this:
+If the data parameter is zero, then the first quotation has to produce
+the value to be returned. If the data parameter is positive then the
+second has to combine the data parameter with the result of applying the
+function to its predecessor. For the factorial function the required
+quoted programs are very simple:</p>
 <pre><code>        [1]  [*]  primrec</code></pre>
 <p>computes the factorial recursively. There is no need for any
 definition. For example, the following program computes the factorial of
@@ -149,7 +149,7 @@ functions which take states as arguments and as values. The meaning of
 compound programs has to be given in terms of the meanings of atomic
 programs. It is useful to classify atomic programs into categories
 depending on what kind of function they denote. A coarse classification
-distinguishes just three, called</p>
+distinguishes just three, called:</p>
 <ol type="1">
 <li>the <em>literal</em>s,</li>
 <li>the <em>operator</em>s and</li>
@@ -229,24 +229,25 @@ line.</p>
 <p>Consider the following equations in infix notation: The first says
 that multiplying a number <code>x</code> by 2 gives the same result as
 adding it to itself. The second says that the size of a reversed list is
-the same as the <code>size</code> of the original list.</p>
+the same as the <code>size</code> of the original list:</p>
 <pre><code>        2 * x  =  x + x                 size(reverse(x))  =  size(x)</code></pre>
 <p>In Joy the same equations would be written, <em>without
 variables</em>, like this:</p>
 <pre><code>        2  *   ==   dup  +              reverse  size   ==   size</code></pre>
 <p>Other equivalences express algebraic properties of various
-operations. For example, the predecessor pred of the successor succ of a
-number is just the number itself. The conjunction and of a truth value
-with itself gives just the truth value. The less than relation
-<code>&lt;</code> is the converse of the greater than relation
-<code>&gt;</code>. Inserting a number with cons into a list of numbers
-and then taking the sum of that gives the same result as first taking
-the sum of the list and then adding the other number. In conventional
-notation these are expressed by</p>
+operations. For example, the predecessor <code>pred</code> of the
+successor <code>succ</code> of a number is just the number itself. The
+conjunction <code>and</code> of a truth value with itself gives just the
+truth value. The less than relation <code>&lt;</code> is the converse of
+the greater than relation <code>&gt;</code>. Inserting a number with
+<code>cons</code> into a list of numbers and then taking the sum of that
+gives the same result as first taking the sum of the list and then
+adding the other number. In conventional notation these are expressed
+by:</p>
 <pre><code>        pred(succ(x))  =  x             x and x  =  x
         x &lt; y  =  y &gt; x                 sum(cons(x,y))  =  x + sum(y)</code></pre>
-<p>In Joy these are expressed <em>without variables</em></p>
-<pre><code>        succ  pred   ==   id            dup  and   ==   id
+<p>In Joy these are expressed <em>without variables</em>:</p>
+<pre><code>        succ  pred   ==   id            dup  and    ==   id
         &lt;   ==   swap &gt;                 cons  sum   ==   sum  +</code></pre>
 <p>Some properties of operations have to be expressed by combinators.
 One of these is the dip combinator which expects a program on top of the
@@ -265,7 +266,7 @@ concatenands.</p>
 <p>The last example uses both combinators to express that multiplication
 distributes (from the right) over addition. (Note that the program
 parameter for <del>app2</del><code>unary2</code> is first constructed
-from the multiplicand and <code>*</code>.)</p>
+from the multiplicand and <code>*</code>.):</p>
 <pre><code>        [+]  dip  +   ==   +  +
         and  not      ==   [not]  unary2  or        (* app2 *)
         concat  size  ==   [size]  unary2  +        (* app2 *)
@@ -273,7 +274,7 @@ from the multiplicand and <code>*</code>.)</p>
 <p>A deep result in the theory of computability concerns the elimination
 of recursive definitions. To use the stock example, the
 <em>factorial</em> function can be <em>defined</em> recursively in Joy
-by</p>
+by:</p>
 <pre><code>        factorial  ==
             [0 =] [pop 1] [dup 1 - factorial *] ifte</code></pre>
 <p>The definition is then <em>used</em> in programs like this:</p>
@@ -288,8 +289,8 @@ definition, as follows:</p>
 <p>The second line in this program does much the same as the body of the
 definition of factorial, but it is a quoted program. The third line
 first transforms this into another longer quoted program which performs
-“anonymous” recursion, and then the final i combinator essentially
-dequotes this program causing its execution.</p>
+“anonymous” recursion, and then the final <code>i</code> combinator
+essentially dequotes this program causing its execution.</p>
 <p>The third line implements Joy’s counterpart of the <em>Y</em>
 combinator of the lambda calculus. Exactly the same line can be used to
 cause anonymous recursion of other functions which are normally defined
@@ -341,7 +342,7 @@ but for Joy it is particularly simple. The basic binary rewriting
 relation will be written in infix notation as “<code>-&gt;</code>”,
 pronounced “can be rewritten as”. The following are some sample rules
 for the <code>+</code> and <code>&lt;</code> operators and for the dip
-combinator.</p>
+combinator:</p>
 <pre><code>        2  3  +   -&gt;   5
         2  3  &lt;   -&gt;   true
         a  [P]  dip   -&gt;   P  a</code></pre>
@@ -372,11 +373,11 @@ difference would be explained away as a syntactic coincidence due to the
 choice of notation. Apart from <code>+</code> there would be very many
 term constructors.</p>
 <p>However, Joy has operators for manipulating the top few elements of
-the stack, such as swap, dup and pop. These are also found in the
-language <em>Forth</em>. These operators take a stack as argument and
-yield a stack as value, and their presence forces all other operators to
-be of the same type. For example, the following is a rewrite rule for
-swap:</p>
+the stack, such as <code>swap</code>, <code>dup</code> and
+<code>pop</code>. These are also found in the language <em>Forth</em>.
+These operators take a stack as argument and yield a stack as value, and
+their presence forces all other operators to be of the same type. For
+example, the following is a rewrite rule for <code>swap</code>:</p>
 <pre><code>        a  b  swap   -&gt;   b  a</code></pre>
 <p>Unlike Forth, Joy also has quotations and combinators. These features
 also force the conclusion that the appropriate rewriting system is a
@@ -420,10 +421,10 @@ have attractive algebraic properties, and hence there is no theoretical
 reason for preferring one concrete notation over another.</p>
 <p>The languages of <em>category</em> theory comprises another group of
 functional languages. Whereas the other functional languages use
-function application, these use function composition. No high level
+function application, these use function composition. No high-level
 programming language has been based on this formalism, but it has been
 used as a low level machine language as a target for compilation from a
-(typed) lambda calculus source. Joy is a high level programming language
+(typed) lambda calculus source. Joy is a high-level programming language
 which resembles the categorical languages more than it resembles any of
 the other functional languages.</p>
 <p>The prototype implementation is written in (K&amp;R) C; it uses a

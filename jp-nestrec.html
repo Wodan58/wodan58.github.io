@@ -8,8 +8,9 @@
 <li><a href="#TOC-4">Partially explicit recursion</a></li>
 <li><a href="#TOC-5">A nested recursion combinator</a></li>
 </ol>
+<hr />
 <h2 id="TOC-1"><strong>Introduction</strong></h2>
-<p>This note was prompted by Nick Forde's version of a Joy operator
+<p>This note was prompted by Nick Forde’s version of a Joy operator
 which computes the Ackermann function which is one of the few well-known
 functions that use nested recursion. He was trying to avoid explicit
 recursion in the definition, but found that none of the recursion
@@ -17,7 +18,7 @@ combinators of Joy <em>at the time</em> were up to the task. His finding
 prompted the inclusion of a new Joy combinator <em>condnestrec</em> into
 the language.</p>
 <p>This note gives definitions of (the common simplification of)
-Ackermann's function, of McCarthy's 91-function, of a function producing
+Ackermann’s function, of McCarthy’s 91-function, of a function producing
 a Hamiltonian path over a hypercube, of a function producing Gray
 sequences, and of the Hanoi problem. All involve nested recursion.
 Several possible definition methods are used.</p>
@@ -32,7 +33,7 @@ factorial function:</p>
                IF n = 0 
                THEN 1 
                ELSE  n * fact(n-1) </code></pre>
-<p>  Here is the corresponding recursive definition in Joy:</p>
+<p>Here is the corresponding recursive definition in Joy:</p>
 <pre><code>        DEFINE
             r-fact == 
                [ null ] 
@@ -41,7 +42,7 @@ factorial function:</p>
                ifte. </code></pre>
 <p>The following tests this definition – redundantly, of course. Note
 that the response from Joy is indented to the left. The same style will
-be used in all later tests.</p>
+be used in all later tests:</p>
 <pre><code>        [ 0 1 2 3 4 5 6 ]  [r-fact]  map. 
 [1 1 2 6 24 120 720]</code></pre>
 <p>The next definition is of a not so familiar function originally due
@@ -87,7 +88,7 @@ useful if one wants to see a trace of what is sitting on the stack. The
 following tests are complete from (0,0) up to (3,5), and give some
 indication of the behaviour. The final line only gives the value for
 (4,0) because computation for (4,1) crashes the Joy stack (and also, it
-seems, calculations in other languages).</p>
+seems, calculations in other languages):</p>
 <pre><code>        [ [0 0] [0 1] [0 2] [0 3] [0 4] [0 5] ]   [i r-ack]  map  putln 
         [ [1 0] [1 1] [1 2] [1 3] [1 4] [1 5] ]   [i r-ack]  map  putln 
         [ [2 0] [2 1] [2 2] [2 3] [2 4] [2 5] ]   [i r-ack]  map  putln 
@@ -100,12 +101,14 @@ seems, calculations in other languages).</p>
 [13]</code></pre>
 <p>In the Towers of Hanoi puzzle the disks have to be moved in a
 particular order. Ignoring what the target peg is, for three disks the
-order is 1 2 1 3 1 2 1. In general for n disks it is a sequence of <span
-class="math inline">2<sup>N</sup> - 1</span> steps. In the usual
-implementation of the Hanoi program the disks that have to be moved are
-not mentioned at all. The sequence of steps is also one that performs a
-Hamiltonian path on an n-dimensional hypercube. The following is the Joy
-program:</p>
+order is 1 2 1 3 1 2 1. In general for n disks it is a sequence of <img
+style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Ctextstyle%202%5EN%5E%20-%201"
+alt="2^N^ - 1" title="2^N^ - 1" class="math inline" /> steps. In the
+usual implementation of the Hanoi program the disks that have to be
+moved are not mentioned at all. The sequence of steps is also one that
+performs a Hamiltonian path on an n-dimensional hypercube. The following
+is the Joy program:</p>
 <pre><code>        DEFINE 
             r-hamilhyp ==   #  [] n  =&gt;  [...] 
                [ null ] 
@@ -124,11 +127,12 @@ outputs:</p>
         []  5  r-hamilhyp. 
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1 5 1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
 <h2 id="TOC-3">[<strong>Self-application</strong>]</h2>
-<p>One way to get by without recursive definitions is by using Curry's
+<p>One way to get by without recursive definitions is by using Curry’s
 "paradoxical" Y combinator which can also be defined in Joy. Another way
 would use what is known as "self-application", giving a function a
 parameter which is also a function – e.g. itself. In Joy there is an
-inbuilt combinator to this effect, but it might have been defined by</p>
+inbuilt combinator to this effect, but it might have been defined
+by:</p>
 <pre><code>        DEFINE
             x == dup i.</code></pre>
 <p>Using this combinator a non-recursive definition of the factorial
@@ -144,7 +148,7 @@ function is this:</p>
 <code>x-fact</code> is not recursive, as a parameter to the
 <code>map</code> combinator instead of using the quotation
 <code>[x-fact]</code> it would have been possible to use quotation of
-the body of the definition.</p>
+the body of the definition:</p>
 <pre><code>        [ 0 1 2 3 4 5 6 ]  [x-fact]  map. 
 [1 1 2 6 24 120 720]</code></pre>
 <p>In the recursive definition of the 91-function the recursive branch
@@ -215,10 +219,11 @@ together with one of the tests:</p>
 [1 2 1 3 1 2 1 4 1 2 1 3 1 2 1 5 1 2 1 3 1 2 1 4 1 2 1 3 1 2 1]</code></pre>
 <h2 id="TOC-4"><strong>Partially explicit recursion</strong></h2>
 <p>Nick Forde suggested writing the Ackermann function by using the
-condlinrec combinator to achieve one recursion, and to use explicit
-recursion for the other. For reasons that do not concern us here, his
-version computes the <em>converse</em> of the text book definition. For
-that reason, in the tests below the call is to [swap ack]:</p>
+<code>condlinrec</code> combinator to achieve one recursion, and to use
+explicit recursion for the other. For reasons that do not concern us
+here, his version computes the <em>converse</em> of the text book
+definition. For that reason, in the tests below the call is to [swap
+ack]:</p>
 <pre><code>        DEFINE ack == (* I:n I:m -&gt; I:a *) 
             [ [ [0 =] [pop 1 +] ] 
               [ [swap 0 =] [popd 1 - 1 swap] [] ] 
@@ -262,10 +267,10 @@ for the double recursion:</p>
 [5 13 29 61 125 253]</code></pre>
 <p>In the same style here is the partially recursive definition of the
 function for the Hamiltonian path on a hypercube. But since there is
-only a two way branching, the linrec combinator is used rather than the
-slightly more complex (and hence more flexible) condlinrec combinator.
-Remember that the implicit recursion occurs between the third and fourth
-quotation.</p>
+only a two way branching, the <code>linrec</code> combinator is used
+rather than the slightly more complex (and hence more flexible)
+<code>condlinrec</code> combinator. Remember that the implicit recursion
+occurs between the third and fourth quotation:</p>
 <pre><code>        DEFINE
             lr-hamilhyp == 
                [ null ] 
@@ -282,7 +287,7 @@ only the commented line has been inserted. The definition generates Gray
 sequences of subsets of small numbers. Each subset is generated from its
 predecessor by having just one number added or removed. This step is
 here done by an operation called <em>toggle</em>, which takes a set of
-small numbers and another small number as parameters and returns a set.
+small numbers and another small number as parameter and returns a set.
 If the number was in the original set then it is removed, if the number
 was not in the original set then it is added. Here is the definition and
 some examples:</p>
@@ -329,7 +334,7 @@ that the parameter to the combinator is a list of just two cases. The
 first case consists of a test quotation and another quotation, so there
 is no recursion here. The second case is also the last, so it is the
 default, and it has no test quotation. There are three quotations, so
-the implicit recursion occurs between them, so it occurs twice.</p>
+the implicit recursion occurs between them, so it occurs twice:</p>
 <pre><code>        DEFINE 
             cnr-hamilhyp == 
                [ [ [null] [pop] ] 
@@ -343,7 +348,7 @@ the implicit recursion occurs between them, so it occurs twice.</p>
 <p>In the following definition of the Ackermann function implicit
 recursion occurs once in the second case, and twice in the third,
 default case. In each of the three places the quotation following the
-implicit recursion is actually empty.</p>
+implicit recursion is actually empty:</p>
 <pre><code>        DEFINE 
             cnr-ack == 
                [ [ [pop null]  [popd succ] ] 
@@ -369,7 +374,7 @@ Hamiltonian path on a hypercube by inserting one line as indicated:</p>
 [{3} {1 3} {1 2 3} {2 3} {2} {1 2} {1} {}]</code></pre>
 <p>Since the Hamiltonian path sequence is also the sequence of the disk
 numbers in the Hanoi problem, it is perhaps not too surprising that the
-solution to the Hamoi problem is so similar. The solution of course has
+solution to the Hanoi problem is so similar. The solution of course has
 to specify the pegs: each move has to specify from which peg the top
 disk is to be removed and to which peg it is to be moved. However, the
 number of the disk is not normally mentioned. In the following program
@@ -381,7 +386,7 @@ peg. The disks on the first peg are to be moved to the peg whose name is
 the second on the list, and the peg whose name is the third item can be
 used as a temporary. The user chose to call the pegs "source"
 "destination" and "temp" in the first example, and "S" "D" and "T" in
-the second example.</p>
+the second example:</p>
 <pre><code>        DEFINE 
             cnr-hanoi == 
                [[rolldown] infra] dip 
@@ -398,10 +403,8 @@ the second example.</p>
 [S D] [S T] [D T] [S D] [T S] [T D] [S D] [S T] [D T] [D S] [T S] [D T] [S D] [S T] [D T] [S D] [T S] [T D] [S D] [T S] [D T] [D S] [T S] [T D] [S D] [S T] [D T] [S D] [T S] [T D] [S D]      </code></pre>
 <p>It is interesting to note that although the Gray sequence program and
 the Hanoi program are based on the same program, the Hamiltonian path
-program, the Gray sequence produced consists of <span
-class="math inline">2<sup>n</sup></span> members and the Hanoi move
-sequence consists of <span class="math inline">2<sup>N</sup> - 1</span>
-members.</p>
+program, the Gray sequence produced consists of 2<sup>N</sup> members
+and the Hanoi move sequence consists of 2<sup>N</sup> - 1 members.</p>
 <p>Since this note started with the recursive definitions of the
 factorial function and the 91-function, This section would not be
 complete without the corresponding definitions using the
@@ -426,7 +429,7 @@ combinator. In the following definitions of the <code>even</code>
 predicate and the <code>abs</code> (absolute value) operator,
 <code>condlinrec</code> is used just for conditionals without making use
 of the possibility of recursion. For the <code>abs</code> operator the
-default is actually empty.</p>
+default is actually empty:</p>
 <pre><code>        DEFINE 
             cnr-even == 
                [ [ [2 rem null] [pop true] ] 
@@ -450,5 +453,5 @@ true
 these examples. All the examples took a numeric parameter to guide the
 recursion, and one obvious alternative to investigate is the use of
 lists.</p>
-<p>MYNOTE: Bauer and Woessner, functions ble and morris. Manna,
-Ackermann for strings.</p>
+<p>[MYNOTES: Bauer and Woessner, functions ble and morris. Manna,
+Ackermann for strings.]</p>
