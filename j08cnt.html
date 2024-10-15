@@ -688,28 +688,29 @@ problem, Modula2 allows use of qualified names which are similar to
 record notation. Such names consist of the name of the module together
 with the name of the exported identifier.</p>
 <p>Structuring devices similar to modules would benefit any language for
-programming in the large. Because Joy is so weakly typed, definition
-modules would be almost pointless. However, implementation modules with
-selective export would hide utility functions of a module that are not
-needed outside the module. Qualified names would then be as in Modula2.
-A crude substitute for a hiding facility and for qualified names is
-already used in the Joy libraries. Hidden functions are given names that
-are not displayed by the class which first occurred in <em>Simula</em>,
-an early descendant of Algol 60. Classes are a generalisation of record
-types, but in addition to fields for assignable variables there are
-fields for procedures and functions. Instances of a class type are
-called <em>object</em>s, they consist of instance specific assignable
-variables of their type. From the outside objects are manipulated only
-by the procedures and functions of their class. This is the essence of
-<em>object oriented programming</em>, it emphasises hiding of
-implementation details so that only <em>abstract data type</em>s are
-visible from the outside. Two other notions are <em>inheritance</em> of
-properties of objects from other objects, and making functions and
-procedures <em>re-usable</em> and <em>polymorphic</em>. The ability of
-an object to respond to actual parameters of different types. The
-<em>C++ language</em> has made these concepts extremely popular. It is
-being used to build extensive libraries containing re-usable
-components.</p>
+programming in the large. Because Joy is so weakly<a href="#fn2"
+class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>
+typed, definition modules would be almost pointless. However,
+implementation modules with selective export would hide utility
+functions of a module that are not needed outside the module. Qualified
+names would then be as in Modula2. A crude substitute for a hiding
+facility and for qualified names is already used in the Joy libraries.
+Hidden functions are given names that are not displayed by the class
+which first occurred in <em>Simula</em>, an early descendant of Algol
+60. Classes are a generalisation of record types, but in addition to
+fields for assignable variables there are fields for procedures and
+functions. Instances of a class type are called <em>object</em>s, they
+consist of instance specific assignable variables of their type. From
+the outside objects are manipulated only by the procedures and functions
+of their class. This is the essence of <em>object oriented
+programming</em>, it emphasises hiding of implementation details so that
+only <em>abstract data type</em>s are visible from the outside. Two
+other notions are <em>inheritance</em> of properties of objects from
+other objects, and making functions and procedures <em>re-usable</em>
+and <em>polymorphic</em>. The ability of an object to respond to actual
+parameters of different types. The <em>C++ language</em> has made these
+concepts extremely popular. It is being used to build extensive
+libraries containing re-usable components.</p>
 <p>Since Joy does not have any assignable variables, the notion of class
 and objects are not applicable. However, hiding, inheritance and
 polymorphism would still be useful. Many operators in Joy are already
@@ -745,5 +746,7 @@ role="doc-endnotes">
 <ol>
 <li id="fn1"><p>This sentence ends in the middle.<a href="#fnref1"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Wikipedia classifies Joy as strongly typed.<a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
