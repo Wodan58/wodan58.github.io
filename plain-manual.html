@@ -36,7 +36,7 @@ Examples: []  [3 512 -7]  [john mary]  [&#39;A &#39;C [&#39;B]]  [dup *].
  float type       :  -&gt;  F
 The type of floating-point numbers.
 Literals of this type are written with embedded decimal points (like 1.2)
-and optional exponent specifiers (like 1.5E2)
+and optional exponent specifiers (like 1.5E2).
 
  file type        :  -&gt;  FILE:
 The type of references to open I/O streams,
@@ -72,14 +72,14 @@ Pushes current value of flag  for automatic output, I = 0..2.
 undeferror :  -&gt;  I
 Pushes current value of undefined-is-error flag.
 
-undefs     :  -&gt;
+undefs     :  -&gt;  [..]
 Push a list of all undefined symbols in the current symbol table.
 
 echo       :  -&gt;  I
 Pushes value of echo flag, I = 0..3.
 
 clock      :  -&gt;  I
-Pushes the integer value of current CPU usage in hundreds of a second.
+Pushes the integer value of current CPU usage in milliseconds.
 
 time       :  -&gt;  I
 Pushes the current time (in seconds since the Epoch).
@@ -111,13 +111,13 @@ swap       :   X Y  -&gt;   Y X
 Interchanges X and Y on top of the stack.
 
 rollup     :  X Y Z  -&gt;  Z X Y
-Moves X and Y up, moves Z down
+Moves X and Y up, moves Z down.
 
 rolldown   :  X Y Z  -&gt;  Y Z X
-Moves Y and Z down, moves X up
+Moves Y and Z down, moves X up.
 
 rotate     :  X Y Z  -&gt;  Z Y X
-Interchanges X and Z
+Interchanges X and Z.
 
 popd       :  Y Z  -&gt;  Z
 As if defined by:   popd  ==  [pop] dip 
@@ -191,7 +191,7 @@ C is the character whose Ascii value is integer I (or logical or character).
 
 abs        :  N1  -&gt;  N2
 Integer N2 is the absolute value (0,1,2..) of integer N1,
-or float N2 is the absolute value (0.0 ..) of float N1
+or float N2 is the absolute value (0.0 ..) of float N1.
 
 acos       :  F  -&gt;  G
 G is the arc cosine of F.
@@ -263,13 +263,13 @@ Converts a time I into a list T representing local time:
 [year month day hour minute second isdst yearday weekday].
 Month is 1 = January ... 12 = December;
 isdst is a Boolean flagging daylight savings/summer time;
-weekday is 0 = Monday ... 7 = Sunday.
+weekday is 1 = Monday ... 7 = Sunday.
 
 gmtime     :  I  -&gt;  T
 Converts a time I into a list T representing universal time:
 [year month day hour minute second isdst yearday weekday].
 Month is 1 = January ... 12 = December;
-isdst is false; weekday is 0 = Monday ... 7 = Sunday.
+isdst is false; weekday is 1 = Monday ... 7 = Sunday.
 
 mktime     :  T  -&gt;  I
 Converts a list T representing local time into a time I.
@@ -333,19 +333,21 @@ fgets      :  S  -&gt;  S L
 L is the next available line (as a string) from stream S.
 
 fopen      :  P M  -&gt;  S
-The file system object with pathname P is opened with mode M (r, w, a, etc.)
-and stream object S is pushed; if the open fails, file:NULL is pushed.
+The file system object with pathname P is opened with mode M
+(r, w, a, etc.) and stream object S is pushed; if the open fails, file:NULL
+is pushed.
 
 fread      :  S I  -&gt;  S L
 I bytes are read from the current position of stream S
 and returned as a list of I integers.
 
 fwrite     :  S L  -&gt;  S
-A list of integers are written as bytes to the current position of stream S.
+A list of integers are written as bytes to the current position of
+stream S.
 
 fremove    :  P  -&gt;  B
-The file system object with pathname P is removed from the file system.
- is a boolean indicating success or failure.
+The file system object with pathname P is removed from the file
+system. B is a boolean indicating success or failure.
 
 frename    :  P1 P2  -&gt;  B
 The file system object with pathname P1 is renamed to P2.
@@ -358,12 +360,13 @@ fputch     :  S C  -&gt;  S
 The character C is written to the current position of stream S.
 
 fputchars  :  S &quot;abc..&quot;  -&gt;  S
-The string abc.. (no quotes) is written to the current position of stream S.
+The string abc.. (no quotes) is written to the current position of
+stream S.
 
 fputstring :  S &quot;abc..&quot;  -&gt;  S
 == fputchars, as a temporary alternative.
 
-fseek      :  S P W  -&gt;  S
+fseek      :  S P W  -&gt;  S B
 Stream S is repositioned to position P relative to whence-point W,
 where W = 0, 1, 2 for beginning, current position, end respectively.
 
@@ -398,7 +401,7 @@ X (= A[I]) is the I-th member of aggregate A.
 size       :  A  -&gt;  I
 Integer I is the number of elements of aggregate A.
 
-opcase     :  X [..[X Xs]..]  -&gt;  [Xs]
+opcase     :  X [..[X Xs]..]  -&gt;  X [Xs]
 Indexing on type of X, returns the list [Xs].
 
 case       :  X [..[X Y]..]  -&gt;  Y i
@@ -421,7 +424,7 @@ Sequence U is the concatenation of sequences S and T.
 
 enconcat   :  X S T  -&gt;  U
 Sequence U is the concatenation of sequences S and T
-with X inserted between S and T (== swapd cons concat)
+with X inserted between S and T (== swapd cons concat).
 
 name       :  sym  -&gt;  &quot;sym&quot;
 For operators and combinators, the string &quot;sym&quot; is the name of item sym,
@@ -513,14 +516,14 @@ combinator
 i          :  [P]  -&gt;  ...
 Executes P. So, [P] i  ==  P.
 
-x          :  [P]i  -&gt;  ...
+x          :  [P] x  -&gt;  ...
 Executes P without popping [P]. So, [P] x  ==  [P] P.
 
 dip        :  X [P]  -&gt;  ... X
 Saves X, executes P, pushes X back.
 
 app1       :  X [P]  -&gt;  R
-Executes P, pushes result R on stack without X.
+Obsolescent.  Executes P, pushes result R on stack.
 
 app11      :  X Y [P]  -&gt;  R
 Executes P, pushes result R on stack.
@@ -618,21 +621,21 @@ tailrec    :  [P] [T] [R1]  -&gt;  ...
 Executes P. If that yields true, executes T.
 Else executes R1, recurses.
 
-binrec     :  [B] [T] [R1] [R2]  -&gt;  ...
+binrec     :  [P] [T] [R1] [R2]  -&gt;  ...
 Executes P. If that yields true, executes T.
 Else uses R1 to produce two intermediates, recurses on both,
-then executes R2 to combines their results.
+then executes R2 to combine their results.
 
 genrec     :  [B] [T] [R1] [R2]  -&gt;  ...
-Executes B, if that yields true executes T.
-Else executes R1 and then [[B] [T] [R1] [R2] genrec] R2.
+Executes B, if that yields true, executes T.
+Else executes R1 and then [[[B] [T] [R1] R2] genrec] R2.
 
 condlinrec :  [ [C1] [C2] .. [D] ]  -&gt;  ...
-Each [Ci] is of the forms [[B] [T]] or [[B] [R1] [R2]].
+Each [Ci] is of the form [[B] [T]] or [[B] [R1] [R2]].
 Tries each B. If that yields true and there is just a [T], executes T and exit.
 If there are [R1] and [R2], executes R1, recurses, executes R2.
 Subsequent case are ignored. If no B yields true, then [D] is used.
-It is then of the forms [[T]] or [[R1] [R2]]. For the former, executes T.
+It is then of the form [[T]] or [[R1] [R2]]. For the former, executes T.
 For the latter executes R1, recurses, executes R2.
 
 step       :  A  [P]  -&gt;  ...
@@ -676,11 +679,11 @@ treestep   :  T [P]  -&gt;  ...
 Recursively traverses leaves of tree T, executes P for each leaf.
 
 treerec    :  T [O] [C]  -&gt;  ...
-T is a tree. If T is a leaf, executes O. Else executes [[O] [C] treerec] C.
+T is a tree. If T is a leaf, executes O. Else executes [[[O] C] treerec] C.
 
 treegenrec :  T [O1] [O2] [C]  -&gt;  ...
 T is a tree. If T is a leaf, executes O1.
-Else executes O2 and then [[O1] [O2] [C] treegenrec] C.
+Else executes O2 and then [[[O1] [O2] C] treegenrec] C.
 
 
 
@@ -688,10 +691,10 @@ miscellaneous commands
 
 help          :  -&gt;
 Lists all defined symbols, including those from library files.
-Then lists all primitives of raw Joy
+Then lists all primitives of raw Joy.
 (There is a variant: &quot;_help&quot; which lists hidden symbols).
 
-helpdetail    :  [ S1  S2  .. ]
+helpdetail    :  [ S1  S2  .. ]  -&gt;
 Gives brief help on each symbol S in the list.
 
 manual        :  -&gt;
@@ -699,7 +702,7 @@ Writes this manual of all Joy primitives to output file.
 
 setautoput    :  I  -&gt;
 Sets value of flag for automatic put to I (if I = 0, none;
-if I = 1, put; if I = 2, stack.
+if I = 1, put; if I = 2, stack).
 
 setundeferror :  I  -&gt;
 Sets flag that controls behavior of undefined functions
@@ -724,7 +727,8 @@ argv          :  -&gt; A
 Creates an aggregate A containing the interpreter&#39;s command line arguments.
 
 argc          :  -&gt; I
-Pushes the number of command line arguments. This is quivalent to &#39;argv size&#39;.
+Pushes the number of command line arguments.
+This is equivalent to &#39;argv size&#39;.
 
 get           :  -&gt;  F
 Reads a factor from input and pushes it onto stack.
